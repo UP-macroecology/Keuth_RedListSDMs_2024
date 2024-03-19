@@ -1,0 +1,13 @@
+# Quantifying extinction risk using SDMs
+
+Quantifying the extinction risk of species using species distribution models by using a spatially-explicit simulation approach with different virtual species
+
+## Workflow
+For this study the distribution and the extinction of virtual species under climate change in an artificial landscape is modelled using the spatially-explicit individual-absed modelling plattform RangeShifter. The data from the simulation is later used 
+for estimating SDMs and comparing the model predictiions of the SDMs to the results of the simulation data to investigate the habitat loss - extinction risk relationship.
+The virtual species has 4 different traits, which are varied in a two factorial way to represent different vulnerability of species under climate change. These traits are niche optimum to model range-contracting and range-shifting under climate change, 
+niche breadth to model habitat fragmentation and specilization, growth rate for representing different reproductive strategies and dispersal distance for including dispersal limitations for some species.
+
+## 1. Parameter testing for the simulation model
+To establish the parameters for the simulation model I first test different parameter values to establish values that represent the patterns that I want to investigate as well as to obtain a stable population size after the spin-up period in 
+my simulation model. 
