@@ -92,7 +92,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
     # par(mfrow=c(2,2))
     
     #calculate real habitat change
-    real_rangechange <- data.frame(year = c(0:(length(ls_spec)-1), range = NA))
+    real_rangechange <- data.frame(Year = c(0:(length(ls_spec)-1), range = NA))
 
     for(i in 1:length(ls_spec)){
       tmp <- ls_spec[[i]][["suitab.raster"]]
