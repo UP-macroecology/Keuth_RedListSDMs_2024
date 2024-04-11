@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=testing_breadth
+#SBATCH --job-name=3b_testing_breadth
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
 #SBATCH --cpus-per-task=6
@@ -9,4 +9,4 @@
 #SBATCH --nodelist=ecoc9z
 
 cd ${SLURM_SUBMIT_DIR}
-R CMD BATCH ./03_Testing_NicheBreadths.R ./output-file-testing_breadth.Rout
+R CMD BATCH ./03b_Testing_NicheBreadths.R ./output-file-b_testing_breadth.Rout

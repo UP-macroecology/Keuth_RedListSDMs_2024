@@ -151,25 +151,25 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
     
     demo <- Demography(Rmax = 3, ReproductionType = 0) # sexual model with no stage structure
     
-      # # Define dispersal module ------------------------------------------------------------------------------------
-      # disp <-  Dispersal(
-      #   # Emigration phase: stage 0 has constant emigration probability of 0.4
-      #   Emigration = Emigration(EmigProb = 0.4),
-      #   # Transfer phase: negative exponential dispersal kernel with mean dispersal distance of 8km
-      #   Transfer = DispersalKernel(DoubleKernel = T, Distances = matrix(c(15000, 250000, 0.95), ncol = 3)),
-      #   # Settlement: if individual arrives in unsuitable cells, it can randomly chose a suitable neighbouring cell or will die
-      #   Settlement = Settlement(Settle = 2)
-      # )
+      # Define dispersal module ------------------------------------------------------------------------------------
+      disp <-  Dispersal(
+        # Emigration phase: stage 0 has constant emigration probability of 0.4
+        Emigration = Emigration(EmigProb = 0.4),
+        # Transfer phase: negative exponential dispersal kernel with mean dispersal distance of 8km
+        Transfer = DispersalKernel(DoubleKernel = T, Distances = matrix(c(15000, 250000, 0.95), ncol = 3)),
+        # Settlement: if individual arrives in unsuitable cells, it can randomly chose a suitable neighbouring cell or will die
+        Settlement = Settlement(Settle = 2)
+      )
     
-    # Define dispersal module ------------------------------------------------------------------------------------
-    disp <-  Dispersal(
-      # Emigration phase: stage 0 has constant emigration probability of 0.4
-      Emigration = Emigration(EmigProb = 0.4),
-      # Transfer phase: negative exponential dispersal kernel with mean dispersal distance of 8km
-      Transfer = DispersalKernel(Distances = 15000),
-      # Settlement: if individual arrives in unsuitable cells, it can randomly chose a suitable neighbouring cell or will die
-      Settlement = Settlement(Settle = 2)
-    )
+    # # Define dispersal module ------------------------------------------------------------------------------------
+    # disp <-  Dispersal(
+    #   # Emigration phase: stage 0 has constant emigration probability of 0.4
+    #   Emigration = Emigration(EmigProb = 0.4),
+    #   # Transfer phase: negative exponential dispersal kernel with mean dispersal distance of 8km
+    #   Transfer = DispersalKernel(Distances = 15000),
+    #   # Settlement: if individual arrives in unsuitable cells, it can randomly chose a suitable neighbouring cell or will die
+    #   Settlement = Settlement(Settle = 2)
+    # )
       
       # Define initial conditions for simulations ------------------------------------------------------------------------------------
       
@@ -207,7 +207,7 @@ pop_mean <- results[[1]]
 extProb_list <- results[[2]]
 real_rangechange <- results[[3]]
  
-pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_wo_longdisp.pdf"))) # PDF with necessary plots
+pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths.pdf"))) # PDF with necessary plots
 
     plot_list <- vector("list", length = 4)
     plot_list[[1]] <- ggplot(pop_mean[[2]], aes(x = Year, y = Abundance, color=Breadth))+
@@ -261,7 +261,7 @@ pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_wo_longdisp.pdf")
                x = 1,
                y = 1,
                size = 4,
-               label = paste0("ntemp:0.25+variable\nnpre:0.5+variable\nK:0.05\nRmax:3\nEmigProb:0.4\nDispersal:15000")) +
+               label = paste0("ntemp:0.25+variable\nnpre:0.5+variable\nK:0.05\nRmax:3\nEmigProb:0.4\nDispersal:15000,250000,0.95")) +
       theme_void()
     
     #Plot all of them in the same window
