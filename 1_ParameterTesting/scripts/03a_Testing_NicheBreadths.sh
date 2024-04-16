@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=testing_breadth
+#SBATCH --job-name=3a_testing_breadth
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
 #SBATCH --cpus-per-task=6

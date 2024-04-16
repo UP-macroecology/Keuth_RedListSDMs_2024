@@ -90,7 +90,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
     # plot(ls_spec[[45]], main = "year 45")
     # plot(ls_spec[[55]], main = "year 55")
     # par(mfrow=c(2,2))
-    
+
     #calculate real habitat change
     real_rangechange <- data.frame(Year = c(0:(length(ls_spec)-1), range = NA))
 
@@ -104,15 +104,15 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
       real_rangechange[i, 3] <- (real_rangechange[i,2] / real_rangechange[1,2])
     }
     real_rangechange[1,3] <- 1
-    
+
     real_rangechange$Breadth <- paste0("Breadth: ", width[b])
-     
+
     #save maps
     for (i in 1:length(ls_spec)) {
       d <- temp_rise[i]
       temp <- ls_spec[[i]][["suitab.raster"]]
       values(temp) <- values(temp)*100 #make values to percentages
-      writeRaster(temp, filename = paste(path_input,"Inputs/habitat_per_breadth", width[b], "_cc", d, ".asc", sep = ""), 
+      writeRaster(temp, filename = paste(path_input,"Inputs/habitat_per_breadth", width[b], "_cc", d, "K3.asc", sep = ""),
                   overwrite = T, format = "ascii")
     }
 
@@ -127,7 +127,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
     landnames <- c()
     for (i in 1:length(val)){
       d <- val[i]
-      k <- paste0("habitat_per_breadth", width[b], "_cc", d, ".asc")
+      k <- paste0("habitat_per_breadth", width[b], "_cc", d, "K3.asc")
       landnames <- append(landnames, k)
     }
     
@@ -188,8 +188,8 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
       
       # Run simulations ------------------------------------------------------------------------------------
       
-      RunRS(s, path_input)
-      
+       RunRS(s, path_input)
+
       # Calculate population and occupancy mean and extinction probability ------------------------------------
       range <- readRange(s, path_input)
       #range <- read.table(paste0(path_loop, "Outputs/Batch1_Sim0_Land1_Range.txt"), h = T, sep = "\t")
@@ -197,7 +197,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
                                                               Occupancy = mean(NOccupCells), sd_Oc = sd(NOccupCells)) %>% add_column(Breadth = paste0("Breadth: ", width[b]))
       pop <- readPop(s, path_input)
       extProb_list <- Calc_ExtProb(pop, s) %>% add_column(Breadth = paste0("Breadth: ", width[b]))
-      
+
       list(pop_mean, extProb_list, real_rangechange)
 }
 
@@ -206,7 +206,7 @@ stopCluster(cl)
 pop_mean <- results[[1]]
 extProb_list <- results[[2]]
 real_rangechange <- results[[3]]
- 
+
 pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_K0.03.pdf"))) # PDF with necessary plots
 
     plot_list <- vector("list", length = 4)
@@ -220,7 +220,7 @@ pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_K0.03.pdf"))) # P
       theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
             legend.title = element_text(size=6), #change legend title font size
             legend.text = element_text(size=5)) #change legend text font size
-    
+
     # plot_list[[2]] <-  ggplot(pop_mean[[2]], aes(x = Year, y = Occupancy, color= Breadth))+
     #   geom_line()+
     #   geom_line(data=pop_mean[[1]], aes(x = Year, y=Occupancy, color= Breadth))+
@@ -231,7 +231,7 @@ pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_K0.03.pdf"))) # P
     #   theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
     #         legend.title = element_text(size=6), #change legend title font size
     #         legend.text = element_text(size=5)) #change legend text font size
-    
+
     plot_list[[2]] <- ggplot(real_rangechange[[2]], aes(x = Year, y = diff, color= Breadth))+
       geom_line()+
       geom_line(data=real_rangechange[[1]], aes(x = Year, y=diff, color= Breadth))+
@@ -244,7 +244,7 @@ pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_K0.03.pdf"))) # P
             legend.text = element_text(size=5))+ #change legend text font size
       ylim(c(0,0.25))+
       xlim(c(25,65))
-    
+
     plot_list[[3]] <- ggplot(extProb_list[[2]], aes(x = Year, y = extProb, color= Breadth))+
       geom_line()+
       geom_line(data=extProb_list[[1]], aes(x = Year, y=extProb, color= Breadth))+
@@ -255,7 +255,7 @@ pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_K0.03.pdf"))) # P
       theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
             legend.title = element_text(size=6), #change legend title font size
             legend.text = element_text(size=5)) #change legend text font size
-    
+
     plot_list[[4]] <- ggplot() +
       annotate("text",
                x = 1,
@@ -263,10 +263,10 @@ pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_K0.03.pdf"))) # P
                size = 4,
                label = paste0("ntemp:0.25+variable\nnpre:0.5+variable\nK:0.03\nRmax:3\nEmigProb:0.4\nDispersal:15000,250000,0.95")) +
       theme_void()
-    
+
     #Plot all of them in the same window
     grid.arrange(grobs = plot_list)
-    
+
     dev.off() #save pdf
 
 

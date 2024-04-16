@@ -182,13 +182,13 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
                       Years = spinup + sim_years,
                       OutIntPop = 1,
                       OutIntOcc = 1)
-      
-      s <- RSsim(batchnum = b , land = land, demog = demo, dispersal = disp, simul = sim,
+    g <- 12+b
+      s <- RSsim(batchnum = g , land = land, demog = demo, dispersal = disp, simul = sim,
                  init = init)
       
       # Run simulations ------------------------------------------------------------------------------------
       
-      RunRS(s, path_input)
+      #RunRS(s, path_input)
       
       # Calculate population and occupancy mean and extinction probability ------------------------------------
       range <- readRange(s, path_input)
@@ -203,71 +203,73 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
 
 stopCluster(cl)
 
-pop_mean <- results[[1]]
-extProb_list <- results[[2]]
-real_rangechange <- results[[3]]
- 
-pdf(paste0(path_input, paste0("Output_Maps/plots_nichebreadths_wo_longdisp.pdf"))) # PDF with necessary plots
+saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_wo_longdisp.rds"))
 
-    plot_list <- vector("list", length = 4)
-    plot_list[[1]] <- ggplot(pop_mean[[2]], aes(x = Year, y = Abundance, color=Breadth))+
-      geom_line()+
-      geom_line(data=pop_mean[[1]], aes(x = Year, y=Abundance, color=Breadth))+
-      geom_line(data=pop_mean[[3]], aes(x = Year, y=Abundance, color=Breadth))+
-      geom_line(data=pop_mean[[4]], aes(x = Year, y=Abundance, color=Breadth))+
-      geom_line(data=pop_mean[[5]], aes(x = Year, y=Abundance, color=Breadth))+
-      geom_line(data=pop_mean[[6]], aes(x = Year, y=Abundance, color=Breadth))+
-      theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
-            legend.title = element_text(size=6), #change legend title font size
-            legend.text = element_text(size=5)) #change legend text font size
-    
-    # plot_list[[2]] <-  ggplot(pop_mean[[2]], aes(x = Year, y = Occupancy, color= Breadth))+
-    #   geom_line()+
-    #   geom_line(data=pop_mean[[1]], aes(x = Year, y=Occupancy, color= Breadth))+
-    #   geom_line(data=pop_mean[[3]], aes(x = Year, y=Occupancy, color=Breadth))+
-    #   geom_line(data=pop_mean[[4]], aes(x = Year, y=Occupancy, color=Breadth))+
-    #   geom_line(data=pop_mean[[5]], aes(x = Year, y=Occupancy, color=Breadth))+
-    #   geom_line(data=pop_mean[[6]], aes(x = Year, y=Occupancy, color=Breadth))+
-    #   theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
-    #         legend.title = element_text(size=6), #change legend title font size
-    #         legend.text = element_text(size=5)) #change legend text font size
-    
-    plot_list[[2]] <- ggplot(real_rangechange[[2]], aes(x = Year, y = diff, color= Breadth))+
-      geom_line()+
-      geom_line(data=real_rangechange[[1]], aes(x = Year, y=diff, color= Breadth))+
-      geom_line(data=real_rangechange[[3]], aes(x = Year, y=diff, color= Breadth))+
-      geom_line(data=real_rangechange[[4]], aes(x = Year, y=diff, color= Breadth))+
-      geom_line(data=real_rangechange[[5]], aes(x = Year, y=diff, color= Breadth))+
-      geom_line(data=real_rangechange[[6]], aes(x = Year, y=diff, color= Breadth))+
-      theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
-            legend.title = element_text(size=6), #change legend title font size
-            legend.text = element_text(size=5))+ #change legend text font size
-      ylim(c(0,0.25))+
-      xlim(c(25,65))
-    
-    plot_list[[3]] <- ggplot(extProb_list[[2]], aes(x = Year, y = extProb, color= Breadth))+
-      geom_line()+
-      geom_line(data=extProb_list[[1]], aes(x = Year, y=extProb, color= Breadth))+
-      geom_line(data=extProb_list[[3]], aes(x = Year, y=extProb, color= Breadth))+
-      geom_line(data=extProb_list[[4]], aes(x = Year, y=extProb, color= Breadth))+
-      geom_line(data=extProb_list[[5]], aes(x = Year, y=extProb, color= Breadth))+
-      geom_line(data=extProb_list[[6]], aes(x = Year, y=extProb, color= Breadth))+
-      theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
-            legend.title = element_text(size=6), #change legend title font size
-            legend.text = element_text(size=5)) #change legend text font size
-    
-    plot_list[[4]] <- ggplot() +
-      annotate("text",
-               x = 1,
-               y = 1,
-               size = 4,
-               label = paste0("ntemp:0.25+variable\nnpre:0.5+variable\nK:0.05\nRmax:3\nEmigProb:0.4\nDispersal:15000")) +
-      theme_void()
-    
-    #Plot all of them in the same window
-    grid.arrange(grobs = plot_list)
-    
-    dev.off() #save pdf
+# pop_mean <- results[[1]]
+# extProb_list <- results[[2]]
+# real_rangechange <- results[[3]]
+#  
+# pdf(paste0(path_input, "Output_Maps/plots_nichebreadths_wo_longdisp.pdf")) # PDF with necessary plots
+# 
+#     plot_list <- vector("list", length = 4)
+#     plot_list[[1]] <- ggplot(pop_mean[[2]], aes(x = Year, y = Abundance, color=Breadth))+
+#       geom_line()+
+#       geom_line(data=pop_mean[[1]], aes(x = Year, y=Abundance, color=Breadth))+
+#       geom_line(data=pop_mean[[3]], aes(x = Year, y=Abundance, color=Breadth))+
+#       geom_line(data=pop_mean[[4]], aes(x = Year, y=Abundance, color=Breadth))+
+#       geom_line(data=pop_mean[[5]], aes(x = Year, y=Abundance, color=Breadth))+
+#       geom_line(data=pop_mean[[6]], aes(x = Year, y=Abundance, color=Breadth))+
+#       theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
+#             legend.title = element_text(size=6), #change legend title font size
+#             legend.text = element_text(size=5)) #change legend text font size
+#     
+#     # plot_list[[2]] <-  ggplot(pop_mean[[2]], aes(x = Year, y = Occupancy, color= Breadth))+
+#     #   geom_line()+
+#     #   geom_line(data=pop_mean[[1]], aes(x = Year, y=Occupancy, color= Breadth))+
+#     #   geom_line(data=pop_mean[[3]], aes(x = Year, y=Occupancy, color=Breadth))+
+#     #   geom_line(data=pop_mean[[4]], aes(x = Year, y=Occupancy, color=Breadth))+
+#     #   geom_line(data=pop_mean[[5]], aes(x = Year, y=Occupancy, color=Breadth))+
+#     #   geom_line(data=pop_mean[[6]], aes(x = Year, y=Occupancy, color=Breadth))+
+#     #   theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
+#     #         legend.title = element_text(size=6), #change legend title font size
+#     #         legend.text = element_text(size=5)) #change legend text font size
+#     
+#     plot_list[[2]] <- ggplot(real_rangechange[[2]], aes(x = Year, y = diff, color= Breadth))+
+#       geom_line()+
+#       geom_line(data=real_rangechange[[1]], aes(x = Year, y=diff, color= Breadth))+
+#       geom_line(data=real_rangechange[[3]], aes(x = Year, y=diff, color= Breadth))+
+#       geom_line(data=real_rangechange[[4]], aes(x = Year, y=diff, color= Breadth))+
+#       geom_line(data=real_rangechange[[5]], aes(x = Year, y=diff, color= Breadth))+
+#       geom_line(data=real_rangechange[[6]], aes(x = Year, y=diff, color= Breadth))+
+#       theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
+#             legend.title = element_text(size=6), #change legend title font size
+#             legend.text = element_text(size=5))+ #change legend text font size
+#       ylim(c(0,0.05))+
+#       xlim(c(25,65))
+#     
+#     plot_list[[3]] <- ggplot(extProb_list[[2]], aes(x = Year, y = extProb, color= Breadth))+
+#       geom_line()+
+#       geom_line(data=extProb_list[[1]], aes(x = Year, y=extProb, color= Breadth))+
+#       geom_line(data=extProb_list[[3]], aes(x = Year, y=extProb, color= Breadth))+
+#       geom_line(data=extProb_list[[4]], aes(x = Year, y=extProb, color= Breadth))+
+#       geom_line(data=extProb_list[[5]], aes(x = Year, y=extProb, color= Breadth))+
+#       geom_line(data=extProb_list[[6]], aes(x = Year, y=extProb, color= Breadth))+
+#       theme(legend.key.size = unit(0.3, 'cm'), #change legend key size
+#             legend.title = element_text(size=6), #change legend title font size
+#             legend.text = element_text(size=5)) #change legend text font size
+#     
+#     plot_list[[4]] <- ggplot() +
+#       annotate("text",
+#                x = 1,
+#                y = 1,
+#                size = 4,
+#                label = paste0("ntemp:0.25+variable\nnpre:0.5+variable\nK:0.05\nRmax:3\nEmigProb:0.4\nDispersal:15000")) +
+#       theme_void()
+#     
+#     #Plot all of them in the same window
+#     grid.arrange(grobs = plot_list)
+#     
+#     dev.off() #save pdf
 
 
 #clean all temporary files
