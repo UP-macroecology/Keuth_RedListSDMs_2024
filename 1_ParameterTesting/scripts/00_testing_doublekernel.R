@@ -10,14 +10,8 @@ library(gridExtra)
 library(tibble)
 library(ggplot2)
 
-#
-tempdir()
-
-#setwd("Dokumente/Arbeit - Zurell/SDM_Extinctions")
-#dirpath <- file.path("Dokumente/Arbeit - Zurell/SDM_Extinctions/Test_Simulations")
-
 #File path
-path_input <- file.path(paste0("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/"))
+path_input <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/01_TestingParameters/")
 
 #obtain number for temperature increase
 t <- 1:90
@@ -27,7 +21,7 @@ theta <- 0.3
 set.seed(5678)
 ts <- alpha + beta * t + arima.sim(list(ma = theta), n = length(t))
 x <- as.vector(ts)
-temp_rise <- rescale(x, c(0,0.9))
+temp_rise <- scales::rescale(x, c(0,0.9))
 
 # Set up the dynamic landscapes ------------------------------------------------------------------------------------
 # Numbers of spinup years in dynamic landscape
@@ -149,8 +143,8 @@ sim <- Simulation(Simulation = 0,
                   OutIntOcc = 1)
 
 s <- RSsim(batchnum = 1, land = land, demog = demo, dispersal = disp, simul = sim, init = init)
-s_e_m5 <- RSsim(batchnum = 2, land = land, demog = demo, dispersal = disp_e_m5, simul = sim, init = init)
-s_e_p5 <- RSsim(batchnum = 3, land = land, demog = demo, dispersal = disp_e_p5, simul = sim, init = init)
+#s_e_m5 <- RSsim(batchnum = 2, land = land, demog = demo, dispersal = disp_e_m5, simul = sim, init = init)
+#s_e_p5 <- RSsim(batchnum = 3, land = land, demog = demo, dispersal = disp_e_p5, simul = sim, init = init)
 s_dp_m5 <- RSsim(batchnum = 4, land = land, demog = demo, dispersal = disp_dp_m5, simul = sim, init = init)
 s_dp_p5 <- RSsim(batchnum = 5, land = land, demog = demo, dispersal = disp_dp_p5, simul = sim, init = init)
 s_dd_m5 <- RSsim(batchnum = 6, land = land, demog = demo, dispersal = disp_dd_m5, simul = sim, init = init)
@@ -159,8 +153,8 @@ s_dd_p5 <- RSsim(batchnum = 7, land = land, demog = demo, dispersal = disp_dd_p5
 # Run simulations ------------------------------------------------------------------------------------
 
 RunRS(s, path_input)
-RunRS(s_e_m5, path_input)
-RunRS(s_e_p5, path_input)
+#RunRS(s_e_m5, path_input)
+#RunRS(s_e_p5, path_input)
 RunRS(s_dp_m5, path_input)
 RunRS(s_dp_p5, path_input)
 RunRS(s_dd_m5, path_input)
@@ -175,30 +169,22 @@ abund_sens <- bind_rows(
   readRange(s,path_input) %>%
     group_by(Year) %>%
     summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "0 - Default"),
-  # Sensitivity 1
-  readRange(s_e_m5,path_input) %>%
-    group_by(Year) %>%
-    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "1 - Emig. Prob. -5%"),
-  # Sensitivity 2
-  readRange(s_e_p5,path_input) %>%
-    group_by(Year) %>%
-    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "2 - Emig. Prob. +5%"),
   # Sensitivity 3
   readRange(s_dp_m5,path_input) %>%
     group_by(Year) %>%
-    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "3 - Disp. Prob. -5%"),
+    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "1 - Disp. Prob. -5%"),
   # Sensitivity 4
   readRange(s_dp_p5,path_input) %>%
     group_by(Year) %>%
-    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "4 - Disp. Prob. +5%"),
+    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "2 - Disp. Prob. +5%"),
   # Sensitivity 5
   readRange(s_dd_m5,path_input) %>%
     group_by(Year) %>%
-    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "5 - Disp. Dist. -5%"),
+    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "3 - Disp. Dist. -5%"),
   # Sensitivity 6
   readRange(s_dd_p5,path_input) %>%
     group_by(Year) %>%
-    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "6 - Disp. Dist. +5%"),
+    summarise(Abundance = mean(NInds), sd = sd(NInds)) %>% add_column(Scenario = "4 - Disp. Dist. +5%"),
 )
 #### Plotting ####
 # Set color palette for scenarios excluding "Scenario 0 - Default"
@@ -207,17 +193,15 @@ scenario_colors <- rainbow(length(unique(abund_sens$Scenario)) - 1)
 scenario_colors <- c("black", scenario_colors)
 # Define the order of scenarios
 scenario_order <- c("0 - Default",
-                    "1 - Emig. Prob. -5%",
-                    "2 - Emig. Prob. +5%",
-                    "3 - Disp. Prob. -5%",
-                    "4 - Disp. Prob. +5%",
-                    "5 - Disp. Dist. -5%",
-                    "6 - Disp. Dist. +5%")
+                    "1 - Disp. Prob. -5%",
+                    "2 - Disp. Prob. +5%",
+                    "3 - Disp. Dist. -5%",
+                    "4 - Disp. Dist. +5%")
 # Convert Scenario to factor with desired levels
 abund_sens$Scenario <- factor(abund_sens$Scenario, levels = scenario_order)
 # Remove rows with NA in the Scenario column
 #abund_sens <- abund_sens[!is.na(abund_sens$Scenario), ]
-pdf(paste0(path_input, "Outputs/Plots_Parametertesting_wn_verylongDisp.pdf"))
+pdf(paste0(path_input, "Outputs/Plots_Parametertesting_wn_longDisp.pdf"))
 p1 <- ggplot(data = abund_sens, mapping = aes(x = Year, y = Abundance, color = Scenario)) +
   geom_line(linewidth = 1) +
   geom_ribbon(aes(ymin = Abundance - sd, ymax = Abundance + sd), linetype = 2, alpha = 0.1) +
@@ -225,7 +209,6 @@ p1 <- ggplot(data = abund_sens, mapping = aes(x = Year, y = Abundance, color = S
   scale_fill_discrete(breaks = abund_sens$Scenario) +
   xlim(c(50,120))+
   ylim(c(0,2500))
-
 grid.arrange(p1)
 dev.off()
 
