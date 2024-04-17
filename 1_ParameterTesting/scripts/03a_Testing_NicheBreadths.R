@@ -1,11 +1,14 @@
-# Testing of different niche breadths
+# Testing of different niche breadths 
+
+# In this script: Long dispersal is added
+
 # I first only model range-shifting species, as additionally to surviving the spin-up they also need to be none dispersal-limited
 # the other parameters are set to the values of the critical species (Rmax = 3, Dispersaldistance: 15000)
 # additionally rare long distance dispersal events are included, parameters for this are based on Fandos(2023) as well as
 # additional Literature research, which reported similar values
 
+# File path
 path_input <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/01_TestingParameters/")
-#path_input <- file.path("Bugs/")
 
 # Function for calculating extinction probability
 source(paste0(path_input, "Functions/Extinction_probability.R"))
@@ -27,10 +30,6 @@ library(gridExtra)
 # define vector for parameter combinations
 width <- c(0.025, 0.035, 0.045, 0.055, 0.065, 0.075)
 
-# prepare lists
-#pop_mean <- vector("list", length(width))
-#extProb_list <- vector("list", length(width))
-
 #Prepare cluster
 ncores <- 6
 cl <- makeCluster(ncores)
@@ -45,9 +44,6 @@ comb <- function(x, ...) {
 # Start loops for the SDM fitting
 results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", "RangeShiftR", "dplyr", "scales", "tibble", "ggplot2", "gridExtra"), .combine = "comb",
                    .multicombine = T, .init = list(list(), list(), list())) %dopar% {
-
-
-#foreach(b=1:length(width), .packages = c("raster", "virtualspecies", "RangeShiftR", "dplyr", "scales", "tibble", "ggplot2", "gridExtra")) %dopar% {
 
   #obtain number for temperature increase
   t <- 1:90
@@ -112,7 +108,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
       d <- temp_rise[i]
       temp <- ls_spec[[i]][["suitab.raster"]]
       values(temp) <- values(temp)*100 #make values to percentages
-      writeRaster(temp, filename = paste(path_input,"Inputs/habitat_per_breadth", width[b], "_cc", d, "wo_longdisp.asc", sep = ""), 
+      writeRaster(temp, filename = paste(path_input,"Inputs/habitat_per_breadth", width[b], "_cc", d, ".asc", sep = ""), 
                   overwrite = T, format = "ascii")
     }
 
@@ -127,7 +123,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "virtualspecies", 
     landnames <- c()
     for (i in 1:length(val)){
       d <- val[i]
-      k <- paste0("habitat_per_breadth", width[b], "_cc", d, "wo_longdisp.asc")
+      k <- paste0("habitat_per_breadth", width[b], "_cc", d, ".asc")
       landnames <- append(landnames, k)
     }
     
