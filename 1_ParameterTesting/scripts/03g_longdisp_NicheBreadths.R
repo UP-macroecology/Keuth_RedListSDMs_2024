@@ -134,6 +134,39 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      pop <- readPop(s, path_input)
                      extProb_list <- Calc_ExtProb(pop, s) %>% add_column(Breadth = paste0("Breadth: ", width[b]))
                      
+                     # Plot occurrences in landscape under cc -----------------------------------------------
+                     
+                     # Occurrences for individuals without long dispersal
+                     pdf(paste0(path_loop, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp.pdf"))
+                     
+                     #Load specific pop data set
+                     pop <- read.table(paste0(path_loop, "Outputs/Batch", b, "_Sim0_Land1_Pop.txt"), header = T, sep = "\t")
+                     
+                     #remove unimportant columns
+                     pop_short <- pop %>% dplyr::select(-c(RepSeason, Species))
+                     # extract occurrences
+                     occ_short <- subset(pop_short, pop_short$NInd >= 1)
+                     #change column names
+                     colnames(occ_short)[colnames(occ_short) == "x"] <- "X"
+                     colnames(occ_short)[colnames(occ_short) == "y"] <- "Y"
+                     # extract only the first replication
+                     occ_Rep0 <- subset(occ_short, occ_short$Rep == 0)
+                     # Plot the occurrences under climate change
+                     for (i in 1:length(temp_rise)) {
+                       tmp <-rast(paste0(path_loop, "Inputs/habitat_per_breadth", width[b], "_cc", temp_rise[i], ".asc"))
+                       occ_sub <- subset(occ_Rep0, occ_Rep0$Year == i+99)
+                       occ_sub$X <- occ_sub$X * 1000
+                       occ_sub$Y <- occ_sub$Y * 1000
+                       m <- vect(occ_sub, geom = c("X", "Y"))
+                       if(length(m) >0){
+                         plot(tmp)
+                         plot(m, add = T)
+                       } else {
+                         plot(tmp)
+                       }
+                     }
+                     dev.off()
+                     
                      list(pop_mean, extProb_list)
                    }
 
