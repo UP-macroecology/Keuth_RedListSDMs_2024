@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH --job-name=testing_breadth
+#SBATCH --job-name=6_landscape_breadth
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=6
+#SBATCH --cpus-per-task=1
 #SBATCH --time=96:00:00
 #SBATCH --mem=250gb
 #SBATCH --nodelist=ecoc9z
 
 cd ${SLURM_SUBMIT_DIR}
-R CMD BATCH ./03_Testing_NicheBreadths.R ./output-file-testing_breadth.Rout
+R CMD BATCH ./06_Plot_Landscape_NicheBreadths.R ./output-file-6_plot_landscape_breadth.Rout

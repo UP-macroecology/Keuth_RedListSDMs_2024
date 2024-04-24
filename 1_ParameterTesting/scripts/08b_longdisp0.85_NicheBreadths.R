@@ -1,6 +1,6 @@
 # Testing different niche breadths with long and short distance dispersal
 
-# Testing different niche breadths with long dispersal values and a probability of 0.95 for the long dispersal
+# Testing different niche breadths with long dispersal values and a probability of 0.85 for the long dispersal
 
 path_input <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/01_TestingParameters/")
 #path_input <- file.path("Bugs/")
@@ -42,7 +42,7 @@ comb <- function(x, ...) {
 
 # Start loops for the SDM fitting
 results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dplyr", "scales", "tibble", "ggplot2", "gridExtra", "terra"), .combine = "comb",
-                   .multicombine = T, .init = list(list(), list(), list())) %dopar% {
+                   .multicombine = T, .init = list(list(), list())) %dopar% {
                      
                      #obtain number for temperature increase
                      t <- 1:90
@@ -94,7 +94,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                        # Emigration phase: stage 0 has constant emigration probability of 0.4
                        Emigration = Emigration(EmigProb = 0.4),
                        # Transfer phase: negative exponential dispersal kernel with mean dispersal distance of 8km
-                       Transfer = DispersalKernel(DoubleKernel = T, Distances = matrix(c(15000, 250000, 0.95), ncol = 3)),
+                       Transfer = DispersalKernel(DoubleKernel = T, Distances = matrix(c(15000, 250000, 0.85), ncol = 3)),
                        # Settlement: if individual arrives in unsuitable cells, it can randomly chose a suitable neighbouring cell or will die
                        Settlement = Settlement(Settle = 2)
                      )
@@ -121,12 +121,13 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                                        OutIntPop = 1,
                                        OutIntOcc = 1)
                      
-                     s <- RSsim(batchnum = b , land = land, demog = demo, dispersal = disp, simul = sim,
+                     g <- b + 15
+                     s <- RSsim(batchnum = g , land = land, demog = demo, dispersal = disp, simul = sim,
                                 init = init)
                      
                      # Run simulations ------------------------------------------------------------------------------------
                      
-                     RunRS(s, path_input)
+                     #RunRS(s, path_input)
                      
                      # Calculate population and occupancy mean and extinction probability ------------------------------------
                      range <- readRange(s, path_input)
@@ -139,7 +140,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      # Plot occurrences in landscape under cc -----------------------------------------------
                      
                      # Occurrences for individuals without long dispersal
-                     pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp.pdf"))
+                     pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp0.85.pdf"))
                      
                      #Load specific pop data set
                      pop <- read.table(paste0(path_input, "Outputs/Batch", b, "_Sim0_Land1_Pop.txt"), header = T, sep = "\t")
@@ -174,4 +175,4 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
 
 stopCluster(cl)
 
-saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdisp.rds"))
+saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdisp0.85.rds"))

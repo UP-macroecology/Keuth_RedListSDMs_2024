@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=3g_longdisp0.8_breadth
+#SBATCH --job-name=8b_longdisp0.85_breadth
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
 #SBATCH --cpus-per-task=5
@@ -9,4 +9,4 @@
 #SBATCH --nodelist=ecoc9z
 
 cd ${SLURM_SUBMIT_DIR}
-R CMD BATCH ./03g_longdisp0.8_NicheBreadths.R ./output-file-g_longdisp0.8_breadth.Rout
+R CMD BATCH ./08b_longdisp0.85_NicheBreadths.R ./output-file-8b_longdisp0.85_breadth.Rout
