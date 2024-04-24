@@ -87,7 +87,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      
                      # Define demography module ------------------------------------------------------------------------------------
                      
-                     demo <- Demography(Rmax = 3, ReproductionType = 0) # sexual model with no stage structure
+                     demo <- Demography(Rmax = 5, ReproductionType = 0) # sexual model with no stage structure
                      
                      # # Define dispersal module ------------------------------------------------------------------------------------
                      disp <-  Dispersal(
@@ -127,7 +127,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      
                      # Run simulations ------------------------------------------------------------------------------------
                      
-                     #RunRS(s, path_input)
+                     RunRS(s, path_input)
                      
                      # Calculate population and occupancy mean and extinction probability ------------------------------------
                      range <- readRange(s, path_input)
@@ -140,7 +140,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      # Plot occurrences in landscape under cc -----------------------------------------------
                      
                      # Occurrences for individuals without long dispersal
-                     pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp0.8.pdf"))
+                     pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp0.8_Rmax5.pdf"))
                      
                      #Load specific pop data set
                      pop <- read.table(paste0(path_input, "Outputs/Batch", b, "_Sim0_Land1_Pop.txt"), header = T, sep = "\t")
@@ -175,4 +175,4 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
 
 stopCluster(cl)
 
-saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdisp0.8.rds"))
+saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdisp0.8_Rmax5.rds"))

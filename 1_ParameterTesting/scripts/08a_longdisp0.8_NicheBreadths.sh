@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=5
 #SBATCH --time=96:00:00
 #SBATCH --mem=250gb
-#SBATCH --nodelist=ecoc9z
+#SBATCH --nodelist=ecoc9
 
 cd ${SLURM_SUBMIT_DIR}
 R CMD BATCH ./08a_longdisp0.8_NicheBreadths.R ./output-file-8a_longdisp0.8_breadth.Rout
