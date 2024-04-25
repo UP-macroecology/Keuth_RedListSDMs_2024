@@ -197,7 +197,7 @@ saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdi
 #                      alpha <- 0.5
 #                      beta <- 0.9
 #                      theta <- 0.3
-#                      set.seed(5678)
+#                      set.seed(8465)#set.seed(5678)
 #                      ts <- alpha + beta * t + arima.sim(list(ma = theta), n = length(t))
 #                      x <- as.vector(ts)
 #                      temp_rise <- scales::rescale(x, c(0,0.9))
