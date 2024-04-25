@@ -855,3 +855,170 @@ legend <- ggplot(pop_longdisp[[5]], aes(x= Year, y = Abundance, color = "0.95"))
 shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p1.2,p2.2,p3.2,p4.2,p5.2, ncol = 3, nrow = 2),shared_legend, ncol = 1, nrow = 2, heights = c(11,1.5))
+
+# short and long dispersal for Rmax 3 and the second landscape --------------
+
+# Comparison when including long dispersal
+results_shortdisp <- readRDS("1_ParameterTesting/data/results_nichebreadths_shortdisp_Rmax3_land2.rds")
+results_longdisp <- readRDS("1_ParameterTesting/data/results_nichebreadths_longdisp_Rmax3_land2.rds")
+habitatsize <- readRDS("1_ParameterTesting/data/habitatloss_nichebreadths_land2.rds")
+
+# extract the single lists
+pop_shortdisp <- results_shortdisp[[1]]
+extProb_shortdisp <- results_shortdisp[[2]]
+
+pop_longdisp <- results_longdisp[[1]]
+extProb_longdisp <- results_longdisp[[2]]
+
+habitatsize <- lapply(habitatsize, function(x){x$Year <- x$Year + 100; return(x)})
+
+#calculate relative abundance to plot within the plot
+pop_shortdisp <- lapply(pop_shortdisp, function(x){x$rel_pop <- NA;
+for (i in 101:nrow(x)){
+  x[i, 7] <- x[i, 2] / x[100,2]
+};
+x[100,7] <- 1; return(x)})
+
+pop_longdisp <- lapply(pop_longdisp, function(x){x$rel_pop <- NA;
+for (i in 101:nrow(x)){
+  x[i, 7] <- x[i, 2] / x[100,2]
+};
+x[100,7] <- 1; return(x)})
+
+# Plot the results
+p1 <- ggplot(extProb_shortdisp[[1]], aes(x = Year, y = extProb))+
+  geom_line(colour = "blue", linewidth = 1)+
+  geom_line(data= extProb_longdisp[[1]], colour = "blue", linewidth = 1, linetype = "dashed")+
+  geom_line(data = habitatsize[[1]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_shortdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold")+
+  geom_line(data = pop_longdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_shortdisp[[1]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p2 <- ggplot(extProb_shortdisp[[2]], aes(x = Year, y = extProb))+
+  geom_line(colour = "blue", linewidth = 1)+
+  geom_line(data= extProb_longdisp[[2]], colour = "blue", linewidth = 1, linetype = "dashed")+
+  geom_line(data = habitatsize[[2]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_shortdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold")+
+  geom_line(data = pop_longdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_shortdisp[[2]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p3 <- ggplot(extProb_shortdisp[[3]], aes(x = Year, y = extProb))+
+  geom_line(colour = "blue", linewidth = 1)+
+  geom_line(data= extProb_longdisp[[3]], colour = "blue", linewidth = 1, linetype = "dashed")+
+  geom_line(data = habitatsize[[3]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_shortdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold")+
+  geom_line(data = pop_longdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_shortdisp[[3]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p4 <- ggplot(extProb_shortdisp[[4]], aes(x = Year, y = extProb))+
+  geom_line(colour = "blue", linewidth = 1)+
+  geom_line(data= extProb_longdisp[[4]], colour = "blue", linewidth = 1, linetype = "dashed")+
+  geom_line(data = habitatsize[[4]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_shortdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold")+
+  geom_line(data = pop_longdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_shortdisp[[4]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p5 <- ggplot(extProb_shortdisp[[5]], aes(x = Year, y = extProb))+
+  geom_line(colour = "blue", linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], colour = "blue", linewidth = 1, linetype = "dashed")+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold")+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_shortdisp[[5]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p7 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 8,
+           label = paste0("ntemp:0.5+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:15000, 250000, 0.95\nlandscape 2")) +
+  theme_void()
+
+legend <- ggplot(extProb_shortdisp[[1]], aes(x = Year, y = extProb, colour = "Ext"))+
+  geom_line(linewidth = 1)+
+  geom_line(data = habitatsize[[1]], aes(x = Year, y = diff, colour = "Habitat"), linewidth = 1)+
+  geom_line(data = pop_shortdisp[[1]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "short"), linewidth = 1)+
+  geom_line(data = pop_longdisp[[1]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "long"), linewidth = 1)+
+  ylab("Rate")+
+  ggtitle(unique(extProb_shortdisp[[1]]$Breadth))+
+  xlim(c(90, 170))+
+  scale_color_manual(values = c("Pop" = "#FF6A6A", "Habitat" = "gold", "Ext" = "blue"), labels=c( "Extinction probability", "Population size", "Habitat size"))+
+  scale_linetype_manual(values = c("long" = "dashed", "short" = "solid"), labels = c("long dispersal", "short dispersal"))+
+  labs(color=NULL, linetype = NULL)+
+  theme(legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.position = "bottom")
+
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p1,p2,p3,p4,p5, ncol = 3, nrow = 2),p7,shared_legend, ncol = 1, nrow = 3, heights = c(10,1.5,1.5))
+
+# look at the real abundances and occupancy values
+
+p1.2 <- ggplot(pop_longdisp[[1]], aes(x= Year, y = Abundance))+
+  geom_line(color = "#FF0000", linewidth = 1)+
+  geom_line(data = pop_shortdisp[[1]], aes(x=Year, y= Abundance), color = "black", linewidth = 1)+
+  ggtitle(unique(pop_longdisp[[1]]$Breadth))+
+  ylim(c(0,max(pop_shortdisp[[5]]$Abundance)))+
+  theme(plot.title = element_text(size = 20))
+
+p2.2 <- ggplot(pop_longdisp[[2]], aes(x= Year, y = Abundance))+
+  geom_line(color = "#FF0000", linewidth = 1)+
+  geom_line(data = pop_shortdisp[[2]], aes(x=Year, y= Abundance), color = "black", linewidth = 1)+
+  ggtitle(unique(pop_longdisp[[2]]$Breadth))+
+  ylim(c(0,max(pop_shortdisp[[5]]$Abundance)))+
+  theme(plot.title = element_text(size = 20))
+
+p3.2 <- ggplot(pop_longdisp[[3]], aes(x= Year, y = Abundance))+
+  geom_line(color = "#FF0000", linewidth = 1)+
+  geom_line(data = pop_shortdisp[[3]], aes(x=Year, y= Abundance), color = "black", linewidth = 1)+
+  ggtitle(unique(pop_longdisp[[3]]$Breadth))+
+  ylim(c(0,max(pop_shortdisp[[5]]$Abundance)))+
+  theme(plot.title = element_text(size = 20))
+
+p4.2 <- ggplot(pop_longdisp[[4]], aes(x= Year, y = Abundance))+
+  geom_line(color = "#FF0000", linewidth = 1)+
+  geom_line(data = pop_shortdisp[[4]], aes(x=Year, y= Abundance), color = "black", linewidth = 1)+
+  ggtitle(unique(pop_longdisp[[4]]$Breadth))+
+  ylim(c(0,max(pop_shortdisp[[5]]$Abundance)))+
+  theme(plot.title = element_text(size = 20))
+
+p5.2 <- ggplot(pop_longdisp[[5]], aes(x= Year, y = Abundance))+
+  geom_line(color = "#FF0000", linewidth = 1)+
+  geom_line(data = pop_shortdisp[[5]], aes(x=Year, y= Abundance), color = "black", linewidth = 1)+
+  ggtitle(unique(pop_longdisp[[5]]$Breadth))+
+  ylim(c(0,max(pop_shortdisp[[5]]$Abundance)))+
+  theme(plot.title = element_text(size = 20))
+
+legend <- ggplot(pop_longdisp[[5]], aes(x= Year, y = Abundance, color = "0.95"))+
+  geom_line(linewidth = 1)+
+  geom_line(data = pop_shortdisp[[5]], aes(x=Year, y= Abundance, color = "short"), linewidth = 1)+
+  ggtitle(unique(pop_longdisp[[5]]$Breadth))+
+  ylim(c(0,max(pop_longdisp[[5]]$Abundance)))+
+  theme(plot.title = element_text(size = 20))+
+  scale_color_manual(values = c("0.95" = "#FF0000", "short" = "black"), labels=c("long dispersal", "short dispersal"))+
+  theme(legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.position = "bottom", legend.title = element_text(size = 18))+
+  labs(color=NULL)
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p1.2,p2.2,p3.2,p4.2,p5.2, ncol = 3, nrow = 2),shared_legend, ncol = 1, nrow = 2, heights = c(11,1.5))
