@@ -331,7 +331,7 @@ p7 <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = paste0("ntemp:0.25+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:15000, 250000, 0.95")) +
+           label = paste0("ntemp:0.25+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:5000,15000, 250000, 0.95\nlandscape 1")) +
   theme_void()
 
 legend <- ggplot(extProb_shortdisp[[1]], aes(x = Year, y = extProb, colour = "Ext"))+
@@ -439,7 +439,7 @@ p7.1 <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = paste0("ntemp:0.25+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:15000, 250000, variable")) +
+           label = paste0("ntemp:0.25+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:15000, 250000, variable\nlandscape 1")) +
   theme_void()
 
 legend <- ggplot(extProb_longdisp0.8[[1]], aes(x = Year, y = extProb, colour = "Ext"))+

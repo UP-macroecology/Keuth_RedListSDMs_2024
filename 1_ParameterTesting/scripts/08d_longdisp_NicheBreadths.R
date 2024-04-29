@@ -120,8 +120,8 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                                        Years = spinup + sim_years,
                                        OutIntPop = 1,
                                        OutIntOcc = 1)
-                     
-                     s <- RSsim(batchnum = b , land = land, demog = demo, dispersal = disp, simul = sim,
+                     g <- b + 20
+                     s <- RSsim(batchnum = g , land = land, demog = demo, dispersal = disp, simul = sim,
                                 init = init)
                      
                      # Run simulations ------------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      # Plot occurrences in landscape under cc -----------------------------------------------
                      
                      # Occurrences for individuals without long dispersal
-                     pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp0.95_Rmax5.pdf"))
+                     pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp0.95.pdf"))
                      
                      #Load specific pop data set
                      pop <- read.table(paste0(path_input, "Outputs/Batch", b, "_Sim0_Land1_Pop.txt"), header = T, sep = "\t")
@@ -174,4 +174,4 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
 
 stopCluster(cl)
 
-saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdisp0.95_Rmax5.rds"))
+saveRDS(results, file = paste0(path_input, "Outputs/results_nichebreadths_longdisp0.95.rds"))
