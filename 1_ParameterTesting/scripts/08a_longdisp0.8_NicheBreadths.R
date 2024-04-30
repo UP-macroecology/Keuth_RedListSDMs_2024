@@ -143,7 +143,7 @@ results <- foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dp
                      pdf(paste0(path_input, "Output_Maps/occurrences_landscape_Breadth",width[b], "longdisp0.8.pdf"))
                      
                      #Load specific pop data set
-                     pop <- read.table(paste0(path_input, "Outputs/Batch", b, "_Sim0_Land1_Pop.txt"), header = T, sep = "\t")
+                     pop <- read.table(paste0(path_input, "Outputs/Batch", g, "_Sim0_Land1_Pop.txt"), header = T, sep = "\t")
                      
                      #remove unimportant columns
                      pop_short <- pop %>% dplyr::select(-c(RepSeason, Species))

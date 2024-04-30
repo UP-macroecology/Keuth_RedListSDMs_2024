@@ -5,7 +5,8 @@
 path_input <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/01_TestingParameters/")
 
 # Load packages
-
+library(foreach)
+library(doParallel)
 
 # define vector for parameter combinations
 width <- c(0.035, 0.04, 0.045, 0.05, 0.055)
@@ -16,8 +17,7 @@ cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
 # Start loops for the SDM fitting
-foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dplyr", "scales", "tibble", "ggplot2", "gridExtra", "terra"),
-        .multicombine = T,) %dopar% {
+foreach(b=1:length(width), .packages = c("raster", "dplyr", "scales", "tibble", "terra")) %dopar% {
           
           pdf(paste0(path_input, "Output_Maps/landscape_comparison_Breadth",width[b], ".pdf"))
           
@@ -29,7 +29,7 @@ foreach(b=1:length(width), .packages = c("raster", "RangeShiftR", "dplyr", "scal
           set.seed(5678)
           ts <- alpha + beta * t + arima.sim(list(ma = theta), n = length(t))
           x <- as.vector(ts)
-          temp_rise <- rescale(x, c(0,0.9))
+          temp_rise <- scales::rescale(x, c(0,0.9))
           
           par(mfrow=c(2,3))
           
