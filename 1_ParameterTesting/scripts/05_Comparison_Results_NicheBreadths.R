@@ -531,6 +531,134 @@ shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p1.2,p2.2,p3.2,p4.2,p5.2, ncol = 3, nrow = 2),shared_legend, ncol = 1, nrow = 2, heights = c(11,1.5))
 
+# prepare joint plot for everything together
+colunc <- colorRampPalette(c("lightskyblue1", "deepskyblue2", "royalblue3"))
+blue.col <- colunc(4)
+
+p1.3 <- ggplot(extProb_longdisp0.8[[1]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[1]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[1]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[1]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[1]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[1]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[1]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.1))+
+  theme(plot.title = element_text(size = 20))
+
+p2.3 <- ggplot(extProb_longdisp0.8[[2]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[2]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[2]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[2]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[2]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[2]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[2]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.1))+
+  theme(plot.title = element_text(size = 20))
+
+p3.3 <- ggplot(extProb_longdisp0.8[[3]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[3]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[3]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[3]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[3]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[3]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[3]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.1))+
+  theme(plot.title = element_text(size = 20))
+
+p4.3 <- ggplot(extProb_longdisp0.8[[4]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[4]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[4]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[4]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[4]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[4]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[4]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.1))+
+  theme(plot.title = element_text(size = 20))
+
+p5.3 <- ggplot(extProb_longdisp0.8[[5]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[5]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[5]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[5]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[5]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.1))+
+  theme(plot.title = element_text(size = 20))
+
+p7.3 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 8,
+           label = paste0("ntemp:0.5+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:5000, 15000, 250000, variable\nlandscape 1")) +
+  theme_void()
+
+legend <- ggplot(extProb_longdisp0.8[[5]], aes(x = Year, y = extProb, colour = "Ext0.8"))+
+  geom_line(linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[5]], aes(colour = "Ext0.85"), linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[5]], aes(colour = "Ext0.9"), linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], aes(colour = "Ext0.95"), linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[5]], aes(colour = "Ext"), linewidth = 1)+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff, colour = "Habitat"), linewidth = 1)+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "long"), linewidth = 1)+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "short"), linewidth = 1)+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[1]]$Breadth))+
+  xlim(c(90, 170))+
+  scale_color_manual(values = c("Pop" = "gold", "Habitat" = "#FF6A6A", "Ext" = "darkblue", "Ext0.8" = blue.col[1], "Ext0.85" = blue.col[2],"Ext0.9" = blue.col[3], "Ext0.95" = blue.col[4]),
+                     breaks = c("Pop", "Habitat", "Ext", "Ext0.8", "Ext0.85", "Ext0.9", "Ext0.95"),
+                     labels=c("Population size", "Habitat size", "Extinction probability (short)", "Ext. prob. (long, 0.8)", "Ext. prob. (long, 0.85)", "Ext. prob. (long, 0.9)", 
+                              "Ext. prob. (long, 0.95)"))+
+  scale_linetype_manual(values = c("short" = "solid", "long" = "dashed"), labels = c("long dispersal", "short dispersal"))+
+  labs(color=NULL, linetype = NULL)+
+  theme(legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.position = "right", legend.title = element_text(size = 18))
+
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p1.3,p2.3,p3.3,p4.3,p5.3, shared_legend, ncol = 3, nrow = 2),p7.3, ncol = 1, nrow = 2, heights = c(12,1.5))
+
+
 # short and long dispersal with different probabilities for Rmax 5 ------
 
 # Comparison when including long dispersal
@@ -915,6 +1043,7 @@ for (i in 101:nrow(x)){
 };
 x[100,7] <- 1; return(x)})
 
+lapply(pop_shortdisp, function(x){max(x$rel_pop, na.rm = T)})
 # Plot the results
 p1 <- ggplot(extProb_shortdisp[[1]], aes(x = Year, y = extProb))+
   geom_line(colour = "blue", linewidth = 1)+
@@ -1179,6 +1308,133 @@ legend <- ggplot(pop_longdisp[[5]], aes(x= Year, y = Abundance, color = "0.95"))
 shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p1.2,p2.2,p3.2,p4.2,p5.2, ncol = 3, nrow = 2),shared_legend, ncol = 1, nrow = 2, heights = c(11,1.5))
+
+# prepare joint plot for everything together
+colunc <- colorRampPalette(c("lightskyblue1", "deepskyblue2", "royalblue3"))
+blue.col <- colunc(4)
+
+p1.3 <- ggplot(extProb_longdisp0.8[[1]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[1]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[1]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[1]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[1]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[1]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[1]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p2.3 <- ggplot(extProb_longdisp0.8[[2]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[2]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[2]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[2]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[2]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[2]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[2]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p3.3 <- ggplot(extProb_longdisp0.8[[3]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[3]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[3]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[3]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[3]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[3]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[3]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p4.3 <- ggplot(extProb_longdisp0.8[[4]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[4]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[4]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[4]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[4]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[4]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[4]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p5.3 <- ggplot(extProb_longdisp0.8[[5]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[5]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[5]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[5]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[5]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.2))+
+  theme(plot.title = element_text(size = 20))
+
+p7.3 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 8,
+           label = paste0("ntemp:0.5+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:5000, 15000, 250000, variable\nlandscape 2")) +
+  theme_void()
+
+legend <- ggplot(extProb_longdisp0.8[[5]], aes(x = Year, y = extProb, colour = "Ext0.8"))+
+  geom_line(linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[5]], aes(colour = "Ext0.85"), linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[5]], aes(colour = "Ext0.9"), linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], aes(colour = "Ext0.95"), linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[5]], aes(colour = "Ext"), linewidth = 1)+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff, colour = "Habitat"), linewidth = 1)+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "long"), linewidth = 1)+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "short"), linewidth = 1)+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[1]]$Breadth))+
+  xlim(c(90, 170))+
+  scale_color_manual(values = c("Pop" = "gold", "Habitat" = "#FF6A6A", "Ext" = "darkblue", "Ext0.8" = blue.col[1], "Ext0.85" = blue.col[2],"Ext0.9" = blue.col[3], "Ext0.95" = blue.col[4]),
+                     breaks = c("Pop", "Habitat", "Ext", "Ext0.8", "Ext0.85", "Ext0.9", "Ext0.95"),
+                     labels=c("Population size", "Habitat size", "Extinction probability (short)", "Ext. prob. (long, 0.8)", "Ext. prob. (long, 0.85)", "Ext. prob. (long, 0.9)", 
+                              "Ext. prob. (long, 0.95)"))+
+  scale_linetype_manual(values = c("short" = "solid", "long" = "dashed"), labels = c("long dispersal", "short dispersal"))+
+  labs(color=NULL, linetype = NULL)+
+  theme(legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.position = "right", legend.title = element_text(size = 18))
+
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p1.3,p2.3,p3.3,p4.3,p5.3, shared_legend, ncol = 3, nrow = 2),p7.3, ncol = 1, nrow = 2, heights = c(12,1.5))
 
 # short and long dispersal for Rmax 3 and the third landscape --------------
 
@@ -1503,3 +1759,130 @@ legend <- ggplot(pop_longdisp[[5]], aes(x= Year, y = Abundance, color = "0.95"))
 shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p1.2,p2.2,p3.2,p4.2,p5.2, ncol = 3, nrow = 2),shared_legend, ncol = 1, nrow = 2, heights = c(11,1.5))
+
+# prepare joint plot for everything together
+colunc <- colorRampPalette(c("lightskyblue1", "deepskyblue2", "royalblue3"))
+blue.col <- colunc(4)
+
+p1.3 <- ggplot(extProb_longdisp0.8[[1]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[1]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[1]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[1]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[1]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[1]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[1]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[1]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.6))+
+  theme(plot.title = element_text(size = 20))
+
+p2.3 <- ggplot(extProb_longdisp0.8[[2]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[2]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[2]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[2]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[2]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[2]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[2]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[2]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.6))+
+  theme(plot.title = element_text(size = 20))
+
+p3.3 <- ggplot(extProb_longdisp0.8[[3]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[3]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[3]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[3]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[3]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[3]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[3]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[3]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.6))+
+  theme(plot.title = element_text(size = 20))
+
+p4.3 <- ggplot(extProb_longdisp0.8[[4]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[4]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[4]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[4]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[4]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[4]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[4]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[4]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.6))+
+  theme(plot.title = element_text(size = 20))
+
+p5.3 <- ggplot(extProb_longdisp0.8[[5]], aes(x = Year, y = extProb))+
+  geom_line(colour = blue.col[1], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[5]], colour = blue.col[2], linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[5]], colour = blue.col[3], linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], colour = blue.col[4], linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[5]], colour = "darkblue", linewidth = 1)+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff), linewidth = 1, colour = "#FF6A6A")+
+  geom_line(data = pop_longdisp0.8[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.85[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp0.9[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "dashed")+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop), linewidth = 1, colour = "gold", linetype = "solid")+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[5]]$Breadth))+
+  xlim(c(99, 170))+
+  ylim(c(0,1.6))+
+  theme(plot.title = element_text(size = 20))
+
+p7.3 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 8,
+           label = paste0("ntemp:0.5+variable; npre:0.5+variable\nK:0.05; Rmax:3; EmigProb:0.4; Dispersal:5000, 15000, 250000, variable\nlandscape 2")) +
+  theme_void()
+
+legend <- ggplot(extProb_longdisp0.8[[5]], aes(x = Year, y = extProb, colour = "Ext0.8"))+
+  geom_line(linewidth = 1)+
+  geom_line(data= extProb_longdisp0.85[[5]], aes(colour = "Ext0.85"), linewidth = 1)+
+  geom_line(data= extProb_longdisp0.9[[5]], aes(colour = "Ext0.9"), linewidth = 1)+
+  geom_line(data= extProb_longdisp[[5]], aes(colour = "Ext0.95"), linewidth = 1)+
+  geom_line(data= extProb_shortdisp[[5]], aes(colour = "Ext"), linewidth = 1)+
+  geom_line(data = habitatsize[[5]], aes(x = Year, y = diff, colour = "Habitat"), linewidth = 1)+
+  geom_line(data = pop_longdisp[[5]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "long"), linewidth = 1)+
+  geom_line(data = pop_shortdisp[[5]], aes(x = Year, y = rel_pop, colour = "Pop", linetype = "short"), linewidth = 1)+
+  ylab("Rate")+
+  ggtitle(unique(extProb_longdisp[[1]]$Breadth))+
+  xlim(c(90, 170))+
+  scale_color_manual(values = c("Pop" = "gold", "Habitat" = "#FF6A6A", "Ext" = "darkblue", "Ext0.8" = blue.col[1], "Ext0.85" = blue.col[2],"Ext0.9" = blue.col[3], "Ext0.95" = blue.col[4]),
+                     breaks = c("Pop", "Habitat", "Ext", "Ext0.8", "Ext0.85", "Ext0.9", "Ext0.95"),
+                     labels=c("Population size", "Habitat size", "Extinction probability (short)", "Ext. prob. (long, 0.8)", "Ext. prob. (long, 0.85)", "Ext. prob. (long, 0.9)", 
+                              "Ext. prob. (long, 0.95)"))+
+  scale_linetype_manual(values = c("short" = "solid", "long" = "dashed"), labels = c("long dispersal", "short dispersal"))+
+  labs(color=NULL, linetype = NULL)+
+  theme(legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.position = "right", legend.title = element_text(size = 18))
+
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p1.3,p2.3,p3.3,p4.3,p5.3, shared_legend, ncol = 3, nrow = 2),p7.3, ncol = 1, nrow = 2, heights = c(12,1.5))
