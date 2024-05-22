@@ -23,7 +23,7 @@ optima <- c(0.27, 0.5)
 breadth <- c(0.045, 0.055)
 sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth)
 
-ncores <- 20
+ncores <- 12
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
@@ -127,7 +127,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "NLMR", "virtualspecies",
     for (i in 1:length(temp_values)){
       tmp <- stack(temp_cc[[i]], l_pre)
       names(tmp) <- c("temp", "pre")
-      writeRaster(tmp, filename = paste(sdm_dir, "landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", (i-1), ".grd", sep = ""), overwrite = T)
+      writeRaster(tmp, filename = paste(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", (i-1), ".grd", sep = ""), overwrite = T)
     }
     
     # plots of landscape under climate landscapes ------------------------------------------------------------------
