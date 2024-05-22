@@ -3,7 +3,7 @@
 #SBATCH --job-name=landscapes_cc
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=12
 #SBATCH --time=96:00:00
 #SBATCH --mem=150gb
 #SBATCH --nodelist=ecoc9
