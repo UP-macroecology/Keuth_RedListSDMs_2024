@@ -28,13 +28,13 @@ source("/import/ecoc9z/data-zurell/keuth/02_Simulations/Functions/Extinction_pro
 land_rep <- 1:3
 optima <- c(0.27, 0.5)
 breadth <- c(0.045, 0.055)
-rmax <- c(3,5)
+rmax <- c(3, 5)
 dispersal <- c(5000, 15000)
 
 sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims$BatchNum <- rep(1:16, each = 3)
 
-ncores <- 20
+ncores <- 24
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
@@ -203,3 +203,6 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
     dev.off()
 }
 stopCluster(cl)
+
+gc()
+rm(list=ls())

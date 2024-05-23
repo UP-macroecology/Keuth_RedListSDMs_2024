@@ -105,20 +105,20 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "NLMR", "virtualspecies",
     param <- formatFunctions(temp = c(fun = "dnorm", mean = optima, sd = breadth),
                              pre = c(fun = "dnorm", mean = 0.5, sd = breadth))
     
-    hs_spec <- vector("list", length = length(ls_cc)) #list for the different habitat suitability maps
+    ls_hs <- vector("list", length = length(ls_cc)) #list for the different habitat suitability maps
     hs_name <- c() #create name vector to rename later
     
     for (i in 1:length(ls_cc)) {
-      hs_spec[[i]] <- generateSpFromFun(raster.stack = ls_cc[[i]][[c("temp", "pre")]], parameters = param, plot = F)
+      ls_hs[[i]] <- generateSpFromFun(raster.stack = ls_cc[[i]][[c("temp", "pre")]], parameters = param, plot = F)
       hs_name <- append(hs_name, paste0("cc_Year", (i-1)))
     }
-    names(hs_spec) <- hs_name
+    names(ls_hs) <- hs_name
     
     #save created HS maps and landscapes ---------------------------------------------------------------------------
     
     # save habitat suitability maps for simulations
-    for (i in 1:length(ls_spec)) {
-      temp <- ls_spec[[i]][["suitab.raster"]]
+    for (i in 1:length(ls_hs)) {
+      temp <- ls_hs[[i]][["suitab.raster"]]
       values(temp) <- values(temp)*100 #make values to percentages
       writeRaster(temp, filename = paste(sim_dir,"Inputs/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", (i-1), ".asc", sep = ""), overwrite = T, format = "ascii")
     }
@@ -135,17 +135,17 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "NLMR", "virtualspecies",
     #plot all maps under climate change
     pdf(paste0(sim_dir, "Output_Maps/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_under_cc.pdf"))
     par(mfrow=c(2,3))
-    for (i in 1:length(ls_spec)) {
-      plot(ls_spec[[i]])
+    for (i in 1:length(ls_hs)) {
+      plot(ls_hs[[i]])
     }
     par(mfrow=c(2,2))
     dev.off()
     
     # calculate real habitat change ----------------------------------------------
-    habitat_change <- data.frame(Year = c(0:(length(ls_spec)-1), habitat_size = NA, habitat_loss = NA))
+    habitat_change <- data.frame(Year = c(0:(length(ls_hs)-1), habitat_size = NA, habitat_loss = NA))
     
-    for(i in 1:length(ls_spec)){
-      tmp <- ls_spec[[i]][["suitab.raster"]]
+    for(i in 1:length(ls_hs)){
+      tmp <- ls_hs[[i]][["suitab.raster"]]
       values(temp) <- values(temp)*100
       habitat_change[i, "habitat_size"] <- sum(values(tmp)[values(tmp) != 0 & !is.na(values(tmp))])
     }
