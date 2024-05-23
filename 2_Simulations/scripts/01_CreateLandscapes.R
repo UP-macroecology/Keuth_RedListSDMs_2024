@@ -4,8 +4,8 @@
 # niche breadth: narrow (0.045) wide (0.055)
 
 #define file path
-sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/02_Simulations/")
-sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/03_SDMs/")
+sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/")
+sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
 
 # Load packages
 library(raster)

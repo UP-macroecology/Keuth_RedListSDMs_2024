@@ -7,8 +7,8 @@
 # dispersal: short (5000), long (15 000, 250 000, 0.95)
 
 #define file path
-sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/02_Simulations/")
-sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/03_SDMs/")
+sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/")
+sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
 
 # Load packages
 require(RangeShiftR)
@@ -22,7 +22,7 @@ library(scales)
 library(data.table)
 
 # Function for calculating extinction probability
-source("/import/ecoc9z/data-zurell/keuth/02_Simulations/Functions/Extinction_probability.R")
+source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/Functions/Extinction_probability.R")
 
 # create data frame with all parameter combinations
 land_rep <- 1:3
