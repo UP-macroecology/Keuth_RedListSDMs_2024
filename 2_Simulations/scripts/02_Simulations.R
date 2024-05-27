@@ -112,12 +112,12 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
       
     # Run simulations ------------------------------------------------------------------------------------
       
-    RunRS(s, path_input)
+    RunRS(s, sim_dir)
       
     # Calculation of different values  -------------------------------------------------------------------
       
     # Calculate extinction probability
-    pop <- readPop(s, path_input)
+    pop <- readPop(s, sim_dir)
     extProb <- Calc_ExtProb(pop, s) 
     saveRDS(extProb, paste0(sim_dir, file = "Outputs/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
       
@@ -141,10 +141,10 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
     saveRDS(ls_Occ, paste0(sdm_dir, "data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     
     # plot outputs ---------------------------------------------------------------------------------
-    pdf(paste0(path_input, "Output_Maps/Plots_Batch", BatchNum, "_Sim", rep_nr, ".pdf"))
+    pdf(paste0(sim_dir, "Output_Maps/Plots_Batch", BatchNum, "_Sim", rep_nr, ".pdf"))
     par(mfrow=c(2,2))
-    plotAbundance(s, path_input)
-    plotOccupancy(s, path_input)
+    plotAbundance(s, sim_dir)
+    plotOccupancy(s, sim_dir)
     plot(NULL, type = "n", ylab = "Ext.Prob.", xlab = "Year", cex.lab = 2, cex.axis = 1.5)
     lines(extProb$Year, extProb$extProb, type = "l", lwd = 1.8, col = "black")
     # Parameter values Plot
@@ -175,7 +175,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
     # Plot occurrences in landscape under cc -----------------------------------------------
       
     # Occurrences for individuals without long dispersal
-    pdf(paste0(path_input, "Output_Maps/occurrences_in_landscape_BatchNum", BatchNum, "_land", rep_nr, ".pdf"))
+    pdf(paste0(sim_dir, "Output_Maps/occurrences_in_landscape_BatchNum", BatchNum, "_land", rep_nr, ".pdf"))
       
     #remove unimportant columns
     pop_short <- pop %>% dplyr::select(-c(RepSeason, Species))

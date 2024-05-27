@@ -124,7 +124,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "NLMR", "virtualspecies",
     }
     
     # save landscape maps as stacks for the SDMs
-    for (i in 1:length(temp_values)){
+    for (i in 1:length(temp_cc@layers)){
       tmp <- stack(temp_cc[[i]], l_pre)
       names(tmp) <- c("temp", "pre")
       writeRaster(tmp, filename = paste(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", (i-1), ".grd", sep = ""), overwrite = T)
