@@ -39,7 +39,7 @@ ncores <- 10
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
-foreach(sim_nr=1, .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra", "data.table")) %dopar% {
+foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra", "data.table")) %dopar% {
   # Extract parameter values
   rep_nr <- sims[sim_nr,]$land_rep
   optima <- sims[sim_nr,]$optima
