@@ -35,11 +35,11 @@ dispersal <- c(5000, 15000)
 sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims$BatchNum <- rep(1:16, each = 3)
 
-ncores <- 10
+ncores <- 1
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
-foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra", "data.table")) %dopar% {
+foreach(sim_nr=46:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra", "data.table")) %dopar% {
   # Extract parameter values
   rep_nr <- sims[sim_nr,]$land_rep
   optima <- sims[sim_nr,]$optima

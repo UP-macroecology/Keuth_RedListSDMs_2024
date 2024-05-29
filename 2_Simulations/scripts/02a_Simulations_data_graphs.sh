@@ -3,9 +3,9 @@
 #SBATCH --job-name=simulations_data
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=1
 #SBATCH --time=96:00:00
-#SBATCH --mem=400gb
+#SBATCH --mem=730gb
 #SBATCH --nodelist=ecoc9
 
 cd ${SLURM_SUBMIT_DIR}
