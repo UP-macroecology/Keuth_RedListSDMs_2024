@@ -218,10 +218,11 @@ g <- grid.arrange(arrangeGrob(t0,t_c_medium, t_w_medium, t_nn, e1, e3, t_wn, e2,
                   t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 # Plot huge comparison graph ----------
-ggplot(df_simulations_all, aes(x= Year, y = rel_pop))+
-  geom_line(color = "gold", linewidth = 1)+
-  geom_line(aes(x= Year, y= habitat_loss), color = "#FF6A6A", linewidth = 1)+
-  geom_line(aes(x = Year, y = extProb), color = "blue", linewidth = 1)+
-  theme(strip.text = element_text(size = 14))+
+ggplot(df_simulations_all, aes(x= Year, y = rel_pop, colour = "Pop"))+
+  geom_line(linewidth = 1)+
+  geom_line(aes(x= Year, y= habitat_loss, colour = "Habitat"), linewidth = 1)+
+  geom_line(aes(x = Year, y = extProb, colour = "Ext"), linewidth = 1)+
+  theme(strip.text = element_text(size = 14), legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.title = element_blank())+
+  scale_color_manual(values = c("Pop" = "#FF6A6A", "Habitat" = "gold", "Ext" = "blue"), labels=c( "Extinction probability", "Population size", "Habitat size"))+
   ylab("Rate")+
   facet_wrap(~scenario_name)
