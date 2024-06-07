@@ -21,7 +21,7 @@ sims$scenario_name <- paste(sims$optima, sims$breadth, sims$rmax, sims$dispersal
 # Load extinction data
 extinction <- vector("list", 16)
 for (i in 1:16) {
-  tmp <- readRDS(paste0("2_Simulations/data/ExtProb_Batch", i, "_Sim3.rds"))
+  tmp <- readRDS(paste0("2_Simulations/data/ExtProb_Batch", i, "_Sim1.rds"))
   #add scenario information
   tmp$scenario <- as.factor(i) 
   tmp$Year <- tmp$Year - 100
@@ -37,7 +37,7 @@ for (i in 1:16) {
 # Load abundance data
 abundance <- vector("list", 16)
 for (i in 1:16) {
-  tmp <- readRDS(paste0("2_Simulations/data/SumInd_Batch", i, "_Sim3.rds"))
+  tmp <- readRDS(paste0("2_Simulations/data/SumInd_Batch", i, "_Sim1.rds"))
   #add scenario information
   tmp$scenario <- as.factor(i)
   tmp$optima <- sims[i,]$optima
@@ -72,10 +72,10 @@ abundance <- lapply(abundance, function(x){x <- x[!x$Year %in% c(0:97),]; x$Year
 # Load habitat loss values
 habitat_loss <- vector("list", 4)
 
-habitat_loss[[1]] <- readRDS("2_Simulations/data/real_habitatloss_land3_optima0.27_breadth0.045.rds")
-habitat_loss[[2]] <- readRDS("2_Simulations/data/real_habitatloss_land3_optima0.27_breadth0.055.rds")
-habitat_loss[[3]] <- readRDS("2_Simulations/data/real_habitatloss_land3_optima0.5_breadth0.045.rds")
-habitat_loss[[4]] <- readRDS("2_Simulations/data/real_habitatloss_land3_optima0.5_breadth0.055.rds")
+habitat_loss[[1]] <- readRDS("2_Simulations/data/real_habitatloss_land1_optima0.27_breadth0.045.rds")
+habitat_loss[[2]] <- readRDS("2_Simulations/data/real_habitatloss_land1_optima0.27_breadth0.055.rds")
+habitat_loss[[3]] <- readRDS("2_Simulations/data/real_habitatloss_land1_optima0.5_breadth0.045.rds")
+habitat_loss[[4]] <- readRDS("2_Simulations/data/real_habitatloss_land1_optima0.5_breadth0.055.rds")
 
 habitat_loss <- lapply(habitat_loss, function(x){x <- left_join(years, x, by = "Year"); x[is.na(x)] <- 0; x[1:2,3] <- NA; return(x)})
 
@@ -91,10 +91,10 @@ for (i in c(1,5,9,13)) {
   df_simulations[[i]] <- cbind(df_simulations[[i]], habitat_loss = habitat_loss[[1]]$habitat_loss)
 }
 for (i in c(2,6,10,14)) {
-  df_simulations[[i]] <- cbind(df_simulations[[i]], habitat_loss = habitat_loss[[2]]$habitat_loss)
+  df_simulations[[i]] <- cbind(df_simulations[[i]], habitat_loss = habitat_loss[[3]]$habitat_loss)
 }
 for (i in c(3,7,11,15)) {
-  df_simulations[[i]] <- cbind(df_simulations[[i]], habitat_loss = habitat_loss[[3]]$habitat_loss)
+  df_simulations[[i]] <- cbind(df_simulations[[i]], habitat_loss = habitat_loss[[2]]$habitat_loss)
 }
 for (i in c(4,8,12,16)) {
   df_simulations[[i]] <- cbind(df_simulations[[i]], habitat_loss = habitat_loss[[4]]$habitat_loss)
@@ -218,9 +218,9 @@ g <- grid.arrange(arrangeGrob(t0,t_c_medium, t_w_medium, t_nn, e1, e3, t_wn, e2,
                   t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 # Plot huge comparison graph ----------
-ggplot(df_simulations_all, aes(x= Year, y = rel_pop, colour = "Pop"))+
+ggplot(df_simulations_all, aes(x= Year, y = rel_pop, colour = "Habitat"))+
   geom_line(linewidth = 1)+
-  geom_line(aes(x= Year, y= habitat_loss, colour = "Habitat"), linewidth = 1)+
+  geom_line(aes(x= Year, y= habitat_loss, colour = "Pop"), linewidth = 1)+
   geom_line(aes(x = Year, y = extProb, colour = "Ext"), linewidth = 1)+
   theme(strip.text = element_text(size = 14), legend.text = element_text(size = 20), legend.key.size = unit(1, "cm"), legend.title = element_blank())+
   scale_color_manual(values = c("Pop" = "#FF6A6A", "Habitat" = "gold", "Ext" = "blue"), labels=c( "Extinction probability", "Population size", "Habitat size"))+
