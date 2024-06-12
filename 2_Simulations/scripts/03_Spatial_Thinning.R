@@ -36,11 +36,11 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster",
   BatchNum <- sims[sim_nr,]$BatchNum
   
   #read in current landscape
-  clim <- stack(paste0(sdm_dir, "landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear0.grd"))
+  clim <- stack(paste0(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear0.grd"))
   mask <- clim[[1]]
   
   #Load in presence of respective scenario
-  presences <- readRDS(paste0(sdm_dir, "occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  presences <- readRDS(paste0(sdm_dir, "data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   
   #Create Absence Points -----------------------------------------------------------------
   #create absences for every replicate run
@@ -68,7 +68,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster",
   
   # extract climatic values for every cell
   points_full <- lapply(points_full, function(x){x <- cbind(x, raster::extract(x = clim, y = x[, c("X", "Y")], cellnumbers = T)); return(x)})
-  saveRDS(points_full, paste0(sdm_dir, "occurrences/Occ_Abs_full_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(points_full, paste0(sdm_dir, "data/occurrences/Occ_Abs_full_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
   
   # spatial thinning -------------------------------------------------------------------------
   xy <- lapply(points_full, function(x){x <- gridSample(x[,c("X", "Y")], mask, chess = "white"); return(x)})
@@ -78,7 +78,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster",
   }
   names(points_thinned) <- names(points_full)
   
-  saveRDS(points_thinned, paste0(sdm_dir, "occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(points_thinned, paste0(sdm_dir, "data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
   
   #number of presence and absence points for the replicated runs used in the SDMs ----------------
   
@@ -102,7 +102,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster",
     tab.num <- rbind(tab.num, tmp)
   }
   
-  pdf(paste0(sdm_dir, "occurrences/number_presences_absences_Batch", BatchNum, "_Sim", rep_nr, ".pdf"))
+  sink(paste0(sdm_dir, "data/occurrences/number_presences_absences_Batch", BatchNum, "_Sim", rep_nr, ".txt"))
   print("mean Presences")
   print(mean(tab.num$presences[-1]))
   print("sd Presences")
@@ -111,7 +111,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster",
   print(mean(tab.num$absences[-1]))
   print("sd Absences")
   print(sd(tab.num$absences[-1]))
-  dev.off()
+  sink()
 }
 
 stopCluster(cl)
