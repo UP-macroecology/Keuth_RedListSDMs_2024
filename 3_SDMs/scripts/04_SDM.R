@@ -320,8 +320,9 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
                                                                                                                        "_Replication", replicates[replicate_nr], ".RData"))
 
     } #close replication loop
-    save(performance_mean, performance_raw, file = paste0(sdm_dir, "evaluation/performance_measures/performance_SDM_Batch", BatchNum, "_Sim", rep_nr, ".RData"))
-    save(hs_change, file = paste0(sdm_dir, "results/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".RData"))
+    saveRDS(performance_raw, file = paste0(sdm_dir, "evaluation/performance_measures/performance_raw_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(performance_mean, file = paste0(sdm_dir, "evaluation/performance_measures/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(hs_change, file = paste0(sdm_dir, "results/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 stopCluster(cl)
