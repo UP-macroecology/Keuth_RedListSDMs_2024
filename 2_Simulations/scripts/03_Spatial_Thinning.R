@@ -27,7 +27,7 @@ ncores <- 24
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
-foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster", "data.table")) %dopar% {
+foreach(sim_nr=25:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "raster", "data.table")) %dopar% {
   
   # Prepare variables --------------
   rep_nr <- sims[sim_nr,]$land_rep
