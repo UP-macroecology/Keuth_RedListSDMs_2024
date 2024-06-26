@@ -23,7 +23,7 @@ dispersal <- c(5000, 15000)
 sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims$BatchNum <- rep(1:16, each = 3)
 
-ncores <- 24
+ncores <- 48
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
@@ -37,10 +37,12 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "terra", 
   
   #read in current landscape
   clim <- rast(paste0(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear0.grd"))
+  #clim <- rast("3_SDMs/data/land1_optima0.27_breadth0.045_ccYear0.grd")
   mask <- clim[[1]]
   
   #Load in presence of respective scenario
   presences <- readRDS(paste0(sdm_dir, "data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  #presences <- readRDS("3_SDMs/data/Occ_list_Batch1_Sim1.rds")
 
   presences <- lapply(presences, function(x){x <- as.data.frame(x); x$X <- x$X * 1000; x$Y <- x$Y *1000; return(x)})
 
@@ -48,7 +50,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "terra", 
   #create absences for every replicate run
   absences <- vector("list", length = length(presences))
   for (i in 1:length(presences)) {
-    tmp.presences <- presences[[1]][,2:3]
+    tmp.presences <- presences[[i]][,2:3]
     cell.numbers <- c(1:length(values(mask))) #obtain all cell numbers
     presences.cellnumbers <- cellFromXY(mask, tmp.presences) #obtain cell numbers of presences
     absences.cellnumbers <- setdiff(cell.numbers, presences.cellnumbers) #obtain non occupied cell numbers

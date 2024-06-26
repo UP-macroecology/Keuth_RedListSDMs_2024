@@ -55,6 +55,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
 
   #Read in thinned points
   points_thinned <- readRDS(paste0(sdm_dir, "data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
+  #points_thinned <- readRDS("3_SDMs/data/Occ_Abs_thinned_list_Batch_1_Sim1.rds")
     
   # create lists for the different obtained data
   performance_mean <- vector("list", length = length(replicates))
@@ -62,7 +63,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
   hs_change <- vector("list", length = length(replicates))
     
   # Start loop for the 10 different replicates (fitting a SDM to each of them)
-  for(replicate_nr in 1:length(replicates)){
+  for(replicate_nr in 1:length(replicates)){#
     #create the data frames
     performance_raw_loop <- c()
     performance_mean_loop <- c()
@@ -73,12 +74,12 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
     data_test <- points_thinned[-(replicates[replicate_nr])]
 
     # Fit GLM ------------------------------------------------------------------------
-      
+
     loop_glm <- step(glm(occ ~ temp + I(temp^2) + pre + I(pre^2), family = "binomial", data = data_train))
-      
+
     #save output in txt.file
     sink(paste0(sdm_dir, "evaluation/algorithm_output/GLM_Outputs_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".txt"))
-    summary(loop_glm)
+    print(summary(loop_glm))
     sink()
 
     #Fit RF -------------------------------------------------------------------------
@@ -90,15 +91,17 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
     # Look at single trees:
     print(getTree(loop_rf,1,T))
     sink()
-      
+
     # Fit Maxent -------------------------------------------------------------------
     loop_maxent <- maxnet(p=data_train$occ, data=data_train[,c("temp", "pre")], maxnet.formula(p=data_train$occ, data=data_train[,c("temp", "pre")]), classes = "lqh")
-    
+
     #save algorithms
     save(loop_glm, loop_rf, loop_maxent, file = paste0(sdm_dir, "algorithms/Algorithms_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
+    #load(paste0(sdm_dir, "algorithms/Algorithms_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
+    #load("3_SDMs/data/Algorithms_Batch1_Sim1_Replication87.RData")
 
     #PDF for response curves--------------------------------------------------------
-    pdf(paste0(sdm_dir, "evaluation/algorithm_output/Response_curves_Batch", BatchNum, "_Replication", replicates[c], "_", timestamp, ".pdf"))
+    pdf(paste0(sdm_dir, "evaluation/algorithm_output/Response_curves_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
 
     #Response curves for GLM
     par(mfrow=c(1,2))
@@ -122,7 +125,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
 
     # Evaluate performance -----------------------------------------------------------------------------------
     #validated separately against all 99 replicate runs that are not used for fitting
-     
+
     #performance measures of GLM
     for (i in 1:length(data_test)) {
       test <- data_test[[i]]
@@ -149,6 +152,8 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
 
     # back transform to data frame
     performance_raw_loop <- as.data.frame(performance_raw_loop)
+    
+    #save(performance_raw_loop, file = paste0(sdm_dir, "evaluation/algorithm_output/performance_raw_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
 
     #Calculate predictions for each test replicated run for later calculating ensembles -----------------------------------------------
     pred_glm <- c()
@@ -180,6 +185,8 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
       GLM = rowMeans(pred_glm),
       Maxent = rowMeans(pred_maxent)
     )
+    
+    #save(pred_testdata, file = paste0(sdm_dir, "evaluation/algorithm_output/pred_testdata_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
 
     #Calculate ensembles --------------------------------------------------------------------------------
     # Mean of probabilities
@@ -194,27 +201,27 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
     for (i in 1:length(data_test)) {
       test <- data_test[[i]]
       perf_mean <- evalSDM(test$occ, mean_prob)
-      performance_raw_loop <- rbind(performance_raw_loop, perf_mean %>% add_column(testRep = names(data_test[i]), Algorithm = "mean_prob") %>% 
+      performance_raw_loop <- rbind(performance_raw_loop, perf_mean %>% add_column(testRep = names(data_test[i]), Algorithm = "mean_prob") %>%
                                                           relocate(c(testRep, Algorithm)))
       rm(perf_mean)
       }
 
     # back transform into data frame
     performance_raw_loop <- as.data.frame(performance_raw_loop)
-      
+
     # save performance measures in list
     performance_raw[[replicate_nr]] <- performance_raw_loop
-    
+
     # Average evaluation metrics ----------------------------------------------------------------------
     #calculate mean over performance measures of all test replicate runs per algorithm and the ensemble
-    performance_mean_loop <- performance_raw_loop %>% group_by(Algorithm) %>% summarise(mean_AUC = mean(AUC), sd_AUC = sd(AUC), mean_TSS = mean(TSS), 
-                                                                                        sd_TSS = sd(TSS), mean_Kappa = mean(Kappa), sd_Kappa = sd(Kappa), 
+    performance_mean_loop <- performance_raw_loop %>% group_by(Algorithm) %>% summarise(mean_AUC = mean(AUC), sd_AUC = sd(AUC), mean_TSS = mean(TSS),
+                                                                                        sd_TSS = sd(TSS), mean_Kappa = mean(Kappa), sd_Kappa = sd(Kappa),
                                                                                         mean_Sens = mean(Sens), sd_Sens = sd(Sens), mean_Spec = mean(Spec),
-                                                                                        sd_Spec = sd(Spec), mean_PCC = mean(PCC), sd_PCC = sd(PCC), 
-                                                                                        mean_D2 = mean(D2), sd_D2 = sd(D2), mean_thresh = mean(thresh), 
+                                                                                        sd_Spec = sd(Spec), mean_PCC = mean(PCC), sd_PCC = sd(PCC),
+                                                                                        mean_D2 = mean(D2), sd_D2 = sd(D2), mean_thresh = mean(thresh),
                                                                                         sd_thresh = sd(thresh), .groups = "keep") %>%
                                                       add_column(Rep = replicates[replicate_nr]) %>% relocate(Rep, .before = Algorithm)
-    
+
     # back transform because it is saved as a tibble
     performance_mean_loop <- as.data.frame(performance_mean_loop)
     # save as single element in list of the performance measures of all replicated runs
@@ -255,10 +262,10 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
 
     # calculate sum of habitat suitability of the ensemble for current climate --------------------------------------------
     ens_pred_cur <- ens_pred[,1:3]
-      
+
     #remove cells below a threshold of habitat suitability
     ens_pred_cur <- ens_pred_cur[which(ens_pred_cur$mean_prob >= performance_mean_loop[performance_mean_loop$Algorithm == "mean_prob",'mean_thresh']),]
-      
+
     #sum up habitat suitabilities
     hs_change_loop <- sum(ens_pred_cur[,"mean_prob"], na.rm = T)
 
@@ -297,21 +304,21 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
       # Binarise ensemble predictions
       env_fut_ensemble_bin[[year_nr]] <- data.frame(bio_fut_df[,1:2],
                                            sapply(c('mean_prob'),
-                                                  FUN=function(x){ifelse(env_fut_ensemble[,x]>= 
+                                                  FUN=function(x){ifelse(env_fut_ensemble[,x]>=
                                                                   performance_mean_loop[performance_mean_loop$Algorithm == x,'mean_thresh'],1,0)}))
 
       # calculate sum of habitat suitability of the ensemble for future climate --------------------------------------------
       # obtain arithmetic mean ensemble values
       ens_pred_fut <- env_fut_ensemble[[year_nr]][,1:3]
-        
+
       #remove cells below a threshold of habitat suitability
       ens_pred_fut <- ens_pred_fut[which(ens_pred_fut$mean_prob >= performance_mean_loop[performance_mean_loop$Algorithm == "mean_prob",'mean_thresh']),]
-        
+
       #append to habitat values
       hs_change_loop <- append(hs_change_loop, sum(ens_pred_fut[,"mean_prob"], na.rm = T))
-        
+
       }#close future predictions loop
-    
+
       # add hs_change calculation to list
       hs_change[[replicate_nr]] <- hs_change_loop
 
