@@ -15,3 +15,5 @@ my simulation model. In the different scripts I tested different niche positions
 ## 2. Simulations
 To simulate the population dynamics under climate change, I first created different neutral landscapes under climate change. I replicated each landscape three times by using the same statistical settings for all three replications. I simulated four different landscape settings, which differed in the niche optima and the niche breadth
 Here, I simulate the population dynamics of the different virtual species in the neutral landscape under climate change. In total I simulated 16 different species, due to the four traits with the two-factorial design. These species were modelled in three different landscapes by replicating a landscape with the same statistical settings three times. I first created three replications of four landscapes with differing niche optima, niche breadth combinations under climate change. I then simulated the population dynamics using RangeShifter and finally calculated the extinction probability and obtained the occurrences from the species before climate change 
+
+## 3. SDMs
