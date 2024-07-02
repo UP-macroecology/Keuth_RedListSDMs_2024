@@ -3,7 +3,7 @@
 #SBATCH --job-name=SDMs
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=24
 #SBATCH --time=130:00:00
 #SBATCH --mem=400gb
 #SBATCH --nodelist=ecoc9z
