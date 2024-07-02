@@ -16,22 +16,28 @@ my simulation model. In the different scripts I tested different niche positions
 As a first step, I simulated the population dynamics of the different species under climate change in the neutral landscapes.
 
 *Script:* 01_CreateLandscape.R
+
 My landscape consists of two environmental variables (temperature and precipitation). The final landscapes contain the suitable habitat for the respective virtual species, which is then used in the simulation. The suitable habitat for the different species was obtained using the different niche optima and niche breadth values. This resulted in four different landscapes. Of each landscape three replicates were obtained by using the same statistical settings for all three replicates when randomly creating the landscape.
 
 *Script:* 02_Simulations.R
+
 Here, I simulate the population dynamics of the different virtual species in the neutral landscape under climate change using RangeShifter. In total I simulated 16 different species, due to the four traits with the two-factorial design. In the simulation the traits growth rate an dispersal distance were changed.
 
 *Script:* 02a_Simulations_data_graphs.R
+
 In this script, I calculate the extinction probability of each year and extract the occurrences of the species in the landscape in the different replicated runs. I further plot the results of the simulation to visualize the abundances, extinction probabilities and habitat loss.
 
 *Script:* text_labels_plots.R
+
 This script contains the text labels to label 2x2 plots.
 
 ## 3. SDMs
 As the second step, I fitted SDMs using the simulation data.
 
 *Script:* 03_Spatial_Thinning.R
+
 I marked every cell that was not occupied by an individual in the respective replicate run and year as absence and thinned the occurrences by using only every second cell of it.
 
 *Script:* 04_SDM.R
-I estimated SDMs to ten randomly selected replicated runs. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold and sumed up the habitat suitability for the other cells.
+
+I estimated SDMs to ten randomly selected replicated runs. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold and sumed up the habitat suitability for the other cells. I evaluated the performance of the SDMs against all 99 replicated runs that were not used for the fitting of the SDM.
