@@ -330,3 +330,28 @@ t_CR <- ggplot() +
            size = 8,
            label = "Critically endangered") +
   theme_void()
+
+# text plots for landscapes
+t_l1 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 7,
+           label = "Landscape 1") +
+  theme_void()
+
+t_l2 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 7,
+           label = "Landscape 2") +
+  theme_void()
+
+t_l3 <- ggplot() +
+  annotate("text",
+           x = 1,
+           y = 1,
+           size = 7,
+           label = "Landscape 3") +
+  theme_void()
