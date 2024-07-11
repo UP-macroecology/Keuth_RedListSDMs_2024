@@ -244,32 +244,32 @@ t_ss <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "slow growth rate & short dispersal distance") +
+           size = 5,
+           label = "slow growth rate &\n short dispersal") +
   theme_void()
 
 t_sl <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "slow growth rate & long dispersal distance") +
+           size = 5,
+           label = "slow growth rate &\n long dispersal") +
   theme_void()
 
 t_fs <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "fast growth rate & short dispersal distance") +
+           size = 5,
+           label = "fast growth rate &\n short dispersal") +
   theme_void()
 
 t_fl <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "fast growth rate & long dispersal distance") +
+           size = 5,
+           label = "fast growth rate &\n long dispersal") +
   theme_void()
 
 # niche combinations
@@ -278,32 +278,32 @@ t_cn <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "cold-adapted &\nnarrow niche") +
+           size = 5,
+           label = "cold-adapted & narrow niche") +
   theme_void()
 
 t_cw <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "cold-adapted &\nwide niche") +
+           size = 5,
+           label = "cold-adapted & wide niche") +
   theme_void()
 
 t_wna <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "warm-adapted &\nnarrow niche") +
+           size = 5,
+           label = "warm-adapted & narrow niche") +
   theme_void()
 
 t_ww <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 4,
-           label = "warm-adapted &\nwide niche") +
+           size = 5,
+           label = "warm-adapted & wide niche") +
   theme_void()
 
 # threatened values
