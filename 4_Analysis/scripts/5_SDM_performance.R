@@ -29,12 +29,14 @@ for (sim_nr in 1:nrow(sims)) {
   BatchNum <- sims[sim_nr,]$BatchNum
   tmp <- readRDS(paste0("4_Analysis/data/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   tmp <- do.call(rbind, tmp)
+  # add scenario and land replication number
   tmp$scenario <- paste(BatchNum, rep_nr, sep = ".")
   tmp$BatchNum <- BatchNum
   tmp$landRep <- rep_nr
   performance <- rbind(performance, tmp)
 }
 
+#convert specific columns
 performance$Algorithm <- factor(performance$Algorithm, levels = c("GLM", "RF", "Maxent", "mean_prob"))
 performance$BatchNum <- factor(performance$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
 
@@ -190,6 +192,7 @@ p3 <- ggplot(performance %>% filter(landRep == 3), aes(x = factor(BatchNum), y =
   ))+
   ggtitle("Land replication 3")
 
+# create and extract shared legend
 legend <- ggplot(performance %>% filter(landRep == 3), aes(x = factor(BatchNum), y = mean_AUC))+
   geom_boxplot(data= performance %>% filter(landRep == 3), aes(color = Algorithm), position = position_dodge(width=1.01))+
   theme_bw()+

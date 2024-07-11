@@ -3,13 +3,14 @@
 # load packages
 library(ggplot2)
 library(gridExtra)
+library(ggtext)
+library(dplyr)
 
 # Load functions
 source("Functions/extract_legend.R")
 source("2_Simulations/scripts/text_labels_plots.R")
 
 # load in data
-
 data <- vector("list", 16)
 
 for (i in 1:16){
@@ -24,6 +25,7 @@ for (i in 1:16){
   data[[i]] <- rbind(tmp1, tmp2)
   data[[i]] <- rbind(data[[i]], tmp3)
   
+  #transform column
   data[[i]]$land <- as.character(data[[i]]$land)
 }
 
@@ -173,6 +175,7 @@ p16 <- #ggplot(data[[16]], aes(x=(1-hs_change), y=extProb, col = land, group = l
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())
 
+# create and extract shared legend
 legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
@@ -183,7 +186,7 @@ legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=extProb, col = land, group =
 
 shared_legend <- extract_legend(legend)
 
-
+#Plot the large grid
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
@@ -380,6 +383,7 @@ p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = la
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
+#create and extract the shared legend
 legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
@@ -390,7 +394,7 @@ legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group =
 
 shared_legend <- extract_legend(legend)
 
-
+#Plot the large grid
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
@@ -555,6 +559,7 @@ p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=(1-range_change), col = land, g
   ylim(c(0,1))+
   xlim(c(0,1))
 
+#create and extract shared legend
 legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
@@ -565,7 +570,7 @@ legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group =
 
 shared_legend <- extract_legend(legend)
 
-
+#Plot large grid
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
@@ -578,6 +583,8 @@ set.seed(8765)
 replicates <- sample(0:99, 10)
 
 IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
+
+#transform BatchNum column
 IUCN_classification$BatchNum <- factor(IUCN_classification$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
 
 # create the VU, EN, CR columns for all metrices (Pop, Range, HS, Ext.Prob)
@@ -594,7 +601,7 @@ IUCN_classification$VU_Ext <- NA
 IUCN_classification$EN_Ext <- NA
 IUCN_classification$CR_Ext <- NA
 
-# extract time point when the thresholds of the different criteria is surpassed
+# extract time point when the thresholds of the different criteria is surpassed for the different metrics
 for (i in 1:nrow(IUCN_classification)) {
   # extract values
   land_nr <- IUCN_classification[i,"land_rep"]
@@ -630,7 +637,7 @@ for (i in 1:nrow(IUCN_classification)) {
   IUCN_classification[i ,"CR_Range"] <- head(data[[BatchNum]][data[[BatchNum]]$Rep == rep_nr & data[[BatchNum]]$land == land_nr & (1-data[[BatchNum]]$range_change)>=0.8, "Year"],1) - 100
 }
 
-# plot the results
+# plot the classification time points for VU
 VU1 <- ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x= BatchNum, y = VU_Range))+
   geom_boxplot(width = 0.2)+
   geom_boxplot(aes(x = BatchNum, y = VU_Pop), col = "orange", position = position_nudge(x = 0.5), width = 0.2)+
@@ -769,6 +776,7 @@ VU3 <- ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x= BatchNum, y 
   ggtitle("Land replication 3")+
   ylim(c(0,55))
 
+# create and extract common legend
 colors <- c("Range (A3)" = "black", "Extinction probability (E)" = "blue", "Habitat suitability (A3)" = "red", "Population (A3)" = "orange")
 
 legend <- ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x= BatchNum, y = VU_Range, color ="Range (A3)"))+
@@ -784,9 +792,10 @@ legend <- ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x= BatchNum,
 
 shared_legend <- extract_legend(legend)
 
+#Plot large grid
 grid.arrange(VU1,VU2, VU3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Vulnerable",gp=gpar(fontsize=25,font=2)))
 
-# Endangered
+# plot the classification time points for EN
 EN1 <- ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x= BatchNum, y = EN_Range))+
   geom_boxplot(width = 0.2)+
   geom_boxplot(aes(x = BatchNum, y = EN_Pop), col = "orange", position = position_nudge(x = 0.5), width = 0.2)+
@@ -925,9 +934,10 @@ EN3 <- ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x= BatchNum, y 
   ggtitle("Land replication 3")+
   ylim(c(0,55))
 
+#Plot large grid (with same legend as in the VU plot)
 grid.arrange(EN1,EN2, EN3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Endangered",gp=gpar(fontsize=25,font=2)))
 
-#Criticall endangered  
+# plot the classification time points for CR
 CR1 <- ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x= BatchNum, y = CR_Range))+
   geom_boxplot(width = 0.2)+
   geom_boxplot(aes(x = BatchNum, y = CR_Pop), col = "orange", position = position_nudge(x = 0.5), width = 0.2)+
@@ -1066,5 +1076,6 @@ CR3 <- ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x= BatchNum, y 
   ggtitle("Land replication 3")+
   ylim(c(0,55))
 
+#Plot large grid (with same legend as in the VU plot)
 grid.arrange(CR1,CR2, CR3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Critically endangered",gp=gpar(fontsize=25,font=2)))
 
