@@ -44,7 +44,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "terra", 
   presences <- readRDS(paste0(sdm_dir, "data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   #presences <- readRDS("3_SDMs/data/Occ_list_Batch1_Sim1.rds")
 
-  presences <- lapply(presences, function(x){x <- as.data.frame(x); x$X <- x$X * 1000; x$Y <- x$Y *1000; return(x)})
+  presences <- lapply(presences, function(x){x <- as.data.frame(x); return(x)})
 
   #Create Absence Points -----------------------------------------------------------------
   #create absences for every replicate run
@@ -68,11 +68,13 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "terra", 
   for (i in 1:length(points_full)) {
     points_full[[i]] <- rbind(points_full[[i]], absences[[i]])
   }
+  
+  #saveRDS(points_full, paste0(sdm_dir, "data/occurrences/Occ_Abs_wo_clim_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
 
   # extract climatic values for every cell
-  points_full <- lapply(points_full, function(x){x <- cbind(x, extract(x = clim, y = x[, c("X", "Y")], cells = T, ID = F)); return(x)})
+  points_full <- lapply(points_full, function(x){x <- cbind(x, extract(x = clim, y = x[, c("X", "Y")], cells = T, ID = F, xy = T)); return(x)})
   saveRDS(points_full, paste0(sdm_dir, "data/occurrences/Occ_Abs_full_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
-  
+
   # spatial thinning -------------------------------------------------------------------------
   xy <- lapply(points_full, function(x){x <- gridSample(x[,c("X", "Y")], mask, chess = "white"); return(x)})
   points_thinned <- vector("list", length = length(points_full))
@@ -80,31 +82,31 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dismo", "dplyr", "tibble", "terra", 
     points_thinned[[i]] <- merge(xy[[i]], points_full[[i]], by=c("X", "Y"))
   }
   names(points_thinned) <- names(points_full)
-  
+
   saveRDS(points_thinned, paste0(sdm_dir, "data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
-  
+
   #number of presence and absence points for the replicated runs used in the SDMs ----------------
-  
+
   # select 10 random replications from the 100
   set.seed(8765)
   replicates <- sample(0:99, 10)
-  
+
   # presences and absences for those replicated runs
   points.short <- points_thinned[replicates]
-  
+
   #obtain presences and absences
   points.pre <- lapply(points.short, function(x){x <- subset(x,x$occ == 1); return(x)})
   points.abs <- lapply(points.short, function(x){x <- subset(x,x$occ == 0); return(x)})
-  
+
   # prepare table
   tab.num <- data.frame(presences = 0, absences = 0)
-  
+
   # obtain number of presences and absences
   for (i in 1:10) {
     tmp <- data.frame(presences = nrow(points.pre[[i]]), absences = nrow(points.abs[[i]]))
     tab.num <- rbind(tab.num, tmp)
   }
-  
+
   sink(paste0(sdm_dir, "data/occurrences/number_presences_absences_Batch", BatchNum, "_Sim", rep_nr, ".txt"))
   print("mean Presences")
   print(mean(tab.num$presences[-1]))
