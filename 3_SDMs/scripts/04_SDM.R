@@ -36,7 +36,7 @@ set.seed(8765)
 replicates <- sample(0:99, 10)
 
 #set up cluster
-ncores <- 24
+ncores <- 48
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
                      
@@ -61,6 +61,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
   performance_mean <- vector("list", length = length(replicates))
   performance_raw <- vector("list", length = length(replicates))
   hs_change <- vector("list", length = length(replicates))
+  range_size <- vector("list", length = length(replicates))
     
   # Start loop for the 10 different replicates (fitting a SDM to each of them)
   for(replicate_nr in 1:length(replicates)){
@@ -225,10 +226,10 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
     performance_mean_loop <- as.data.frame(performance_mean_loop)
     # save as single element in list of the performance measures of all replicated runs
     performance_mean[[replicate_nr]] <- performance_mean_loop
-    
+
     #save(performance_raw_loop, performance_mean_loop, file = paste0(sdm_dir, "evaluation/algorithm_output/performance_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
     #load(paste0(sdm_dir, "evaluation/algorithm_output/performance_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
-    
+
     # Make predictions to current climate ----------------------------------------------------------------------------------
     #Load in landscapes for predictions
     bio_curr <- unwrap(clim_pack)
@@ -271,6 +272,9 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
 
     #sum up habitat suitabilities
     hs_change_loop <- sum(ens_pred_cur[,"mean_prob"], na.rm = T)
+    
+    #Calculate current range size
+    range_loop <- length(which(ens_preds_bin$mean_prob == 1))
 
     #prepare data frames for future predictions ---------------------------------------------------------------------------
     all_fut_preds <- vector("list", length = 89)
@@ -283,7 +287,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
       # Load data set
       bio_fut <- terra::rast(paste0(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", year_nr, ".grd"))
       #bio_fut <- terra::rast("3_SDMs/data/land1_optima0.27_breadth0.045_ccYear1.grd")
-      
+
       #Transform data frame
       bio_fut_df <- data.frame(crds(bio_fut),as.points(bio_fut))
 
@@ -299,7 +303,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
                                         sapply(names(all_fut_preds[[year_nr]][,-c(1:2)]), FUN=function(alg){
                                           ifelse(all_fut_preds[[year_nr]][,alg]>=performance_mean_loop[performance_mean_loop$Algorithm==alg,'mean_thresh'],1,0)
                                         }))
- 
+
       #Predictions using ensemble
       ens_fut_preds[[year_nr]] <- data.frame(bio_fut_df[,1:2],
                                     mean_prob = rowMeans(all_fut_preds[[year_nr]][,-c(1:2)]),
@@ -320,11 +324,17 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
 
       #append to habitat values
       hs_change_loop <- append(hs_change_loop, sum(ens_pred_fut[,"mean_prob"], na.rm = T))
+      
+      #append to range values
+      range_loop <- append(range_loop, length(which(ens_fut_preds_bin[[year_nr]]$mean_prob == 1)))
 
       }#close future predictions loop
 
       # add hs_change calculation to list
       hs_change[[replicate_nr]] <- hs_change_loop
+      
+      # add range size calculation to list
+      range_size[[replicate_nr]] <- range_loop
 
       # save predictions
       save(all_fut_preds, all_fut_preds_bin, ens_fut_preds, ens_fut_preds_bin, file = paste0(sdm_dir, "predictions/Predictions_fut_Batch", BatchNum, "_Sim", rep_nr,
@@ -334,6 +344,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "
     saveRDS(performance_raw, file = paste0(sdm_dir, "evaluation/performance_measures/performance_raw_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     saveRDS(performance_mean, file = paste0(sdm_dir, "evaluation/performance_measures/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     saveRDS(hs_change, file = paste0(sdm_dir, "results/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(range_size, file = paste0(sdm_dir, "results/range_size_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 stopCluster(cl)
