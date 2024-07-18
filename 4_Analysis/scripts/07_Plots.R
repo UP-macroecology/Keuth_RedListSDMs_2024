@@ -10,6 +10,15 @@ library(dplyr)
 source("Functions/extract_legend.R")
 source("2_Simulations/scripts/text_labels_plots.R")
 
+# obtain traits for every BatchNum
+optima <- c("cold", "warm")
+breadth <- c("narrow", "wide")
+rmax <- c("slow", "fast")
+dispersal <- c("short", "long")
+
+sims <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims$BatchNum <- rep(1:16)
+
 # load in data
 data <- vector("list", 16)
 
@@ -24,6 +33,12 @@ for (i in 1:16){
   #rbind the different data sets
   data[[i]] <- rbind(tmp1, tmp2)
   data[[i]] <- rbind(data[[i]], tmp3)
+  
+  #add traits to data set
+  data[[i]]$optima <- sims[which(sims$BatchNum == i),]$optima
+  data[[i]]$breadth <- sims[which(sims$BatchNum == i),]$breadth
+  data[[i]]$rmax <- sims[which(sims$BatchNum == i),]$rmax
+  data[[i]]$dispersal <- sims[which(sims$BatchNum == i),]$dispersal
   
   #transform column
   data[[i]]$land <- as.character(data[[i]]$land)
@@ -1079,3 +1094,6 @@ CR3 <- ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x= BatchNum, y 
 #Plot large grid (with same legend as in the VU plot)
 grid.arrange(CR1,CR2, CR3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Critically endangered",gp=gpar(fontsize=25,font=2)))
 
+
+
+# Plot short overview plots
