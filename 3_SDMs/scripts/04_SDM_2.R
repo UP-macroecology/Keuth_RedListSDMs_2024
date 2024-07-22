@@ -33,7 +33,7 @@ sims$BatchNum <- rep(1:16, each = 3)
 
 # select 10 random replications from the 100
 set.seed(8765)
-replicates <- sample(0:99, 10) 
+replicates <- sample(0:99, 10)
 
 #set up cluster
 ncores <- 24
@@ -41,7 +41,7 @@ cl <- makeCluster(ncores)
 registerDoParallel(cl)
                      
 # Loops for the SDM fitting
-foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble", "terra", "randomForest", "mecofun", "data.table")) %dopar% {
+foreach(sim_nr=25:nrow(sims), .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble", "terra", "randomForest", "mecofun", "data.table")) %dopar% {
      
   # Prepare variables --------------
   rep_nr <- sims[sim_nr,]$land_rep
