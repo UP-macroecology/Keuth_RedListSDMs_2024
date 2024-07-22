@@ -30,7 +30,12 @@ ggplot() +
 
 # Calculate FP, FN, TP, TN
 occ <- readRDS("3_SDMs/data/Occ_Abs_full_list_Batch_10_Sim1.rds")
+occ <- readRDS("3_SDMs/data/Occ_Abs_thinned_list_Batch_10_Sim1.rds")
 occ14 <- occ[["14"]]
+
+points_thinned <- lapply(occ, function(x){x <- x[,-which(names(x) %in% c("cell","x", "y"))]; return(x)})
+
+occ12 <- occ14[,-which(names(occ14) %in% c("cell","x", "y"))]
 
 all <- merge(all, occ14, by.x = c("x", "y"), by.y = c("X", "Y"))
 
