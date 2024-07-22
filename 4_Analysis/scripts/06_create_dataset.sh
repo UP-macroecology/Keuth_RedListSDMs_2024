@@ -4,7 +4,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
 #SBATCH --cpus-per-task=24
-#SBATCH --time=130:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=100gb
 #SBATCH --nodelist=ecoc9z
 
