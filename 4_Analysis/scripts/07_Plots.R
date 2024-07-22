@@ -112,147 +112,147 @@ for (i in 1:nrow(IUCN_classification)) {
 
 # Plot the results
 # extinction probability - change in habitat suitability sums/ change in range size ------------
-p1 <- #ggplot(data[[1]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[1]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p1 <- ggplot(data[[1]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[1]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())
 
-p2 <-#ggplot(data[[2]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[2]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p2 <-ggplot(data[[2]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[2]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p3 <- #ggplot(data[[3]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+p3 <- ggplot(data[[3]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
   ggplot(data[[3]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p4 <- #ggplot(data[[4]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[4]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p4 <- ggplot(data[[4]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[4]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p5 <- #ggplot(data[[5]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[5]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p5 <- ggplot(data[[5]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[5]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())
 
-p6 <- #ggplot(data[[6]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[6]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p6 <- ggplot(data[[6]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[6]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p7 <- #ggplot(data[[7]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[7]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p7 <- ggplot(data[[7]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[7]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p8 <- #ggplot(data[[8]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[8]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p8 <- ggplot(data[[8]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[8]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p9 <- #ggplot(data[[9]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[9]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p9 <- ggplot(data[[9]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[9]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())
 
-p10 <- #ggplot(data[[10]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[10]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p10 <- ggplot(data[[10]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[10]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p11 <- #ggplot(data[[11]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[11]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p11 <- ggplot(data[[11]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[11]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p12 <-#ggplot(data[[12]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[12]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p12 <-ggplot(data[[12]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[12]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())
 
-p13 <- #ggplot(data[[13]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[13]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p13 <- ggplot(data[[13]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[13]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "")
 
-p14 <-#ggplot(data[[14]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[14]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p14 <-ggplot(data[[14]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[14]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")++
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())
 
-p15 <- #ggplot(data[[15]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[15]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p15 <- ggplot(data[[15]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  #ggplot(data[[15]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())
 
-p16 <- #ggplot(data[[16]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
-  ggplot(data[[16]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
+p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
+  # ggplot(data[[16]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
-  #xlab("Habitat loss")+
-  xlab("Range loss")+
+  xlab("Habitat loss")+
+  # xlab("Range loss")+
   ylab("Extinction probability")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())
 
@@ -272,193 +272,193 @@ grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 # population size - change in habitat suitability sums/ change in range size ------------
-p1 <- ggplot(data[[1]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[1]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p1 <-# ggplot(data[[1]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[1]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p2 <-ggplot(data[[2]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[2]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p2 <-#ggplot(data[[2]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[2]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p3 <- ggplot(data[[3]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[3]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p3 <- #ggplot(data[[3]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[3]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p4 <- ggplot(data[[4]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[4]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p4 <- #ggplot(data[[4]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[4]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p5 <- ggplot(data[[5]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[5]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p5 <-# ggplot(data[[5]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[5]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p6 <- ggplot(data[[6]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[6]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p6 <-# ggplot(data[[6]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[6]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p7 <- ggplot(data[[7]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[7]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p7 <- #ggplot(data[[7]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[7]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p8 <- ggplot(data[[8]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[8]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p8 <- #ggplot(data[[8]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[8]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p9 <- ggplot(data[[9]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[9]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p9 <- #ggplot(data[[9]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[9]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p10 <- ggplot(data[[10]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[10]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p10 <-# ggplot(data[[10]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[10]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p11 <- ggplot(data[[11]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[11]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p11 <- #ggplot(data[[11]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[11]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p12 <-ggplot(data[[12]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[12]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p12 <-#ggplot(data[[12]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[12]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p13 <- ggplot(data[[13]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[13]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p13 <- #ggplot(data[[13]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[13]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "")+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p14 <-ggplot(data[[14]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[14]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p14 <-#ggplot(data[[14]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[14]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p15 <- ggplot(data[[15]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[15]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p15 <-# ggplot(data[[15]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[15]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
   ylim(c(0,1.2))+
   xlim(c(0,1))
 
-p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  #ggplot(data[[16]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
+p16 <- #ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  ggplot(data[[16]], aes(x=(1-range_change), y=pop_sum, col = land, group = land))+
   geom_point(size=1.5)+
   geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  xlab("Habitat loss")+
-  #xlab("Range loss")+
+  # xlab("Habitat loss")+
+  xlab("Range loss")+
   ylab("relative Population size")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
   ylim(c(0,1.2))+
@@ -1098,12 +1098,9 @@ CR3 <- ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x= BatchNum, y 
 #Plot large grid (with same legend as in the VU plot)
 grid.arrange(CR1,CR2, CR3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Critically endangered",gp=gpar(fontsize=25,font=2)))
 
-
-
 # Plot short overview plots ---------
 
 # Population size over time ---------
-
 p1 <- ggplot(data[[1]], aes(x= (Year-100), y = pop_sum, col = land))+
   geom_point(size = 0.75)+
   #geom_smooth()+
@@ -1377,59 +1374,65 @@ grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 # Population size against change in habitat suitability ---------
-p1 <- ggplot(data_append %>% filter(land == 1), aes(x=(1-hs_change), y = pop_sum, col = optima))+
+p1 <- #ggplot(data_append %>% filter(land == 3), aes(x=(1-hs_change), y = pop_sum, col = optima))+
+  ggplot(data_append, aes(x=(1-hs_change), y = pop_sum, col = optima))+
   geom_point()+
   xlim(c(0,1))+
   ylim(c(0,1))+
-  geom_smooth()+
+  geom_smooth(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
-  geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
   ggtitle("Niche optima")
 
-p2 <- ggplot(data_append %>% filter(land == 1), aes(x=(1-hs_change), y = pop_sum, col = breadth))+
+p2 <-# ggplot(data_append %>% filter(land == 3), aes(x=(1-hs_change), y = pop_sum, col = breadth))+
+  ggplot(data_append, aes(x=(1-hs_change), y = pop_sum, col = breadth))+
   geom_point()+
   xlim(c(0,1))+
   ylim(c(0,1))+
-  geom_smooth()+
+  geom_smooth(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
-  geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
   ggtitle("Niche breadth")
 
-p3 <- ggplot(data_append %>% filter(land == 1), aes(x=(1-hs_change), y = pop_sum, col = rmax))+
+p3 <- #ggplot(data_append %>% filter(land == 3), aes(x=(1-hs_change), y = pop_sum, col = rmax))+
+  ggplot(data_append, aes(x=(1-hs_change), y = pop_sum, col = rmax))+
   geom_point()+
   xlim(c(0,1))+
   ylim(c(0,1))+
-  geom_smooth()+
+  geom_smooth(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
-  geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15),  plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
   ggtitle("Growth rate")
 
-p4 <- ggplot(data_append %>% filter(land == 1), aes(x=(1-hs_change), y = pop_sum, col = dispersal))+
+p4 <- #ggplot(data_append %>% filter(land == 3), aes(x=(1-hs_change), y = pop_sum, col = dispersal))+
+  ggplot(data_append, aes(x=(1-hs_change), y = pop_sum, col = dispersal))+
   geom_point()+
   xlim(c(0,1))+
   ylim(c(0,1))+
-  geom_smooth()+
+  geom_smooth(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
-  geom_abline(intercept = 1, slope = -1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
   ggtitle("Dispersal")
 
-grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Land replication 1",gp=gpar(fontsize=20,font=2)))
+grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Land replication 3",gp=gpar(fontsize=20,font=2)))
+grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
  
 # IUCN classification time --------
 
-VU_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
+VU_pos <- #ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = optima, y = VU_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = optima, y = VU_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = optima, y = VU_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1440,7 +1443,8 @@ theme_bw()+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-VU_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+VU_breadth <-# ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = breadth, y = VU_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = breadth, y = VU_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = breadth, y = VU_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1451,7 +1455,8 @@ VU_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-VU_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+VU_rmax <-# ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = rmax, y = VU_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = rmax, y = VU_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = rmax, y = VU_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1462,7 +1467,8 @@ VU_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-VU_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+VU_disp <- #ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = dispersal, y = VU_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = dispersal, y = VU_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = dispersal, y = VU_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1492,9 +1498,12 @@ shared_legend <- extract_legend(legend)
 #Plot large grid
 grid.arrange(arrangeGrob(VU_pos,VU_breadth, VU_rmax, VU_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
              top=textGrob("Vulnerable",gp=gpar(fontsize=25,font=2)))
+grid.arrange(arrangeGrob(VU_pos,VU_breadth, VU_rmax, VU_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
+             top=textGrob("Vulnerable (land 3)",gp=gpar(fontsize=25,font=2)))
 
 # Endangered
-EN_pos <- ggplot(IUCN_classification, aes(x = optima, y = EN_HS))+
+EN_pos <- #ggplot(IUCN_classification, aes(x = optima, y = EN_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x = optima, y = EN_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = optima, y = EN_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = optima, y = EN_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1505,7 +1514,8 @@ EN_pos <- ggplot(IUCN_classification, aes(x = optima, y = EN_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-EN_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = EN_HS))+
+EN_breadth <- #ggplot(IUCN_classification, aes(x = breadth, y = EN_HS))+
+  ggplot(IUCN_classification  %>% filter(land_rep == 1), aes(x = breadth, y = EN_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = breadth, y = EN_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = breadth, y = EN_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1516,7 +1526,8 @@ EN_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = EN_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-EN_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = EN_HS))+
+EN_rmax <- #ggplot(IUCN_classification, aes(x = rmax, y = EN_HS))+
+  ggplot(IUCN_classification  %>% filter(land_rep == 1), aes(x = rmax, y = EN_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = rmax, y = EN_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = rmax, y = EN_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1527,7 +1538,8 @@ EN_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = EN_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-EN_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = EN_HS))+
+EN_disp <- #ggplot(IUCN_classification, aes(x = dispersal, y = EN_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x = dispersal, y = EN_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = dispersal, y = EN_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = dispersal, y = EN_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1541,9 +1553,12 @@ EN_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = EN_HS))+
 #Plot large grid
 grid.arrange(arrangeGrob(EN_pos,EN_breadth, EN_rmax, EN_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
              top=textGrob("Endangered",gp=gpar(fontsize=25,font=2)))
+grid.arrange(arrangeGrob(EN_pos,EN_breadth, EN_rmax, EN_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
+             top=textGrob("Endangered (land 1)",gp=gpar(fontsize=25,font=2)))
 
 # Critically Endangered
-CR_pos <- ggplot(IUCN_classification, aes(x = optima, y = CR_HS))+
+CR_pos <-# ggplot(IUCN_classification, aes(x = optima, y = CR_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = optima, y = CR_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = optima, y = CR_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = optima, y = CR_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1554,7 +1569,8 @@ CR_pos <- ggplot(IUCN_classification, aes(x = optima, y = CR_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-CR_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = CR_HS))+
+CR_breadth <- #ggplot(IUCN_classification, aes(x = breadth, y = CR_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = breadth, y = CR_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = breadth, y = CR_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = breadth, y = CR_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1565,7 +1581,8 @@ CR_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = CR_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-CR_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = CR_HS))+
+CR_rmax <- #ggplot(IUCN_classification, aes(x = rmax, y = CR_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = rmax, y = CR_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = rmax, y = CR_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = rmax, y = CR_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1576,7 +1593,8 @@ CR_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = CR_HS))+
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 20, face = "italic"))+
   ylab("Timepoint of classification")
 
-CR_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = CR_HS))+
+CR_disp <-# ggplot(IUCN_classification, aes(x = dispersal, y = CR_HS))+
+  ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x = dispersal, y = CR_HS))+
   geom_boxplot(width = 0.2, col = "red")+
   geom_boxplot(aes(x = dispersal, y = CR_Ext), position = position_nudge(x = -0.25), width = 0.2, col = "blue")+
   geom_boxplot(aes(x = dispersal, y = CR_Pop), position = position_nudge(x = 0.25), width = 0.2, col = "orange")+
@@ -1590,3 +1608,5 @@ CR_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = CR_HS))+
 #Plot large grid
 grid.arrange(arrangeGrob(CR_pos,CR_breadth, CR_rmax, CR_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
              top=textGrob("Critically endangered",gp=gpar(fontsize=25,font=2)))
+grid.arrange(arrangeGrob(CR_pos,CR_breadth, CR_rmax, CR_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
+             top=textGrob("Critically endangered (land 3)",gp=gpar(fontsize=25,font=2)))
