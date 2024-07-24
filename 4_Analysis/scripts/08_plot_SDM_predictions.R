@@ -29,7 +29,7 @@ set.seed(8765)
 replicates <- sample(0:99, 10)
 
 #set up cluster
-ncores <- 24
+ncores <- 10
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
@@ -43,7 +43,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("terra", "tibble", "ggplot2", "grid
   BatchNum <- sims[sim_nr,]$BatchNum
   
   # Start loop for the 10 different replicates (fitting a SDM to each of them)
-  for(replicate_nr in 1:length(replicates)){
+  for(replicate_nr in 1){
 
   #load data
     #load(paste0(path_batch, "Predictions_curr_list_Batch", BatchNum, "_Replication", replicates[replicate_nr], "_", timestamp, ".RData"))
@@ -66,7 +66,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("terra", "tibble", "ggplot2", "grid
     rast_ens_fut_preds <- lapply(ens_fut_preds, function(x){x <- terra::rast(x); return(x)})
     
     # Occurrences for individuals without long dispersal
-    pdf(paste0(sdm_dir, "results/occurrences_SDMpredictions_BatchNum", BatchNum, "_land", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
+    pdf(paste0(sdm_dir, "predictions/prediction_maps/occurrences_SDMpredictions_BatchNum", BatchNum, "_land", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
     
     for(i in 1:length(rast_ens_fut_preds)){
       occ_sub <- subset(occ_Rep, occ_Rep$Year == i+100)

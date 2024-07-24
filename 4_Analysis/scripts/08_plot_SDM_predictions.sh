@@ -3,7 +3,7 @@
 #SBATCH --job-name=plot_predictions
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=24
+#SBATCH --cpus-per-task=10
 #SBATCH --time=24:00:00
 #SBATCH --mem=600gb
 #SBATCH --nodelist=ecoc9
