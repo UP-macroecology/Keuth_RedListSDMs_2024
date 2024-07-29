@@ -5,6 +5,7 @@ library(ggplot2)
 library(gridExtra)
 library(ggtext)
 library(dplyr)
+library(grid)
 
 # Load functions
 source("Functions/extract_legend.R")
@@ -13,7 +14,7 @@ source("2_Simulations/scripts/text_labels_plots.R")
 # Prepare data
 
 # obtain traits for every BatchNum
-optima <- c("cold", "warm")
+optima <- c("marginal", "central")
 breadth <- c("narrow", "wide")
 rmax <- c("slow", "fast")
 dispersal <- c("short", "long")
@@ -53,12 +54,17 @@ for (i in 1:16){
 # append data to large data frame
 data_append <- do.call(rbind, data)
 
+# Create habitat loss column
+data_append$hs_loss <- 1 - data_append$hs_change
+
+data_append[which(is.na(data_append$hs_loss)), "hs_loss"] <- 1
+
 # create data frame with all parameter combinations
 IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
 IUCN_classification <- merge(IUCN_classification, sims, by = "BatchNum")
 
 #transform BatchNum column
-IUCN_classification$BatchNum <- factor(IUCN_classification$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
+#IUCN_classification$BatchNum <- factor(IUCN_classification$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
 IUCN_classification$BatchNum <- as.factor(IUCN_classification$BatchNum)
 
 # create the VU, EN, CR columns for all metrices (Pop, Range, HS, Ext.Prob)
@@ -110,6 +116,8 @@ for (i in 1:nrow(IUCN_classification)) {
   # Critically endangered A3 (>=80%)
   IUCN_classification[i ,"CR_Range"] <- head(data[[BatchNum]][data[[BatchNum]]$Rep == rep_nr & data[[BatchNum]]$land == land_nr & (1-data[[BatchNum]]$range_change)>=0.8, "Year"],1) - 100
 }
+
+#IUCN_classification <- IUCN_classification %>% pivot_longer(cols = c(8:19), names_to = "category", values_to = "timepoint") %>% separate(category, c("category2", "metric"))
 
 # Plot the results
 # extinction probability - change in habitat suitability sums/ change in range size ------------
@@ -1434,6 +1442,96 @@ p4 <- #ggplot(data_append %>% filter(land == 3), aes(x=(1-hs_change), y = pop_su
 grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Land replication 3",gp=gpar(fontsize=20,font=2)))
 grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
  
+# Population size against habitat suitability (updated) ---------------
+
+land_rep <- 1:3
+BatchNum <- 1:16
+
+sims <- expand.grid(land = land_rep, BatchNum = BatchNum)
+
+# calculate the different models
+for (sim_nr in 1){
+  BatchNum <- sims[sim_nr,]$BatchNum
+  land <- sims[sim_nr,]$land
+  test <- data_append %>% filter(land == land[1] & BatchNum == BatchNum[1])
+  glm(test$pop_sum ~ (1- test$hs_change), family = "poisson") 
+}
+
+data_append %>% filter(land == land[1])
+
+glm((data_append %>% filter(land == 1 & BatchNum == 1))$extProb ~ 1-(data_append %>% filter(land == 1 & BatchNum == 1))$hs_change, family = "binomial")
+
+
+model2 <- glm(data_append[[2]]$extProb ~ data_append[[2]]$habitatloss, family = "binomial")
+model3 <- glm(data_append[[3]]$extProb ~ data_append[[3]]$habitatloss, family = "binomial")
+model4 <- glm(data_append[[4]]$extProb ~ data_append[[4]]$habitatloss, family = "binomial")
+model5 <- glm(data_append[[5]]$extProb ~ data_append[[5]]$habitatloss, family = "binomial")
+model6 <- glm(data_append[[6]]$extProb ~ data_append[[6]]$habitatloss, family = "binomial")
+model7 <- glm(data_append[[7]]$extProb ~ data_append[[7]]$habitatloss, family = "binomial")
+model8 <- glm(data_append[[8]]$extProb ~ data_append[[8]]$habitatloss, family = "binomial")
+model9 <- glm(data_append[[9]]$extProb ~ data_append[[9]]$habitatloss, family = "binomial")
+model10 <- glm(data_append[[10]]$extProb ~ data_append[[10]]$habitatloss, family = "binomial")
+model11 <- glm(data_append[[11]]$extProb ~ data_append[[11]]$habitatloss, family = "binomial")
+model12 <- glm(data_append[[12]]$extProb ~ data_append[[12]]$habitatloss, family = "binomial")
+model13 <- glm(data_append[[13]]$extProb ~ data_append[[13]]$habitatloss, family = "binomial")
+model14 <- glm(data_append[[14]]$extProb ~ data_append[[14]]$habitatloss, family = "binomial")
+model15 <- glm(data_append[[15]]$extProb ~ data_append[[15]]$habitatloss, family = "binomial")
+model16 <- glm(data_append[[16]]$extProb ~ data_append[[16]]$habitatloss, family = "binomial")
+
+#look at model summary
+sink("Model Results/GLM_Range_ExtProb.txt")
+scenarios[1]
+summary(model1)
+scenarios[2]
+summary(model2)
+scenarios[3]
+summary(model3)
+scenarios[4]
+summary(model4)
+scenarios[5]
+summary(model5)
+scenarios[6]
+summary(model6)
+scenarios[7]
+summary(model7)
+scenarios[8]
+summary(model8)
+scenarios[9]
+summary(model9)
+scenarios[10]
+summary(model10)
+scenarios[11]
+summary(model11)
+scenarios[12]
+summary(model12)
+scenarios[13]
+summary(model13)
+scenarios[14]
+summary(model14)
+scenarios[15]
+summary(model15)
+scenarios[16]
+summary(model16)
+sink()
+
+#predict the model outcomes
+data_append[[1]]$predictions <- predict(model1, type = "response")
+data_append[[2]]$predictions <- predict(model2, type = "response")
+data_append[[3]]$predictions <- predict(model3, type = "response")
+data_append[[4]]$predictions <- predict(model4, type = "response")
+data_append[[5]]$predictions <- predict(model5, type = "response")
+data_append[[6]]$predictions <- predict(model6, type = "response")
+data_append[[7]]$predictions <- predict(model7, type = "response")
+data_append[[8]]$predictions <- predict(model8, type = "response")
+data_append[[9]]$predictions <- predict(model9, type = "response")
+data_append[[10]]$predictions <- predict(model10, type = "response")
+data_append[[11]]$predictions <- predict(model11, type = "response")
+data_append[[12]]$predictions <- predict(model12, type = "response")
+data_append[[13]]$predictions <- predict(model13, type = "response")
+data_append[[14]]$predictions <- predict(model14, type = "response")
+data_append[[15]]$predictions <- predict(model15, type = "response")
+data_append[[16]]$predictions <- predict(model16, type = "response")
+
 # IUCN classification time --------
 
 VU_pos <- #ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
@@ -1627,6 +1725,143 @@ grid.arrange(arrangeGrob(CR_pos,CR_breadth, CR_rmax, CR_disp, nrow=2, ncol = 2, 
              top=textGrob("Critically endangered",gp=gpar(fontsize=25,font=2)))
 grid.arrange(arrangeGrob(CR_pos,CR_breadth, CR_rmax, CR_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
              top=textGrob("Critically endangered (land 1)",gp=gpar(fontsize=25,font=2)))
+
+# IUCN classification time - updated plot -------
+p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.44))+
+  geom_boxplot(aes(x = optima, y = VU_Ext), position = position_nudge(x = -0.22), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.11))+
+  geom_boxplot(aes(x = optima, y = EN_Ext), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.22))+
+  geom_boxplot(aes(x = optima, y = CR_Ext), position = position_nudge(x = 0.45), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche position")+
+  xlab("")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  ylab("Classification timepoint [years]")
+
+p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.44))+
+  geom_boxplot(aes(x = breadth, y = VU_Ext), position = position_nudge(x = -0.22), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.11))+
+  geom_boxplot(aes(x = breadth, y = EN_Ext), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.22))+
+  geom_boxplot(aes(x = breadth, y = CR_Ext), position = position_nudge(x = 0.45), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche breadth")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.44))+
+  geom_boxplot(aes(x = rmax, y = VU_Ext), position = position_nudge(x = -0.22), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.11))+
+  geom_boxplot(aes(x = rmax, y = EN_Ext), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.22))+
+  geom_boxplot(aes(x = rmax, y = CR_Ext), position = position_nudge(x = 0.45), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Growth rate")+
+  xlab("")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  ylab("Classification timepoint [years]")
+
+p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.44))+
+  geom_boxplot(aes(x = dispersal, y = VU_Ext), position = position_nudge(x = -0.22), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.11))+
+  geom_boxplot(aes(x = dispersal, y = EN_Ext), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.22))+
+  geom_boxplot(aes(x = dispersal, y = CR_Ext), position = position_nudge(x = 0.45), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Dispersal")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+# create and extract common legend
+colors <- c("Extinction probability (E)" = "blue", "Habitat suitability (A3)" = "red", "Population size (A3)" = "orange")
+
+legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, color = "Population size (A3)"))+
+  geom_boxplot()+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
+  geom_boxplot(aes(x = BatchNum, y = VU_Ext, color = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
+  theme_bw()+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"),
+        legend.position = "bottom")+
+  ylab("Timepoint of classification")+
+  scale_color_manual(values= colors)
+
+shared_legend <- extract_legend(legend)
+
+#Plot large grid
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+
 
 # habitat loss over time ---------
 p1 <- ggplot(data[[1]], aes(x= (Year-100), y = hs_change, col = land))+
