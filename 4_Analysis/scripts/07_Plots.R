@@ -13,7 +13,7 @@ source("2_Simulations/scripts/text_labels_plots.R")
 
 # Prepare data
 
-# obtain traits for every BatchNum
+# unique trait values
 optima <- c("marginal", "central")
 breadth <- c("narrow", "wide")
 rmax <- c("slow", "fast")
@@ -23,10 +23,15 @@ BatchNum <- 1:16
 set.seed(8765)
 replicates <- sample(0:99, 10)
 
-sims <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
-sims$BatchNum <- rep(1:16)
+#create data frame with all trait combinations
+sims_long <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims_long$BatchNum <- rep(1:16)
 
-# load in data
+# create data frame with all parameter combinations for the IUCN classification time
+IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
+IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+
+# prepare data sets
 data <- vector("list", 16)
 data_mean <- vector("list", 16)
 
@@ -43,42 +48,49 @@ for (i in 1:16){
   data[[i]] <- rbind(data[[i]], tmp3)
   
   #add traits to data set
-  data[[i]]$optima <- sims[which(sims$BatchNum == i),]$optima
-  data[[i]]$breadth <- sims[which(sims$BatchNum == i),]$breadth
-  data[[i]]$rmax <- sims[which(sims$BatchNum == i),]$rmax
-  data[[i]]$dispersal <- sims[which(sims$BatchNum == i),]$dispersal
+  data[[i]]$optima <- sims_long[which(sims_long$BatchNum == i),]$optima
+  data[[i]]$breadth <- sims_long[which(sims_long$BatchNum == i),]$breadth
+  data[[i]]$rmax <- sims_long[which(sims_long$BatchNum == i),]$rmax
+  data[[i]]$dispersal <- sims_long[which(sims_long$BatchNum == i),]$dispersal
+  
+  #calculate habitat loss
+  data[[i]]$hs_loss <- 1- data[[i]]$hs_change
+  
+  #set NAs to 1 (only occurr at the very end of the simulation time)
+  data[[i]][which(is.na(data[[i]]$hs_loss)), "hs_loss"] <- 1
   
   #transform column
   data[[i]]$land <- as.character(data[[i]]$land)
   
-  # calculate mean and standard deviation
+  # calculate mean and standard deviation of population size, habitat size and extinction probability
   data_mean[[i]] <- data[[i]] %>% group_by(Year) %>% summarise(meanPop = mean(pop_sum), sdPop = sd(pop_sum), meanHS = mean(hs_change), sdHS = sd(hs_change),
                                                                meanExt = mean(extProb), sdExt = sd(extProb), .groups='keep')
-  data_mean[[i]]$optima <- sims[which(sims$BatchNum == i),]$optima
-  data_mean[[i]]$breadth <- sims[which(sims$BatchNum == i),]$breadth
-  data_mean[[i]]$rmax <- sims[which(sims$BatchNum == i),]$rmax
-  data_mean[[i]]$dispersal <- sims[which(sims$BatchNum == i),]$dispersal
+  
+  #add traits to data set
+  data_mean[[i]]$optima <- sims_long[which(sims_long$BatchNum == i),]$optima
+  data_mean[[i]]$breadth <- sims_long[which(sims_long$BatchNum == i),]$breadth
+  data_mean[[i]]$rmax <- sims_long[which(sims_long$BatchNum == i),]$rmax
+  data_mean[[i]]$dispersal <- sims_long[which(sims_long$BatchNum == i),]$dispersal
+  
+  # change time column
+  data_mean[[i]]$Year <- data_mean[[i]]$Year - 100
 }
-
-data_mean <- lapply(data_mean, function(x){x$Year <- x$Year - 100; return(x)})
 
 # append data to large data frame
 data_append <- do.call(rbind, data)
 
-# Create habitat loss column
-data_append$hs_loss <- 1 - data_append$hs_change
+# remove values larger than 1 for pop_sum and hs_loss
+data_adapted <- lapply(data, function(x){
+  x[which(x$hs_loss < 0), "hs_loss"] <- 0; 
+  x[which(x$pop_sum > 1), "pop_sum"] <- 1; 
+  return(x)
+})
 
-data_append[which(is.na(data_append$hs_loss)), "hs_loss"] <- 1
+data_adapted_long <- do.call(rbind, data_adapted)
+data_adapted_long$predictions <- NA
+data_adapted_long <- as.data.frame(data_adapted_long)
 
-# create data frame with all parameter combinations
-IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
-IUCN_classification <- merge(IUCN_classification, sims, by = "BatchNum")
-
-#transform BatchNum column
-#IUCN_classification$BatchNum <- factor(IUCN_classification$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
-#IUCN_classification$BatchNum <- as.factor(IUCN_classification$BatchNum)
-
-# create the VU, EN, CR columns for all metrices (Pop, Range, HS, Ext.Prob)
+# create the VU, EN, CR columns classification time for all metrices (Pop, Range, HS, Ext.Prob)
 IUCN_classification$VU_Pop <- NA
 IUCN_classification$EN_Pop <- NA
 IUCN_classification$CR_Pop <- NA
@@ -128,9 +140,647 @@ for (i in 1:nrow(IUCN_classification)) {
   IUCN_classification[i ,"CR_Range"] <- head(data[[BatchNum]][data[[BatchNum]]$Rep == rep_nr & data[[BatchNum]]$land == land_nr & (1-data[[BatchNum]]$range_change)>=0.8, "Year"],1) - 100
 }
 
-#IUCN_classification <- IUCN_classification %>% pivot_longer(cols = c(8:19), names_to = "category", values_to = "timepoint") %>% separate(category, c("category2", "metric"))
+# Plot the results -----
+
+# Population size against habitat suitability (updated) ---------------
+
+# create different data sets for the different models
+data_optima <- data_adapted_long
+data_breadth <- data_adapted_long
+data_rmax <- data_adapted_long
+data_dispersal <- data_adapted_long
+
+# create data frame with combinations of trait and land replication
+land_rep <- 1:3
+optima <- c("marginal", "central")
+
+sims <- expand.grid(land = land_rep, optima = optima)
+sims$breadth <- rep(c("narrow", "wide"), each = 3)
+sims$rmax <- rep(c("slow", "fast"), each = 3)
+sims$dispersal <- rep(c("short", "long"), each = 3)
+
+sink("4_Analysis/Model Results/GLM_Popsize_HSloss.txt")
+# calculate the different models
+for (sim_nr in 1:nrow(sims)){
+  # extract trait values
+  optima <- sims[sim_nr,]$optima
+  breadth <- sims[sim_nr,]$breadth
+  rmax <- sims[sim_nr,]$rmax
+  dispersal <- sims[sim_nr,]$dispersal
+  land <- sims[sim_nr,]$land
+  
+  # subset data set
+  data_sub_optima <- data_optima %>% filter(land == land[1] & optima == optima[1])
+  data_sub_breadth <- data_breadth %>% filter(land == land[1] & breadth == breadth[1])
+  data_sub_rmax <- data_rmax %>% filter(land == land[1] & rmax == rmax[1])
+  data_sub_dispersal <- data_dispersal %>% filter(land == land[1] & dispersal == dispersal[1])
+  
+  # calculate the different models
+  model_optima <- glm(data_sub_optima$pop_sum ~ data_sub_optima$hs_loss, family = "binomial")
+  model_breadth <- glm(data_sub_breadth$pop_sum ~ data_sub_breadth$hs_loss, family = "binomial")
+  model_rmax <- glm(data_sub_rmax$pop_sum ~ data_sub_rmax$hs_loss, family = "binomial")
+  model_dispersal <- glm(data_sub_dispersal$pop_sum ~ data_sub_dispersal$hs_loss, family = "binomial")
+  
+  # save the model outputs
+  print(paste0("land_nr: ", land, " & optima: ", optima))
+  print(summary(model_optima))
+  print(paste0("land_nr: ", land, " & breadth: ", breadth))
+  print(summary(model_breadth))
+  print(paste0("land_nr: ", land, " & rmax: ", rmax))
+  print(summary(model_rmax))
+  print(paste0("land_nr: ", land, " & dispersal: ", dispersal))
+  print(summary(model_dispersal))
+  
+  #make predictions to data
+  data_optima[which(data_optima$land == land & data_optima$optima == optima),"predictions"] <- predict(model_optima, type = "response")
+  data_breadth[which(data_breadth$land == land & data_breadth$breadth == breadth),"predictions"] <- predict(model_breadth, type = "response")
+  data_rmax[which(data_rmax$land == land & data_rmax$rmax == rmax),"predictions"] <- predict(model_rmax, type = "response")
+  data_dispersal[which(data_dispersal$land == land & data_dispersal$dispersal == dispersal),"predictions"] <- predict(model_dispersal, type = "response")
+}
+sink()
+
+# calculate the mean of the predictions
+test <- data_optima %>% group_by(optima, land, hs_loss) %>% summarise(mean_predictions = mean(predictions), sd_predictions = sd(predictions))
+
+ggplot(test, aes(x=hs_loss, y = mean_predictions, col = land, linetype = optima))+
+  geom_line()
+
+ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
+  geom_line()
+
+ggplot(data_append2  %>% filter(land == 1 & BatchNum == 1), aes(x=hs_loss, y = predictions))+
+  geom_line(linewidth = 1.2,aes(linetype = "narrow niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[2]], linewidth = 1.2, aes(linetype = "narrow niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[3]], linewidth = 1.2, aes(linetype = "narrow niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[4]], linewidth = 1.2, aes(linetype = "narrow niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[5]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[6]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[7]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[8]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
+  geom_line(data=data_append[[9]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[10]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[11]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[12]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[13]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[14]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[15]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
+  geom_line(data=data_append[[16]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
+  ylab("Extinction probability")+
+  xlab("Habitat loss")+
+  theme(panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA), 
+        legend.title = element_blank(), legend.position = "bottom", axis.title = element_text(size=18), axis.text = element_text(size=16), 
+        legend.text = element_text(size=16), legend.key.size = unit(1.2, "cm"))+
+  scale_y_continuous(limits = c(0,1), expand = c(0.01, 0.01))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.01, 0.01))+
+  scale_linetype_manual(values = c("solid", "dashed"), labels=c("narrow niche", "wide niche"))+
+  scale_color_manual(values=c("#427AA1", "#DD5560"), labels=c("cold-adapted", "warm-adapted"))
+
+# IUCN classification time - updated plot -------
+
+p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = optima, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = optima, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = optima, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche position")+
+  xlab("")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  ylab("Classification timepoint [years]")
+
+p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = breadth, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = breadth, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = breadth, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche breadth")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = rmax, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = rmax, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = rmax, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Growth rate")+
+  xlab("")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  ylab("Classification timepoint [years]")
+
+p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = dispersal, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = dispersal, y = EN_Ext), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = dispersal, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Dispersal")+
+  ylim(c(0,60))+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+# create and extract common legend
+colors <- c("Habitat suitability (A3)" = "red", "Population size (A3)" = "orange", "Extinction probability (E)" = "blue")
+
+legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, color = "Population size (A3)"))+
+  geom_boxplot()+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
+  geom_boxplot(aes(x = BatchNum, y = VU_Ext, color = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
+  theme_bw()+
+  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"),
+        legend.position = "bottom")+
+  ylab("Timepoint of classification")+
+  scale_color_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
+
+shared_legend <- extract_legend(legend)
+
+#Plot large grid
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+
+# plot of HS, population size and extinction probability over time --------
+p1 <- ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p2 <- ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p3 <- ggplot(data_mean[[3]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p4 <- ggplot(data_mean[[4]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p5 <- ggplot(data_mean[[5]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p6 <- ggplot(data_mean[[6]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p7 <- ggplot(data_mean[[7]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p8 <- ggplot(data_mean[[8]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p9 <- ggplot(data_mean[[9]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p10 <- ggplot(data_mean[[10]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p11 <- ggplot(data_mean[[11]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p12 <- ggplot(data_mean[[12]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p13 <- ggplot(data_mean[[13]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p14 <- ggplot(data_mean[[14]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p15 <- ggplot(data_mean[[15]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+p16 <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(linewidth = 1, col = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  xlim(c(0,75))+
+  ylim(c(-0.15,1.4))
+
+# create and extract common legend
+colors <- c("Population size" = "#FF6A6A", "Habitat suitability" = "gold", "Extinction probability" = "blue")
+
+legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "Habitat suitability"))+
+  geom_line(linewidth = 1)+
+  geom_line(aes(x = Year, y = meanPop, color = "Population size"), linewidth = 1)+
+  geom_line(aes(x = Year, y = meanExt, color = "Extinction probability"), linewidth = 1)+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "bottom", , legend.title = element_blank(), 
+        legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"))+
+  scale_color_manual(values= colors)
+
+shared_legend <- extract_legend(legend)
+
+#Plot the large grid
+grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
+             t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 # Plot the results
+# habitat loss compared to range loss ----------
+p1 <- ggplot(data[[1]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p2 <-ggplot(data[[2]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p3 <- ggplot(data[[3]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p4 <- ggplot(data[[4]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p5 <- ggplot(data[[5]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p6 <- ggplot(data[[6]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p7 <- ggplot(data[[7]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p8 <- ggplot(data[[8]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p9 <- ggplot(data[[9]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p10 <- ggplot(data[[10]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p11 <- ggplot(data[[11]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p12 <-ggplot(data[[12]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p13 <- ggplot(data[[13]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "")+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p14 <-ggplot(data[[14]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p15 <- ggplot(data[[15]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+  geom_point(size=1.5)+
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
+  ylim(c(0,1))+
+  xlim(c(0,1))
+
+#create and extract shared legend
+legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+  geom_point(size = 2)+
+  theme_bw()+
+  xlab("Habitat loss")+
+  ylab("Range loss")+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "bottom", legend.key.size = unit(1, "cm"), legend.text = element_text(size = 13), 
+        legend.title = element_text(size = 15))
+
+shared_legend <- extract_legend(legend)
+
+#Plot large grid
+grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
+             t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
+
+#-------
+#-------
+#-------
+# Old Plots -----
 # extinction probability - change in habitat suitability sums/ change in range size ------------
 p1 <- ggplot(data[[1]], aes(x=(1-hs_change), y=extProb, col = land, group = land))+
   # ggplot(data[[1]], aes(x=(1-range_change), y=extProb, col = land, group = land))+
@@ -496,182 +1146,6 @@ legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group =
 shared_legend <- extract_legend(legend)
 
 #Plot the large grid
-grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
-             t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
-
-# habitat loss compared to range loss ----------
-p1 <- ggplot(data[[1]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p2 <-ggplot(data[[2]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p3 <- ggplot(data[[3]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p4 <- ggplot(data[[4]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p5 <- ggplot(data[[5]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p6 <- ggplot(data[[6]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p7 <- ggplot(data[[7]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p8 <- ggplot(data[[8]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p9 <- ggplot(data[[9]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p10 <- ggplot(data[[10]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p11 <- ggplot(data[[11]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p12 <-ggplot(data[[12]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p13 <- ggplot(data[[13]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "")+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p14 <-ggplot(data[[14]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p15 <- ggplot(data[[15]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
-  geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
-
-#create and extract shared legend
-legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
-  geom_point(size = 2)+
-  theme_bw()+
-  xlab("Habitat loss")+
-  ylab("Range loss")+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "bottom", legend.key.size = unit(1, "cm"), legend.text = element_text(size = 13), 
-        legend.title = element_text(size = 15))
-
-shared_legend <- extract_legend(legend)
-
-#Plot large grid
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
@@ -1118,8 +1592,6 @@ CR3 <- ggplot(IUCN_classification %>% filter(land_rep == 3), aes(x= BatchNum, y 
 #Plot large grid (with same legend as in the VU plot)
 grid.arrange(CR1,CR2, CR3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Critically endangered",gp=gpar(fontsize=25,font=2)))
 
-# Plot short overview plots ---------
-
 # Population size over time ---------
 p1 <- ggplot(data[[1]], aes(x= (Year-100), y = pop_sum, col = land))+
   geom_point(size = 0.75)+
@@ -1453,97 +1925,30 @@ p4 <- #ggplot(data_append %>% filter(land == 3), aes(x=(1-hs_change), y = pop_su
 grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8), top=textGrob("Land replication 3",gp=gpar(fontsize=20,font=2)))
 grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
  
-# Population size against habitat suitability (updated) ---------------
+# compare the relationships with the values larger than 1 and without
+p1 <- ggplot(data_append, aes(x=hs_loss, y= pop_sum, col = land, linetype = optima))+
+  geom_smooth()+
+  geom_point()
 
-land_rep <- 1:3
-BatchNum <- 1:16
+p2 <- ggplot(data_append, aes(x=hs_loss, y= pop_sum, col = land, linetype = breadth))+
+  geom_smooth()+
+  geom_point()
 
-sims <- expand.grid(land = land_rep, BatchNum = BatchNum)
+p3 <- ggplot(data_append, aes(x=hs_loss, y= pop_sum, col = land, linetype = rmax))+
+  geom_smooth()+
+  geom_point()
 
-# calculate the different models
-for (sim_nr in 1){
-  BatchNum <- sims[sim_nr,]$BatchNum
-  land <- sims[sim_nr,]$land
-  test <- data_append %>% filter(land == land[1] & BatchNum == BatchNum[1])
-  glm(test$pop_sum ~ (1- test$hs_change), family = "poisson") 
-}
+p4 <- ggplot(data_append, aes(x=hs_loss, y= pop_sum, col = land, linetype = dispersal))+
+  geom_smooth()+
+  geom_point()
 
-data_append %>% filter(land == land[1])
-
-glm((data_append %>% filter(land == 1 & BatchNum == 1))$extProb ~ 1-(data_append %>% filter(land == 1 & BatchNum == 1))$hs_change, family = "binomial")
-
-
-model2 <- glm(data_append[[2]]$extProb ~ data_append[[2]]$habitatloss, family = "binomial")
-model3 <- glm(data_append[[3]]$extProb ~ data_append[[3]]$habitatloss, family = "binomial")
-model4 <- glm(data_append[[4]]$extProb ~ data_append[[4]]$habitatloss, family = "binomial")
-model5 <- glm(data_append[[5]]$extProb ~ data_append[[5]]$habitatloss, family = "binomial")
-model6 <- glm(data_append[[6]]$extProb ~ data_append[[6]]$habitatloss, family = "binomial")
-model7 <- glm(data_append[[7]]$extProb ~ data_append[[7]]$habitatloss, family = "binomial")
-model8 <- glm(data_append[[8]]$extProb ~ data_append[[8]]$habitatloss, family = "binomial")
-model9 <- glm(data_append[[9]]$extProb ~ data_append[[9]]$habitatloss, family = "binomial")
-model10 <- glm(data_append[[10]]$extProb ~ data_append[[10]]$habitatloss, family = "binomial")
-model11 <- glm(data_append[[11]]$extProb ~ data_append[[11]]$habitatloss, family = "binomial")
-model12 <- glm(data_append[[12]]$extProb ~ data_append[[12]]$habitatloss, family = "binomial")
-model13 <- glm(data_append[[13]]$extProb ~ data_append[[13]]$habitatloss, family = "binomial")
-model14 <- glm(data_append[[14]]$extProb ~ data_append[[14]]$habitatloss, family = "binomial")
-model15 <- glm(data_append[[15]]$extProb ~ data_append[[15]]$habitatloss, family = "binomial")
-model16 <- glm(data_append[[16]]$extProb ~ data_append[[16]]$habitatloss, family = "binomial")
-
-#look at model summary
-sink("Model Results/GLM_Range_ExtProb.txt")
-scenarios[1]
-summary(model1)
-scenarios[2]
-summary(model2)
-scenarios[3]
-summary(model3)
-scenarios[4]
-summary(model4)
-scenarios[5]
-summary(model5)
-scenarios[6]
-summary(model6)
-scenarios[7]
-summary(model7)
-scenarios[8]
-summary(model8)
-scenarios[9]
-summary(model9)
-scenarios[10]
-summary(model10)
-scenarios[11]
-summary(model11)
-scenarios[12]
-summary(model12)
-scenarios[13]
-summary(model13)
-scenarios[14]
-summary(model14)
-scenarios[15]
-summary(model15)
-scenarios[16]
-summary(model16)
-sink()
-
-#predict the model outcomes
-data_append[[1]]$predictions <- predict(model1, type = "response")
-data_append[[2]]$predictions <- predict(model2, type = "response")
-data_append[[3]]$predictions <- predict(model3, type = "response")
-data_append[[4]]$predictions <- predict(model4, type = "response")
-data_append[[5]]$predictions <- predict(model5, type = "response")
-data_append[[6]]$predictions <- predict(model6, type = "response")
-data_append[[7]]$predictions <- predict(model7, type = "response")
-data_append[[8]]$predictions <- predict(model8, type = "response")
-data_append[[9]]$predictions <- predict(model9, type = "response")
-data_append[[10]]$predictions <- predict(model10, type = "response")
-data_append[[11]]$predictions <- predict(model11, type = "response")
-data_append[[12]]$predictions <- predict(model12, type = "response")
-data_append[[13]]$predictions <- predict(model13, type = "response")
-data_append[[14]]$predictions <- predict(model14, type = "response")
-data_append[[15]]$predictions <- predict(model15, type = "response")
-data_append[[16]]$predictions <- predict(model16, type = "response")
+grid.arrange(p1,p2, p3, p4, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
 
 # IUCN classification time --------
+
+#transform BatchNum column
+#IUCN_classification$BatchNum <- factor(IUCN_classification$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
+#IUCN_classification$BatchNum <- as.factor(IUCN_classification$BatchNum)
 
 VU_pos <- #ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   ggplot(IUCN_classification %>% filter(land_rep == 1), aes(x = optima, y = VU_HS))+
@@ -1737,143 +2142,6 @@ grid.arrange(arrangeGrob(CR_pos,CR_breadth, CR_rmax, CR_disp, nrow=2, ncol = 2, 
 grid.arrange(arrangeGrob(CR_pos,CR_breadth, CR_rmax, CR_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
              top=textGrob("Critically endangered (land 1)",gp=gpar(fontsize=25,font=2)))
 
-# IUCN classification time - updated plot -------
-p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = optima, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = optima, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = optima, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = optima, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = optima, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = optima, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
-  geom_vline(xintercept = 1.5)+
-  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
-  scale_x_discrete(expand = c(0.25, 0.25)) +
-  ggtitle("Niche position")+
-  xlab("")+
-  ylim(c(0,60))+
-  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
-        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  ylab("Classification timepoint [years]")
-
-p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = breadth, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = breadth, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = breadth, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = breadth, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = breadth, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = breadth, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
-  geom_vline(xintercept = 1.5)+
-  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
-  scale_x_discrete(expand = c(0.25, 0.25)) +
-  ggtitle("Niche breadth")+
-  ylim(c(0,60))+
-  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
-        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-
-p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = rmax, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = rmax, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = rmax, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = rmax, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = rmax, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = rmax, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
-  geom_vline(xintercept = 1.5)+
-  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
-  scale_x_discrete(expand = c(0.25, 0.25)) +
-  ggtitle("Growth rate")+
-  xlab("")+
-  ylim(c(0,60))+
-  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
-        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  ylab("Classification timepoint [years]")
-
-p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = dispersal, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = dispersal, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = dispersal, y = EN_Ext), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = dispersal, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = dispersal, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = dispersal, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
-  geom_vline(xintercept = 1.5)+
-  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
-  scale_x_discrete(expand = c(0.25, 0.25)) +
-  ggtitle("Dispersal")+
-  ylim(c(0,60))+
-  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
-        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-
-# create and extract common legend
-colors <- c("Habitat suitability (A3)" = "red", "Population size (A3)" = "orange", "Extinction probability (E)" = "blue")
-
-legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, color = "Population size (A3)"))+
-  geom_boxplot()+
-  geom_boxplot(aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
-  geom_boxplot(aes(x = BatchNum, y = VU_Ext, color = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
-  theme_bw()+
-  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"),
-        legend.position = "bottom")+
-  ylab("Timepoint of classification")+
-  scale_color_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
-
-shared_legend <- extract_legend(legend)
-
-#Plot large grid
-grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
-
-
 # habitat loss over time ---------
 p1 <- ggplot(data[[1]], aes(x= (Year-100), y = hs_change, col = land))+
   geom_point(size = 0.75)+
@@ -2037,230 +2305,3 @@ grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 
-# plot of HS, population size and extinction probability over time --------
-p1 <- ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p2 <- ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p3 <- ggplot(data_mean[[3]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p4 <- ggplot(data_mean[[4]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p5 <- ggplot(data_mean[[5]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p6 <- ggplot(data_mean[[6]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p7 <- ggplot(data_mean[[7]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p8 <- ggplot(data_mean[[8]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p9 <- ggplot(data_mean[[9]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p10 <- ggplot(data_mean[[10]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p11 <- ggplot(data_mean[[11]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p12 <- ggplot(data_mean[[12]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p13 <- ggplot(data_mean[[13]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p14 <- ggplot(data_mean[[14]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p15 <- ggplot(data_mean[[15]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-p16 <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
-  xlim(c(0,75))+
-  ylim(c(-0.15,1.4))
-
-# create and extract common legend
-colors <- c("Population size" = "#FF6A6A", "Habitat suitability" = "gold", "Extinction probability" = "blue")
-
-legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "Habitat suitability"))+
-  geom_line(linewidth = 1)+
-  geom_line(aes(x = Year, y = meanPop, color = "Population size"), linewidth = 1)+
-  geom_line(aes(x = Year, y = meanExt, color = "Extinction probability"), linewidth = 1)+
-  ylab("")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "bottom", , legend.title = element_blank(), 
-        legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"))+
-  scale_color_manual(values= colors)
-
-shared_legend <- extract_legend(legend)
-
-#Plot the large grid
-grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
-             t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
