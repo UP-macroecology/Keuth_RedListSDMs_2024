@@ -145,16 +145,36 @@ for (i in 1:nrow(IUCN_classification)) {
 # Population size against habitat suitability (updated) ---------------
 
 # create different data sets for the different models
-data_optima <- data_adapted_long
-data_breadth <- data_adapted_long
-data_rmax <- data_adapted_long
-data_dispersal <- data_adapted_long
+data_optima <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_optima$land <- rep(1:3, each = 100, times = 2)
+data_optima$optima <- rep(c("central", "marginal"), each = 300)
+data_optima$predictions <- NA
+data_optima$land <- as.factor(data_optima$land)
+
+data_breadth <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_breadth$land <- rep(1:3, each = 100, times = 2)
+data_breadth$breadth <- rep(c("narrow", "wide"), each = 300)
+data_breadth$predictions <- NA
+data_breadth$land <- as.factor(data_breadth$land)
+
+data_rmax <-data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_rmax$land <- rep(1:3, each = 100, times = 2)
+data_rmax$rmax <- rep(c("slow", "fast"), each = 300)
+data_rmax$predictions <- NA
+data_rmax$land <- as.factor(data_rmax$land)
+
+data_dispersal <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_dispersal$land <- rep(1:3, each = 100, times = 2)
+data_dispersal$dispersal <- rep(c("short", "long"), each = 300)
+data_dispersal$predictions <- NA
+data_dispersal$land <- as.factor(data_dispersal$land)
 
 # create data frame with combinations of trait and land replication
 land_rep <- 1:3
 optima <- c("marginal", "central")
 
 sims <- expand.grid(land = land_rep, optima = optima)
+sims$optima <- as.character(sims$optima)
 sims$breadth <- rep(c("narrow", "wide"), each = 3)
 sims$rmax <- rep(c("slow", "fast"), each = 3)
 sims$dispersal <- rep(c("short", "long"), each = 3)
@@ -163,77 +183,103 @@ sink("4_Analysis/Model Results/GLM_Popsize_HSloss.txt")
 # calculate the different models
 for (sim_nr in 1:nrow(sims)){
   # extract trait values
-  optima <- sims[sim_nr,]$optima
-  breadth <- sims[sim_nr,]$breadth
-  rmax <- sims[sim_nr,]$rmax
-  dispersal <- sims[sim_nr,]$dispersal
-  land <- sims[sim_nr,]$land
+  optima_nr <- sims[sim_nr,]$optima
+  breadth_nr <- sims[sim_nr,]$breadth
+  rmax_nr <- sims[sim_nr,]$rmax
+  dispersal_nr <- sims[sim_nr,]$dispersal
+  land_nr <- sims[sim_nr,]$land
   
   # subset data set
-  data_sub_optima <- data_optima %>% filter(land == land[1] & optima == optima[1])
-  data_sub_breadth <- data_breadth %>% filter(land == land[1] & breadth == breadth[1])
-  data_sub_rmax <- data_rmax %>% filter(land == land[1] & rmax == rmax[1])
-  data_sub_dispersal <- data_dispersal %>% filter(land == land[1] & dispersal == dispersal[1])
+  data_sub_optima <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$optima == optima_nr)
+  data_sub_breadth <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$breadth == breadth_nr)
+  data_sub_rmax <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$rmax == rmax_nr)
+  data_sub_dispersal <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$dispersal == dispersal_nr)
   
   # calculate the different models
-  model_optima <- glm(data_sub_optima$pop_sum ~ data_sub_optima$hs_loss, family = "binomial")
-  model_breadth <- glm(data_sub_breadth$pop_sum ~ data_sub_breadth$hs_loss, family = "binomial")
-  model_rmax <- glm(data_sub_rmax$pop_sum ~ data_sub_rmax$hs_loss, family = "binomial")
-  model_dispersal <- glm(data_sub_dispersal$pop_sum ~ data_sub_dispersal$hs_loss, family = "binomial")
+  model_optima <- glm(pop_sum ~ hs_loss, data=data_sub_optima, family = "binomial")
+  model_breadth <- glm(pop_sum ~ hs_loss,  data=data_sub_breadth, family = "binomial")
+  model_rmax <- glm(pop_sum ~ hs_loss,  data=data_sub_rmax, family = "binomial")
+  model_dispersal <- glm(pop_sum ~ hs_loss,  data=data_sub_dispersal, family = "binomial")
   
   # save the model outputs
-  print(paste0("land_nr: ", land, " & optima: ", optima))
+  print(paste0("land_nr: ", land_nr, " & optima: ", optima_nr))
   print(summary(model_optima))
-  print(paste0("land_nr: ", land, " & breadth: ", breadth))
+  print(paste0("land_nr: ", land_nr, " & breadth: ", breadth_nr))
   print(summary(model_breadth))
-  print(paste0("land_nr: ", land, " & rmax: ", rmax))
+  print(paste0("land_nr: ", land_nr, " & rmax: ", rmax_nr))
   print(summary(model_rmax))
-  print(paste0("land_nr: ", land, " & dispersal: ", dispersal))
+  print(paste0("land_nr: ", land_nr, " & dispersal: ", dispersal_nr))
   print(summary(model_dispersal))
   
   #make predictions to data
-  data_optima[which(data_optima$land == land & data_optima$optima == optima),"predictions"] <- predict(model_optima, type = "response")
-  data_breadth[which(data_breadth$land == land & data_breadth$breadth == breadth),"predictions"] <- predict(model_breadth, type = "response")
-  data_rmax[which(data_rmax$land == land & data_rmax$rmax == rmax),"predictions"] <- predict(model_rmax, type = "response")
-  data_dispersal[which(data_dispersal$land == land & data_dispersal$dispersal == dispersal),"predictions"] <- predict(model_dispersal, type = "response")
+  predictions_optima <- predict(model_optima, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response")
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"predictions"] <- predictions_optima
+  
+  predictions_breadth <- predict(model_breadth, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response")
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"predictions"] <- predictions_breadth
+  
+  predictions_rmax <- predict(model_rmax, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response")
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"predictions"] <- predictions_rmax
+  
+  predictions_dispersal <- predict(model_dispersal, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response")
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"predictions"] <- predictions_dispersal
 }
 sink()
 
-# calculate the mean of the predictions
-test <- data_optima %>% group_by(optima, land, hs_loss) %>% summarise(mean_predictions = mean(predictions), sd_predictions = sd(predictions))
-
-ggplot(test, aes(x=hs_loss, y = mean_predictions, col = land, linetype = optima))+
-  geom_line()
-
-ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
-  geom_line()
-
-ggplot(data_append2  %>% filter(land == 1 & BatchNum == 1), aes(x=hs_loss, y = predictions))+
-  geom_line(linewidth = 1.2,aes(linetype = "narrow niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[2]], linewidth = 1.2, aes(linetype = "narrow niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[3]], linewidth = 1.2, aes(linetype = "narrow niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[4]], linewidth = 1.2, aes(linetype = "narrow niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[5]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[6]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[7]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[8]], linewidth = 1.2, aes(linetype = "wide niche", color = "cold-adapted"))+
-  geom_line(data=data_append[[9]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[10]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[11]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[12]], linewidth = 1.2, aes(linetype = "narrow niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[13]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[14]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[15]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
-  geom_line(data=data_append[[16]], linewidth = 1.2, aes(linetype = "wide niche", color = "warm-adapted"))+
-  ylab("Extinction probability")+
+p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
+  #geom_point()+
+  xlim(c(0,1))+
+  ylim(c(0,1))+
+  geom_line(linewidth = 2)+
   xlab("Habitat loss")+
-  theme(panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA), 
-        legend.title = element_blank(), legend.position = "bottom", axis.title = element_text(size=18), axis.text = element_text(size=16), 
-        legend.text = element_text(size=16), legend.key.size = unit(1.2, "cm"))+
-  scale_y_continuous(limits = c(0,1), expand = c(0.01, 0.01))+
-  scale_x_continuous(limits = c(0,1), expand = c(0.01, 0.01))+
-  scale_linetype_manual(values = c("solid", "dashed"), labels=c("narrow niche", "wide niche"))+
-  scale_color_manual(values=c("#427AA1", "#DD5560"), labels=c("cold-adapted", "warm-adapted"))
+  ylab("relative Population size")+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
+  theme_bw()+
+  ggtitle("Niche position")
+
+p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, linetype = breadth))+
+  #geom_point()+
+  xlim(c(0,1))+
+  ylim(c(0,1))+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
+  theme_bw()+
+  ggtitle("Niche breadth")
+
+p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype = rmax))+
+  #geom_point()+
+  xlim(c(0,1))+
+  ylim(c(0,1))+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15),  plot.title = element_text(size = 18, face = "italic"))+
+  theme_bw()+
+  ggtitle("Growth rate")
+
+p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  #geom_point()+
+  xlim(c(0,1))+
+  ylim(c(0,1))+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
+  theme_bw()+
+  ggtitle("Dispersal")
+
+grid.arrange(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
+
+
+data_optima$land <- as.factor(data_optima$land)
+ggplot(data_optima, aes(x = hs_loss, y = predictions, col = land, linetype = optima))+
+  geom_line()
 
 # IUCN classification time - updated plot -------
 
