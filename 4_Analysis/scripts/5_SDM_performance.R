@@ -14,7 +14,7 @@ source("4_Analysis/functions/extract_legend.R")
 # Prepare simulation data
 # create data frame with all parameter combinations
 land_rep <- 1:3
-optima <- c("cold", "warm")
+optima <- c("marginal", "central")
 breadth <- c("narrow", "wide")
 rmax <- c("slow", "fast")
 dispersal <- c("short", "long")
@@ -252,71 +252,70 @@ grid.arrange(p1,p2, p3, shared_legend, nrow=2, ncol = 2, heights = c(8,8), width
 
 # Plot performance in small plots ----------
 p_pos <- #ggplot(performance %>% filter(landRep == 3), aes(x= optima, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= optima, y = mean_TSS, color = Algorithm))+
-  geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.5,1))+
+  ggplot(performance, aes(x= optima, y = mean_AUC, fill = Algorithm))+
+  geom_boxplot(alpha = 0.7)+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.5,1))+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
-  scale_color_brewer(palette = "PRGn")+
+  scale_fill_brewer(palette = "PRGn")+
   ggtitle("Niche position")
 
 p_breadth <- #ggplot(performance %>% filter(landRep == 3), aes(x= breadth, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= breadth, y = mean_TSS, color = Algorithm))+
-  geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.5,1))+
+  ggplot(performance, aes(x= breadth, y = mean_AUC, fill = Algorithm))+
+  geom_boxplot(alpha = 0.7)+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.5,1))+
   theme_bw()+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
-  scale_color_brewer(palette = "PRGn")+
+  theme(axis.title = element_blank(), axis.text = element_text(size = 18), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
+  scale_fill_brewer(palette = "PRGn")+
   ggtitle("Niche breadth")
 
 p_rmax <-# ggplot(performance %>% filter(landRep == 3), aes(x= rmax, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= rmax, y = mean_TSS, color = Algorithm))+
-  geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.5,1))+
+  ggplot(performance, aes(x= rmax, y = mean_AUC, fill = Algorithm))+
+  geom_boxplot(alpha = 0.7)+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.5,1))+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
-  scale_color_brewer(palette = "PRGn")+
+  scale_fill_brewer(palette = "PRGn")+
   ggtitle("Growth rate")
 
 p_disp <- #ggplot(performance %>% filter(landRep == 3), aes(x= dispersal, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= dispersal, y = mean_TSS, color = Algorithm))+
-  geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.5,1))+
+  ggplot(performance, aes(x= dispersal, y = mean_AUC, fill = Algorithm))+
+  geom_boxplot(alpha = 0.7)+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.5,1))+
   theme_bw()+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
-  scale_color_brewer(palette = "PRGn")+
+  theme(axis.title = element_blank(), axis.text = element_text(size = 18), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
+  scale_fill_brewer(palette = "PRGn")+
   ggtitle("Dispersal")
 
 
-legend <- ggplot(performance %>% filter(landRep == 1), aes(x= dispersal, y = mean_TSS, color = Algorithm))+
-  geom_boxplot()+
+legend <- ggplot(performance %>% filter(landRep == 1), aes(x= dispersal, y = mean_TSS, fill = Algorithm))+
+  geom_boxplot(alpha = 0.7)+
   ylab("AUC")+
   theme_bw()+
   theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.key.size = unit(1.5, 'cm'), 
         legend.title = element_text(size=18, face = "bold"), #change legend title font size
         legend.text = element_text(size=13), legend.position = "bottom")+
-  scale_color_brewer(palette = "PRGn", labels = c('GLM', 'Random Forest', "MaxEnt", "Ensemble"))
+  scale_fill_brewer(palette = "PRGn", labels = c('GLM', 'Random Forest', "MaxEnt", "Ensemble"))
 
 shared_legend <- extract_legend(legend)
 
 #Plot for main text
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1),
              top=textGrob("Land replication 3",gp=gpar(fontsize=25,font=2)))
-grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))

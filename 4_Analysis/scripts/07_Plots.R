@@ -228,58 +228,82 @@ sink()
 
 p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
   #geom_point()+
-  xlim(c(0,1))+
-  ylim(c(0,1))+
   geom_line(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"), 
+        legend.position = c(0.93, 0.92), axis.title.x = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#EB5E55", "#4BA3C3", "#FCB870"), guide = "none")
   ggtitle("Niche position")
 
 p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, linetype = breadth))+
   #geom_point()+
-  xlim(c(0,1))+
-  ylim(c(0,1))+
   geom_line(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
+  theme(axis.text = element_text(size = 12), plot.title = element_text(size = 18, face = "italic"), legend.position = c(0.94, 0.92),
+        axis.title = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_colour_discrete(guide = "none") +
   ggtitle("Niche breadth")
 
 p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype = rmax))+
   #geom_point()+
-  xlim(c(0,1))+
-  ylim(c(0,1))+
   geom_line(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15),  plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15),  plot.title = element_text(size = 18, face = "italic"), 
+        legend.position = c(0.94, 0.9), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_colour_discrete(guide = "none") +
   ggtitle("Growth rate")
 
 p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
   #geom_point()+
-  xlim(c(0,1))+
-  ylim(c(0,1))+
   geom_line(linewidth = 2)+
   xlab("Habitat loss")+
   ylab("relative Population size")+
-  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
-  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"))+
   theme_bw()+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"), 
+        legend.position = c(0.94, 0.9), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_colour_discrete(guide = "none") +
   ggtitle("Dispersal")
 
+legend <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"), 
+        legend.title = element_text(size = 15), legend.text = element_text(size = 12), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  guides(linetype = "none", colour = guide_legend(title = "Landscape"))+
+  ggtitle("Dispersal")
+
+shared_legend <- extract_legend(legend)
+
 grid.arrange(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,0.8))
 
-
-data_optima$land <- as.factor(data_optima$land)
-ggplot(data_optima, aes(x = hs_loss, y = predictions, col = land, linetype = optima))+
-  geom_line()
 
 # IUCN classification time - updated plot -------
 
