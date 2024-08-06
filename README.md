@@ -27,6 +27,10 @@ Here, I simulate the population dynamics of the different virtual species in the
 
 In this script, I calculate the extinction probability of each year and extract the occurrences of the species in the landscape in the different replicated runs. I further plot the results of the simulation to visualize the abundances, extinction probabilities and habitat loss.
 
+*Script:* 02b_Simulations_Evaluation.R
+
+In this script, I plot the abundances and extinction probabilities of the simulations.
+
 *Script:* text_labels_plots.R
 
 This script contains the text labels to label 2x2 plots.
@@ -36,8 +40,36 @@ As the second step, I fitted SDMs using the simulation data.
 
 *Script:* 03_Spatial_Thinning.R
 
-I marked every cell that was not occupied by an individual in the respective replicate run and year as absence and thinned the occurrences by using only every second cell of it.
+In this script, I first obtain the absences and then thin the data points by removing every second cell. To obtain the absences I marked every cell that was not occupied by an individual in the respective replicated run and year as absence. After that I thinned the data points.
 
-*Script:* 04_SDM.R
+*Script:* 04_SDM.R, 04_SDM_2.R, 04a_SDM_rangesize.R
 
-I estimated SDMs to ten randomly selected replicated runs. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold and sumed up the habitat suitability for the other cells. I evaluated the performance of the SDMs against all 99 replicated runs that were not used for the fitting of the SDM.
+I estimated SDMs to ten randomly selected replicated runs. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every year under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold (obtained by maxTSS) and sumed up the habitat suitability for the other cells. I further calculated the range size by marking a cell as a presence if the habitat suitability was above a certain threshold (masTSS) and summing up the number of cells. I evaluated the performance of the SDMs against all 99 replicated runs that were not used for the fitting of the SDM.
+
+*Script:* 04b_plot_predictions.R
+
+In this script I plotted the predictions of all algorithms for year 0 and further also plotted the occurrence points of the respective scenario on top of it.
+
+## 4. Analysis
+Here, I plot and statistically analysed the results.
+
+*Script:* 5_SDM_performance.R
+
+Plots of the different performance measures of the different SDM algorithms.
+
+*Script:* 5a_occupancy_plots.R
+
+Plots of the occupancy probability of the different scenarios and landscapes.
+
+*Script:* 06_create_dataset.R
+
+In this script, I joined all the different values I obtained during my workflow (extinction probabilities, population size, habitat suitability, range size). I further calculated the relative population size, habitat suitability and range size (relative to year 0).
+
+*Script:* 07_Plots.R
+
+This script includes all plots I made during the exploratory analysis as well as the final plots.
+
+*Script:* 08_plot_SDM_predictions.R
+
+In this script I plotted the predictions of the ensemble model for every single year and further also plotted the occurrence points of the respective scenario on top of it.
+
