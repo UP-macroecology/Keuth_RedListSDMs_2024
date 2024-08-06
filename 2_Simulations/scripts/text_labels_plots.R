@@ -33,7 +33,7 @@ t_c_small <- ggplot() +
            x = 1,
            y = 1,
            size = 6.5,
-           label = "cold-adapted") +
+           label = "marginal position") +
   theme_void()
 
 t_w_small <- ggplot() +
@@ -41,7 +41,7 @@ t_w_small <- ggplot() +
            x = 1,
            y = 1,
            size = 6.5,
-           label = "warm-adapted") +
+           label = "central position") +
   theme_void()
 
 t_c_medium <- ggplot() +
@@ -49,7 +49,7 @@ t_c_medium <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "cold-adapted") +
+           label = "marginal position") +
   theme_void()
 
 t_w_medium <- ggplot() +
@@ -57,7 +57,7 @@ t_w_medium <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "warm-adapted") +
+           label = "central position") +
   theme_void()
 
 t_c_large <- ggplot() +
@@ -65,7 +65,7 @@ t_c_large <- ggplot() +
            x = 1,
            y = 1,
            size = 10,
-           label = "cold-adapted") +
+           label = "marginal position") +
   theme_void()
 
 t_w_large <- ggplot() +
@@ -73,7 +73,7 @@ t_w_large <- ggplot() +
            x = 1,
            y = 1,
            size = 10,
-           label = "warm-adapted") +
+           label = "central position") +
   theme_void()
 
 # text plots for years
@@ -115,7 +115,7 @@ l1 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nnarrow niche\nslow gr. rate \nshort disp.") +
+           label = "marginal position\nnarrow niche\nslow gr. rate \nshort disp.") +
   theme_void()
 
 l2 <- ggplot() +
@@ -123,7 +123,7 @@ l2 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nnarrow niche\nslow gr. rate \nlong disp.") +
+           label = "marginal position\nnarrow niche\nslow gr. rate \nlong disp.") +
   theme_void()
 
 l3 <- ggplot() +
@@ -131,7 +131,7 @@ l3 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nnarrow niche\nfast gr. rate \nshort disp.") +
+           label = "marginal position\nnarrow niche\nfast gr. rate \nshort disp.") +
   theme_void()
 
 l4 <- ggplot() +
@@ -139,7 +139,7 @@ l4 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nnarrow niche\nfast gr. rate \nlong disp.") +
+           label = "marginal position\nnarrow niche\nfast gr. rate \nlong disp.") +
   theme_void()
 
 l5 <- ggplot() +
@@ -147,7 +147,7 @@ l5 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nwide niche\nslow gr. rate \nshort disp.") +
+           label = "marginal position\nwide niche\nslow gr. rate \nshort disp.") +
   theme_void()
 
 l6 <- ggplot() +
@@ -155,7 +155,7 @@ l6 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nwide niche\nslow gr. rate \nlong disp.") +
+           label = "marginal position\nwide niche\nslow gr. rate \nlong disp.") +
   theme_void()
 
 l7 <- ggplot() +
@@ -163,7 +163,7 @@ l7 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nwide niche\nfast gr. rate \nshort disp.") +
+           label = "marginal position\nwide niche\nfast gr. rate \nshort disp.") +
   theme_void()
 
 l8 <- ggplot() +
@@ -171,7 +171,7 @@ l8 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "cold-adapted\nwide niche\nfast gr. rate \nlong disp.") +
+           label = "marginal position\nwide niche\nfast gr. rate \nlong disp.") +
   theme_void()
 
 l9 <- ggplot() +
@@ -179,7 +179,7 @@ l9 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nnarrow niche\nslow gr. rate \nshort disp.") +
+           label = "central position\nnarrow niche\nslow gr. rate \nshort disp.") +
   theme_void()
 
 l10 <- ggplot() +
@@ -187,7 +187,7 @@ l10 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nnarrow niche\nslow gr. rate \nlong disp.") +
+           label = "central position\nnarrow niche\nslow gr. rate \nlong disp.") +
   theme_void()
 
 l11 <- ggplot() +
@@ -195,7 +195,7 @@ l11 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nnarrow niche\nfast gr. rate \nshort disp.") +
+           label = "central position\nnarrow niche\nfast gr. rate \nshort disp.") +
   theme_void()
 
 l12 <- ggplot() +
@@ -203,7 +203,7 @@ l12 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nnarrow niche\nfast gr. rate \nlong disp.") +
+           label = "central position\nnarrow niche\nfast gr. rate \nlong disp.") +
   theme_void()
 
 l13 <- ggplot() +
@@ -211,7 +211,7 @@ l13 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nwide niche\nslow gr. rate \nshort disp.") +
+           label = "central position\nwide niche\nslow gr. rate \nshort disp.") +
   theme_void()
 
 l14 <- ggplot() +
@@ -219,7 +219,7 @@ l14 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nwide niche\nslow gr. rate \nlong disp.") +
+           label = "central position\nwide niche\nslow gr. rate \nlong disp.") +
   theme_void()
 
 l15 <- ggplot() +
@@ -227,7 +227,7 @@ l15 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nwide niche\nfast gr. rate \nshort disp.") +
+           label = "central position\nwide niche\nfast gr. rate \nshort disp.") +
   theme_void()
 
 l16 <- ggplot() +
@@ -235,7 +235,7 @@ l16 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "warm-adapted\nwide niche\nfast gr. rate \nlong disp.") +
+           label = "central position\nwide niche\nfast gr. rate \nlong disp.") +
   theme_void()
 
 # dispersal growth rate combinations
@@ -279,7 +279,7 @@ t_cn <- ggplot() +
            x = 1,
            y = 1,
            size = 5,
-           label = "cold-adapted & narrow niche") +
+           label = "marginal position & narrow niche") +
   theme_void()
 
 t_cw <- ggplot() +
@@ -287,7 +287,7 @@ t_cw <- ggplot() +
            x = 1,
            y = 1,
            size = 5,
-           label = "cold-adapted & wide niche") +
+           label = "marginal position & wide niche") +
   theme_void()
 
 t_wna <- ggplot() +
@@ -295,7 +295,7 @@ t_wna <- ggplot() +
            x = 1,
            y = 1,
            size = 5,
-           label = "warm-adapted & narrow niche") +
+           label = "central position & narrow niche") +
   theme_void()
 
 t_ww <- ggplot() +
@@ -303,7 +303,7 @@ t_ww <- ggplot() +
            x = 1,
            y = 1,
            size = 5,
-           label = "warm-adapted & wide niche") +
+           label = "central position & wide niche") +
   theme_void()
 
 # threatened values

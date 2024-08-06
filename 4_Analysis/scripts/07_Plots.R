@@ -234,11 +234,11 @@ p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetyp
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme_bw()+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"), 
-        legend.position = c(0.93, 0.92), axis.title.x = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
+        legend.position = c(0.93, 0.91), axis.title.x = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
         legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
-  scale_color_manual(values = c("#EB5E55", "#4BA3C3", "#FCB870"), guide = "none")
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006D2C"), guide = "none")+
   ggtitle("Niche position")
 
 p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, linetype = breadth))+
@@ -248,11 +248,11 @@ p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, li
   ylab("relative Population size")+
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  theme(axis.text = element_text(size = 12), plot.title = element_text(size = 18, face = "italic"), legend.position = c(0.94, 0.92),
+  theme(axis.text = element_text(size = 12), plot.title = element_text(size = 18, face = "italic"), legend.position = c(0.94, 0.91),
         axis.title = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
-  scale_colour_discrete(guide = "none") +
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006D2C"), guide = "none")+
   ggtitle("Niche breadth")
 
 p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype = rmax))+
@@ -266,7 +266,7 @@ p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype
         legend.position = c(0.94, 0.9), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
-  scale_colour_discrete(guide = "none") +
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006D2C"), guide = "none")+
   ggtitle("Growth rate")
 
 p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
@@ -281,7 +281,7 @@ p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land
         legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
-  scale_colour_discrete(guide = "none") +
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006D2C"), guide = "none")+
   ggtitle("Dispersal")
 
 legend <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
@@ -297,12 +297,13 @@ legend <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, lin
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   guides(linetype = "none", colour = guide_legend(title = "Landscape"))+
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006D2C"))+
   ggtitle("Dispersal")
 
 shared_legend <- extract_legend(legend)
 
-grid.arrange(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8))
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,0.8))
+
 
 
 # IUCN classification time - updated plot -------
@@ -445,218 +446,206 @@ grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heig
 # plot of HS, population size and extinction probability over time --------
 p1 <- ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p2 <- ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p3 <- ggplot(data_mean[[3]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p4 <- ggplot(data_mean[[4]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p5 <- ggplot(data_mean[[5]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p6 <- ggplot(data_mean[[6]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p7 <- ggplot(data_mean[[7]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p8 <- ggplot(data_mean[[8]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p9 <- ggplot(data_mean[[9]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p10 <- ggplot(data_mean[[10]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p11 <- ggplot(data_mean[[11]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p12 <- ggplot(data_mean[[12]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p13 <- ggplot(data_mean[[13]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
-  ylab("")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "", axis.title.y = element_blank())+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p14 <- ggplot(data_mean[[14]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   ylab("")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "", axis.title.y = element_blank())+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p15 <- ggplot(data_mean[[15]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   ylab("")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "", axis.title.y = element_blank())+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 p16 <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1, col = "gold")+
+  geom_line(linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1, col = "blue")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   ylab("")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "")+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "", axis.title.y = element_blank())+
   xlim(c(0,75))+
   ylim(c(-0.15,1.4))
 
 # create and extract common legend
-colors <- c("Population size" = "#FF6A6A", "Habitat suitability" = "gold", "Extinction probability" = "blue")
+#colors <- c("relative Population size" = "#018571", "relative Habitat suitability" = "#DFC27D", "Extinction probability" = "#9460A5")
+colors <- c("relative Population size" = "#FF6A6A", "relative Habitat suitability" = "gold", "Extinction probability" = "blue")
 
-legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "Habitat suitability"))+
+legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "relative Habitat suitability"))+
   geom_line(linewidth = 1)+
-  geom_line(aes(x = Year, y = meanPop, color = "Population size"), linewidth = 1)+
+  geom_line(aes(x = Year, y = meanPop, color = "relative Population size"), linewidth = 1)+
   geom_line(aes(x = Year, y = meanExt, color = "Extinction probability"), linewidth = 1)+
   ylab("")+
   theme_bw()+
@@ -670,176 +659,193 @@ shared_legend <- extract_legend(legend)
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
-# Plot the results
 # habitat loss compared to range loss ----------
-p1 <- ggplot(data[[1]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p1 <- ggplot(data[[1]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p2 <-ggplot(data[[2]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p2 <-ggplot(data[[2]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p3 <- ggplot(data[[3]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p3 <- ggplot(data[[3]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p4 <- ggplot(data[[4]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p4 <- ggplot(data[[4]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p5 <- ggplot(data[[5]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p5 <- ggplot(data[[5]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p6 <- ggplot(data[[6]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p6 <- ggplot(data[[6]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p7 <- ggplot(data[[7]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p7 <- ggplot(data[[7]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p8 <- ggplot(data[[8]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p8 <- ggplot(data[[8]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p9 <- ggplot(data[[9]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p9 <- ggplot(data[[9]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.x = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p10 <- ggplot(data[[10]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p10 <- ggplot(data[[10]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p11 <- ggplot(data[[11]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p11 <- ggplot(data[[11]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p12 <-ggplot(data[[12]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p12 <-ggplot(data[[12]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), legend.position = "", axis.title = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p13 <- ggplot(data[[13]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p13 <- ggplot(data[[13]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "")+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p14 <-ggplot(data[[14]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p14 <-ggplot(data[[14]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p15 <- ggplot(data[[15]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p15 <- ggplot(data[[15]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
-p16 <- ggplot(data[[16]], aes(x=(1-hs_change), y=(1-range_change), col = land, group = land))+
+p16 <- ggplot(data[[16]], aes(x=hs_loss, y=(1-range_change), col = land, group = land))+
   geom_point(size=1.5)+
-  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed", linewidth = 1)+
+  geom_abline(intercept = 0, slope = 1, col = "black", linetype = "dashed", linewidth = 1.2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "", axis.title.y = element_blank())+
-  ylim(c(0,1))+
-  xlim(c(0,1))
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) 
 
 #create and extract shared legend
-legend <- ggplot(data[[16]], aes(x=(1-hs_change), y=pop_sum, col = land, group = land))+
+legend <- ggplot(data[[16]], aes(x=hs_loss, y=pop_sum, col = land, group = land))+
   geom_point(size = 2)+
   theme_bw()+
   xlab("Habitat loss")+
   ylab("Range loss")+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), legend.position = "bottom", legend.key.size = unit(1, "cm"), legend.text = element_text(size = 13), 
-        legend.title = element_text(size = 15))
+        legend.title = element_text(size = 15))+
+  scale_color_manual(values = c("#C7E9C0", "#31A354", "#006629"))+
+  guides(colour = guide_legend(title = "Landscape"))
 
 shared_legend <- extract_legend(legend)
 
