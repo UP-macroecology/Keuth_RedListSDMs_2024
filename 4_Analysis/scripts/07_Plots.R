@@ -179,7 +179,7 @@ sims$breadth <- rep(c("narrow", "wide"), each = 3)
 sims$rmax <- rep(c("slow", "fast"), each = 3)
 sims$dispersal <- rep(c("short", "long"), each = 3)
 
-sink("4_Analysis/Model Results/GLM_Popsize_HSloss.txt")
+sink("4_Analysis/Model Results/GLM_Popsize_HSloss_quadratic.txt")
 # calculate the different models
 for (sim_nr in 1:nrow(sims)){
   # extract trait values
@@ -196,10 +196,14 @@ for (sim_nr in 1:nrow(sims)){
   data_sub_dispersal <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$dispersal == dispersal_nr)
   
   # calculate the different models
-  model_optima <- glm(pop_sum ~ hs_loss, data=data_sub_optima, family = "binomial")
-  model_breadth <- glm(pop_sum ~ hs_loss,  data=data_sub_breadth, family = "binomial")
-  model_rmax <- glm(pop_sum ~ hs_loss,  data=data_sub_rmax, family = "binomial")
-  model_dispersal <- glm(pop_sum ~ hs_loss,  data=data_sub_dispersal, family = "binomial")
+  #model_optima <- glm(pop_sum ~ hs_loss, data=data_sub_optima, family = "binomial")
+  model_optima <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_optima, family = "binomial")
+  #model_breadth <- glm(pop_sum ~ hs_loss,  data=data_sub_breadth, family = "binomial")
+  model_breadth <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth, family = "binomial")
+  #model_rmax <- glm(pop_sum ~ hs_loss,  data=data_sub_rmax, family = "binomial")
+  model_rmax <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax, family = "binomial")
+  #model_dispersal <- glm(pop_sum ~ hs_loss,  data=data_sub_dispersal, family = "binomial")
+  model_dispersal <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal, family = "binomial")
   
   # save the model outputs
   print(paste0("land_nr: ", land_nr, " & optima: ", optima_nr))
@@ -234,7 +238,7 @@ p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetyp
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme_bw()+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"), 
-        legend.position = c(0.93, 0.91), axis.title.x = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
+        legend.position.inside = c(0.93, 0.91), axis.title.x = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
         legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
@@ -248,7 +252,7 @@ p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, li
   ylab("relative Population size")+
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme_bw()+
-  theme(axis.text = element_text(size = 12), plot.title = element_text(size = 18, face = "italic"), legend.position = c(0.94, 0.91),
+  theme(axis.text = element_text(size = 12), plot.title = element_text(size = 18, face = "italic"), legend.position.inside = c(0.94, 0.91),
         axis.title = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
@@ -263,7 +267,7 @@ p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme_bw()+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15),  plot.title = element_text(size = 18, face = "italic"), 
-        legend.position = c(0.94, 0.9), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
+        legend.position.inside = c(0.94, 0.9), legend.title = element_blank(), legend.text = element_text(size = 12), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#C7E9C0", "#31A354", "#006D2C"), guide = "none")+
@@ -277,7 +281,7 @@ p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land
   theme_bw()+
   geom_abline(intercept = 1, slope = -1, col = "black", linetype = "dashed", linewidth = 1)+
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 18, face = "italic"), 
-        legend.position = c(0.94, 0.9), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
+        legend.position.inside = c(0.94, 0.9), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 12), 
         legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
@@ -855,6 +859,206 @@ grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p
 
 #-------
 #-------
+# try the correct criteria plot
+
+# create the VU, EN, CR columns classification time for all metrices (Pop, Range, HS, Ext.Prob)
+IUCN_classification$VU_Pop_cri <- NA
+IUCN_classification$EN_Pop_cri <- NA
+IUCN_classification$CR_Pop_cri <- NA
+IUCN_classification$VU_HS_cri <- NA
+IUCN_classification$EN_HS_cri <- NA
+IUCN_classification$CR_HS_cri <- NA
+IUCN_classification$VU_Ext_cri <- NA
+IUCN_classification$EN_Ext_cri <- NA
+IUCN_classification$CR_Ext_cri <- NA
+
+# extract time point when the thresholds of the different criteria is surpassed for the different metrics
+for (i in 1:nrow(IUCN_classification)) {
+  for (k in 8:13) {
+    ifelse(IUCN_classification[i, k] < 10, IUCN_classification[i, k+12] <- "Y", IUCN_classification[i, k+12] <- "N")
+  }
+  #criterion E
+  ifelse(IUCN_classification[i, "VU_Ext"] < 100, IUCN_classification[i, "VU_Ext_cri"] <- "Y", IUCN_classification[i, "VU_Ext_cri"] <- "N")
+  ifelse(IUCN_classification[i, "EN_Ext"] < 20, IUCN_classification[i, "EN_Ext_cri"] <- "Y", IUCN_classification[i, "EN_Ext_cri"] <- "N")
+  ifelse(IUCN_classification[i, "CR_Ext"] < 10, IUCN_classification[i, "CR_Ext_cri"] <- "Y", IUCN_classification[i, "CR_Ext_cri"] <- "N")
+  
+}
+
+ 
+p_pos <- ggplot(IUCN_classification %>% group_by(optima) %>% count(VU_Pop_cri) %>% mutate(per = n/240) %>% filter(VU_Pop_cri == "Y"), aes(x = optima, y = per))+
+  geom_bar(stat = "identity",  width = 0.06, fill = "orange", position = position_nudge(x = - 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(VU_HS_cri) %>% mutate(per = n/240) %>% filter(VU_HS_cri == "Y"), aes(x = optima, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.42), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(VU_Ext_cri) %>% mutate(per = n/240) %>% filter(VU_Ext_cri == "Y"), aes(x = optima, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.24), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(EN_Pop_cri) %>% mutate(per = n/240) %>% filter(EN_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0))+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(EN_HS_cri) %>% mutate(per = n/240) %>% filter(EN_HS_cri == "Y"), aes(x = optima, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.09), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(EN_Ext_cri) %>% mutate(per = n/240) %>% filter(EN_Ext_cri == "Y"), aes(x = optima, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.09), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(CR_Pop_cri) %>% mutate(per = n/240) %>% filter(CR_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(CR_HS_cri) %>% mutate(per = n/240) %>% filter(CR_HS_cri == "Y"), aes(x = optima, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.24), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(optima) %>% count(CR_Ext_cri) %>% mutate(per = n/240) %>% filter(CR_Ext_cri == "Y"), aes(x = optima, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.43), fill = "blue")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=1.08, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=1.08, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche position")+
+  xlab("")+
+  ylab("")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.15))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+p_breadth <- ggplot(IUCN_classification %>% group_by(breadth) %>% count(VU_Pop_cri) %>% mutate(per = n/240) %>% filter(VU_Pop_cri == "Y"), aes(x = breadth, y = per))+
+  geom_bar(stat = "identity",  width = 0.06, fill = "orange", position = position_nudge(x = - 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(VU_HS_cri) %>% mutate(per = n/240) %>% filter(VU_HS_cri == "Y"), aes(x = breadth, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.42), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(VU_Ext_cri) %>% mutate(per = n/240) %>% filter(VU_Ext_cri == "Y"), aes(x = breadth, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.24), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(EN_Pop_cri) %>% mutate(per = n/240) %>% filter(EN_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0))+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(EN_HS_cri) %>% mutate(per = n/240) %>% filter(EN_HS_cri == "Y"), aes(x = breadth, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.09), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(EN_Ext_cri) %>% mutate(per = n/240) %>% filter(EN_Ext_cri == "Y"), aes(x = breadth, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.09), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(CR_Pop_cri) %>% mutate(per = n/240) %>% filter(CR_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(CR_HS_cri) %>% mutate(per = n/240) %>% filter(CR_HS_cri == "Y"), aes(x = breadth, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.24), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(breadth) %>% count(CR_Ext_cri) %>% mutate(per = n/240) %>% filter(CR_Ext_cri == "Y"), aes(x = breadth, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.43), fill = "blue")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=1.08, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=1.08, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche breadth")+
+  xlab("")+
+  ylab("")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.15))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+p_rmax <- ggplot(IUCN_classification %>% group_by(rmax) %>% count(VU_Pop_cri) %>% mutate(per = n/240) %>% filter(VU_Pop_cri == "Y"), aes(x = rmax, y = per))+
+  geom_bar(stat = "identity",  width = 0.06, fill = "orange", position = position_nudge(x = - 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(VU_HS_cri) %>% mutate(per = n/240) %>% filter(VU_HS_cri == "Y"), aes(x = rmax, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.42), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(VU_Ext_cri) %>% mutate(per = n/240) %>% filter(VU_Ext_cri == "Y"), aes(x = rmax, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.24), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(EN_Pop_cri) %>% mutate(per = n/240) %>% filter(EN_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0))+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(EN_HS_cri) %>% mutate(per = n/240) %>% filter(EN_HS_cri == "Y"), aes(x = rmax, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.09), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(EN_Ext_cri) %>% mutate(per = n/240) %>% filter(EN_Ext_cri == "Y"), aes(x = rmax, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.09), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(CR_Pop_cri) %>% mutate(per = n/240) %>% filter(CR_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(CR_HS_cri) %>% mutate(per = n/240) %>% filter(CR_HS_cri == "Y"), aes(x = rmax, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.24), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(rmax) %>% count(CR_Ext_cri) %>% mutate(per = n/240) %>% filter(CR_Ext_cri == "Y"), aes(x = rmax, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.43), fill = "blue")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=1.08, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=1.08, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Growth rate")+
+  xlab("")+
+  ylab("")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.15))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+p_disp <- ggplot(IUCN_classification %>% group_by(dispersal) %>% count(VU_Pop_cri) %>% mutate(per = n/240) %>% filter(VU_Pop_cri == "Y"), aes(x = dispersal, y = per))+
+  geom_bar(stat = "identity",  width = 0.06, fill = "orange", position = position_nudge(x = - 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(VU_HS_cri) %>% mutate(per = n/240) %>% filter(VU_HS_cri == "Y"), aes(x = dispersal, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.42), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(VU_Ext_cri) %>% mutate(per = n/240) %>% filter(VU_Ext_cri == "Y"), aes(x = dispersal, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.24), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(EN_Pop_cri) %>% mutate(per = n/240) %>% filter(EN_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0))+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(EN_HS_cri) %>% mutate(per = n/240) %>% filter(EN_HS_cri == "Y"), aes(x = dispersal, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.09), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(EN_Ext_cri) %>% mutate(per = n/240) %>% filter(EN_Ext_cri == "Y"), aes(x = dispersal, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.09), fill = "blue")+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(CR_Pop_cri) %>% mutate(per = n/240) %>% filter(CR_Pop_cri == "Y"), stat = "identity",  
+           width = 0.06, fill = "orange", position = position_nudge(x = 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(CR_HS_cri) %>% mutate(per = n/240) %>% filter(CR_HS_cri == "Y"), aes(x = dispersal, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.24), fill = "red")+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(CR_Ext_cri) %>% mutate(per = n/240) %>% filter(CR_Ext_cri == "Y"), aes(x = dispersal, y = per), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = 0.43), fill = "blue")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=1.08, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=1.08, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=1.08, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=1.08, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Dispersal")+
+  xlab("")+
+  ylab("")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.15))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+# create and extract common legend
+colors <- c("Habitat suitability (A3)" = "red", "Population size (A3)" = "orange", "Extinction probability (E)" = "blue")
+
+legend <- ggplot(IUCN_classification %>% group_by(dispersal) %>% count(VU_Pop_cri) %>% mutate(per = n/240) %>% filter(VU_Pop_cri == "Y"), 
+                 aes(x = dispersal, y = per, fill = "Population size (A3)"))+
+  geom_bar(stat = "identity",  width = 0.06, position = position_nudge(x = - 0.33))+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(VU_HS_cri) %>% mutate(per = n/240) %>% filter(VU_HS_cri == "Y"), 
+           aes(x = dispersal, y = per, fill = "Habitat suitability (A3)"), stat = "identity",  width = 0.06, position = position_nudge(x = -0.42))+
+  geom_bar(data = IUCN_classification %>% group_by(dispersal) %>% count(VU_Ext_cri) %>% mutate(per = n/240) %>% filter(VU_Ext_cri == "Y"), 
+           aes(x = dispersal, y = per,  fill = "Extinction probability (E)"), 
+           stat = "identity",  width = 0.06, position = position_nudge(x = -0.24))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"),
+        legend.position = "bottom")+
+  scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
+  
+shared_legend <- extract_legend(legend)
+
+#Plot large grid
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+
+
 #-------
 # Old Plots -----
 # extinction probability - change in habitat suitability sums/ change in range size ------------
