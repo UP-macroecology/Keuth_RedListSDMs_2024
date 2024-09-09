@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=24
 #SBATCH --time=24:00:00
 #SBATCH --mem=100gb
-#SBATCH --nodelist=ecoc9z
+#SBATCH --nodelist=ecoc9
 
 cd ${SLURM_SUBMIT_DIR}
 R CMD BATCH ./06_create_dataset.R ./output-file-create_dataset.Rout

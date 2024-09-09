@@ -83,47 +83,72 @@ foreach(sim_nr=1:nrow(sims), .packages = c("data.table", "dplyr", "tidyr", "stri
   data_raw$land <- rep_nr
 
   # save data set
-  saveRDS(data_raw, paste0(sdm_dir, "results/data_analysis_raw_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  
-  # remove additional rows of the spin up period to calculate the relative changes
-  data_rel <- data_raw[100:190,]
-
-  # calculate relative values
-  for (i in 3:32) {
-    for (j in 2:nrow(data_rel)) {
-      data_rel[j,i] <- data_rel[j,i]/data_rel[1,i]
-    }
-    data_rel[1,i] <- 1
-  }
-
-  #add column for BatchNum and landscape replicate
-  data_rel$BatchNum <- BatchNum
-  data_rel$land <- rep_nr
-  
-  # save data set
-  saveRDS(data_rel, paste0(sdm_dir, "results/data_analysis_relative_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  #saveRDS(data_raw, paste0(sdm_dir, "results/data_analysis_raw_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   
   # append the single columns with each other
-  data_long_pop <- pivot_longer(data_rel[, 1:12], cols = !c(Year, extProb), values_to = "pop_sum") %>% mutate(Rep = as.numeric(str_extract(name, "\\d+")))
-  data_long_habitat <- pivot_longer(data_rel[, c(1:2,13:22)], cols = !c(Year, extProb), values_to = "hs_change") %>%  mutate(Rep = as.numeric(str_extract(name, "\\d+")))
-  data_long_range <- pivot_longer(data_rel[, c(1:2,23:32)], cols = !c(Year, extProb), values_to = "range_change") %>%  mutate(Rep = as.numeric(str_extract(name, "\\d+")))
+  data_long_pop <- pivot_longer(data_raw[, 1:12], cols = !c(Year, extProb), values_to = "pop_sum") %>% mutate(Rep = as.numeric(str_extract(name, "\\d+")))
+  data_long_habitat <- pivot_longer(data_raw[, c(1:2,13:22)], cols = !c(Year, extProb), values_to = "hs_change") %>%  mutate(Rep = as.numeric(str_extract(name, "\\d+")))
+  data_long_range <- pivot_longer(data_raw[, c(1:2,23:32)], cols = !c(Year, extProb), values_to = "range_change") %>%  mutate(Rep = as.numeric(str_extract(name, "\\d+")))
   
   # join the three different data sets
-  data_long <- full_join(data_long_pop, data_long_habitat, by = c("Year", "Rep"))
-  data_long <- full_join(data_long, data_long_range, by = c("Year", "Rep"))
+  data_long_raw <- full_join(data_long_pop, data_long_habitat, by = c("Year", "Rep"))
+  data_long_raw <- full_join(data_long_raw, data_long_range, by = c("Year", "Rep"))
   
   # remove double columns
-  data_long <- data_long[, -which(names(data_long) %in% c("extProb.x", "extProb.y", "name", "name.x", "name.y"))]
+  data_long_raw <- data_long_raw[, -which(names(data_long_raw) %in% c("extProb.x", "extProb.y", "name", "name.x", "name.y"))]
   
   #rearrange columns
-  data_long <- data_long %>% relocate(Rep, .before = Year) %>% relocate(extProb, .after = Year)
-  
-  #add column for BatchNum and landscape replicate
-  data_long$BatchNum <- BatchNum
-  data_long$land <- rep_nr
+  data_long_raw <- data_long_raw %>% relocate(Rep, .before = Year) %>% relocate(extProb, .after = Year)
   
   # save data set
-  saveRDS(data_long, paste0(sdm_dir, "results/data_analysis_relative_long_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(data_long_raw, paste0(sdm_dir, "results/data_analysis_raw_long_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  
+  # #add column for BatchNum and landscape replicate
+  # data_long$BatchNum <- BatchNum
+  # data_long$land <- rep_nr
+  # 
+  # # save data set
+  # saveRDS(data_long, paste0(sdm_dir, "results/data_analysis_relative_long_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  # 
+  # # remove additional rows of the spin up period to calculate the relative changes
+  # data_rel <- data_raw[100:190,]
+  # 
+  # # calculate relative values
+  # for (i in 3:32) {
+  #   for (j in 2:nrow(data_rel)) {
+  #     data_rel[j,i] <- data_rel[j,i]/data_rel[1,i]
+  #   }
+  #   data_rel[1,i] <- 1
+  # }
+  # 
+  # #add column for BatchNum and landscape replicate
+  # data_rel$BatchNum <- BatchNum
+  # data_rel$land <- rep_nr
+  # 
+  # # save data set
+  # saveRDS(data_rel, paste0(sdm_dir, "results/data_analysis_relative_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  # 
+  # # append the single columns with each other
+  # data_long_pop <- pivot_longer(data_rel[, 1:12], cols = !c(Year, extProb), values_to = "pop_sum") %>% mutate(Rep = as.numeric(str_extract(name, "\\d+")))
+  # data_long_habitat <- pivot_longer(data_rel[, c(1:2,13:22)], cols = !c(Year, extProb), values_to = "hs_change") %>%  mutate(Rep = as.numeric(str_extract(name, "\\d+")))
+  # data_long_range <- pivot_longer(data_rel[, c(1:2,23:32)], cols = !c(Year, extProb), values_to = "range_change") %>%  mutate(Rep = as.numeric(str_extract(name, "\\d+")))
+  # 
+  # # join the three different data sets
+  # data_long <- full_join(data_long_pop, data_long_habitat, by = c("Year", "Rep"))
+  # data_long <- full_join(data_long, data_long_range, by = c("Year", "Rep"))
+  # 
+  # # remove double columns
+  # data_long <- data_long[, -which(names(data_long) %in% c("extProb.x", "extProb.y", "name", "name.x", "name.y"))]
+  # 
+  # #rearrange columns
+  # data_long <- data_long %>% relocate(Rep, .before = Year) %>% relocate(extProb, .after = Year)
+  # 
+  # #add column for BatchNum and landscape replicate
+  # data_long$BatchNum <- BatchNum
+  # data_long$land <- rep_nr
+  # 
+  # # save data set
+  # saveRDS(data_long, paste0(sdm_dir, "results/data_analysis_relative_long_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 stopCluster(cl)
