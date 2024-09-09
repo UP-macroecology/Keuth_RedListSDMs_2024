@@ -248,10 +248,10 @@ for (sim_nr in 1:nrow(sims)){
   data_sub_dispersal <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$dispersal == dispersal_nr)
   
   # calculate the different models
-  model_optima <- step(glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_optima, family = "binomial"))
-  model_breadth <- step(glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth, family = "binomial"))
-  model_rmax <- step(glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax, family = "binomial"))
-  model_dispersal <- step(glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal, family = "binomial"))
+  model_optima <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_optima, family = "binomial")
+  model_breadth <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth, family = "binomial")
+  model_rmax <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax, family = "binomial")
+  model_dispersal <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal, family = "binomial")
   
   # save the model outputs
   print(paste0("land_nr: ", land_nr, " & optima: ", optima_nr))
