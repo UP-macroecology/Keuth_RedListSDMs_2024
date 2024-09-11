@@ -93,7 +93,23 @@ for (i in 1:nrow(IUCN_classification)) {
 
 }
 
+# add the trait values to the data frame
+optima <- c("marginal", "central")
+breadth <- c("narrow", "wide")
+rmax <- c("slow", "fast")
+dispersal <- c("short", "long")
+land_rep <- 1:3
+BatchNum <- 1:16
+
+#create data frame with all trait combinations
+sims_long <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims_long$BatchNum <- rep(1:16)
+
+# create data frame with all parameter combinations for the IUCN classification time
+IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+
 save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_mean.RData")
+write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_mean.csv", row.names = F)
 
 # performs the same code for every scenario
 for (i in 1:nrow(IUCN_classification)) {
@@ -132,15 +148,6 @@ for (i in 1:nrow(IUCN_classification)) {
   
 }
 
-save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.RData")
-
-# Plot the results
-
-library(ggplot2)
-library(gridExtra)
-
-load("4_Analysis/data/IUCN_classification_times_mean.RData")
-
 # add the trait values to the data frame
 optima <- c("marginal", "central")
 breadth <- c("narrow", "wide")
@@ -155,6 +162,16 @@ sims_long$BatchNum <- rep(1:16)
 
 # create data frame with all parameter combinations for the IUCN classification time
 IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+
+save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.RData")
+write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.csv", row.names = F)
+
+# Plot the results
+
+library(ggplot2)
+library(gridExtra)
+
+load("4_Analysis/data/IUCN_classification_times_mean.RData")
 
 p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
@@ -380,8 +397,6 @@ for (i in 1:nrow(IUCN_classification)) {
   
 }
 
-save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates.RData")
-
 # add the trait values to the data frame
 optima <- c("marginal", "central")
 breadth <- c("narrow", "wide")
@@ -396,6 +411,9 @@ sims_long$BatchNum <- rep(1:16)
 
 # create data frame with all parameter combinations for the IUCN classification time
 IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+
+save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates.csv", row.names = F)
 
 p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
