@@ -21,4 +21,4 @@ quant_dist_short <- as.numeric(quantile(distances_short, probs = 0.95))
 quant_dist_long <- as.numeric(quantile(distances_long, probs = 0.95))
 
 # save dispersal distances
-save(med_dist_short, med_dist_short, quant_dist_short, quant_dist_long, file = "3_SDMs/data/values_dispersal_assumption.Rdata")
+save(med_dist_short, med_dist_long, quant_dist_short, quant_dist_long, file = "3_SDMs/data/values_dispersal_assumption.Rdata")
