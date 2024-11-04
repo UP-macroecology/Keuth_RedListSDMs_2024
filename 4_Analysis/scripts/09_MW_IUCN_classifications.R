@@ -19,7 +19,7 @@ MW <- function(data, new_data, timehorizon, threshold, category, metric){
   } else if(metric == "HS") {
     column_data <- "hs_mean"
   } else {
-    column_data <- "extProb2"
+    column_data <- "extProb"
   }
   
   # reduce timehorizon if it exceeds the maximum number of years in the data set
@@ -30,7 +30,16 @@ MW <- function(data, new_data, timehorizon, threshold, category, metric){
   
   # for every year calculated the relative size to the size x years into the future
   for (i in 1:nrow(data)) {
+    if(column_data == "extProb"){
+      # if(is.na(data[data$Year == unique(data$Year)[i+timehorizon], "replicate_runs"])){
+      #   rel_loss <- 1 - (data[tail(which(!is.na(dat$replicate_runs)), 1), "replicate_runs"]/data[data$Year == unique(data$Year)[i],"replicate_runs"])
+      #   #print(data[tail(which(!is.na(dat$replicate_runs)), 1), "replicate_runs"])
+      # } else {
+      rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon], "replicate_runs"]/data[data$Year == unique(data$Year)[i],"replicate_runs"])
+      #}
+    } else {
     rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon], column_data]/data[data$Year == unique(data$Year)[i], column_data])
+    }
     #print(rel_loss)
     
     # controls if the relative loss exceeds the threshold
@@ -58,6 +67,12 @@ IUCN_classification$CR_HS <- NA
 IUCN_classification$VU_Ext <- NA
 IUCN_classification$EN_Ext <- NA
 IUCN_classification$CR_Ext <- NA
+IUCN_classification$VU_HS_disp_median <- NA
+IUCN_classification$EN_HS_disp_median <- NA
+IUCN_classification$CR_HS_disp_median <- NA
+IUCN_classification$VU_HS_disp_quant <- NA
+IUCN_classification$EN_HS_disp_quant <- NA
+IUCN_classification$CR_HS_disp_quant <- NA
 
 # performs the same code for every scenario
 for (i in 1:nrow(IUCN_classification)) {
@@ -66,15 +81,24 @@ for (i in 1:nrow(IUCN_classification)) {
   
   # Load data
   #dat <- readRDS("4_Analysis/data/data_analysis_raw_Batch10_Sim1.rds")
+  #dat2 <- readRDS("4_Analysis/data/Nr_replicates_year_Batch10_Sim1.rds")
   dat <- readRDS(paste0("4_Analysis/data/data_analysis_raw_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  dat2 <- readRDS(paste0("4_Analysis/data/Nr_replicates_year_Batch", BatchNum, "_Sim", land_rep, ".rds"))
 
   # remove rows till year 100
   dat <- dat[!dat$Year %in% c(0:99),]
+  dat2 <- dat2[!dat2$Year %in% c(0:99),]
+  
+  # join data sets
+  dat <- merge(dat, dat2, by = "Year", all = T)
+  
+  #set NAs to 0 in repicate runs column
+  dat[which(is.na(dat$replicate_runs)), "replicate_runs"] <- 0
 
   # calculate mean pop and mean hs
   dat$pop_mean <- rowMeans(dat[,3:12])
   dat$hs_mean <- rowMeans(dat[,13:22])
-  dat$extProb2 <- 1- dat$extProb
+  #dat$extProb2 <- 1- dat$extProb
 
   # Criterion A3 - Pop size
   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.3, "VU", "Pop")
@@ -90,6 +114,23 @@ for (i in 1:nrow(IUCN_classification)) {
   IUCN_classification <- MW(dat, IUCN_classification, 100, 0.1, "VU", "Ext")
   IUCN_classification <- MW(dat, IUCN_classification, 20, 0.2, "EN", "Ext")
   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "CR", "Ext")
+  
+  # calculate time point of classification for using dispersal assumptions
+  dat_median <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  dat_quant <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  
+  #calculate the mean hs_loss for every startYear
+  dat_median$hs_mean <- rowMeans(dat_median[,2:11])
+  dat_quant$hs_mean <- rowMeans(dat_quant[,2:11])
+  
+  # obtain the year when the criterion is fulfilled
+  IUCN_classification[i, "VU_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 30), "startYear"],1)
+  IUCN_classification[i, "EN_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 50), "startYear"],1)
+  IUCN_classification[i, "CR_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 80), "startYear"],1)
+  
+  IUCN_classification[i, "VU_HS_disp_quant"] <- head(dat_median[which(dat_quant$hs_mean >= 30), "startYear"],1)
+  IUCN_classification[i, "EN_HS_disp_quant"] <- head(dat_median[which(dat_quant$hs_mean >= 50), "startYear"],1)
+  IUCN_classification[i, "CR_HS_disp_quant"] <- head(dat_median[which(dat_quant$hs_mean >= 80), "startYear"],1)
 
 }
 
@@ -110,61 +151,62 @@ IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
 
 save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_mean.RData")
 write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_mean.csv", row.names = F)
+# 
+# # performs the same code for every scenario
+# for (i in 1:nrow(IUCN_classification)) {
+#   BatchNum <- IUCN_classification[i, "BatchNum"]
+#   land_rep <- IUCN_classification[i, "land_rep"]
+#   
+#   # Load data
+#   #dat <- readRDS("4_Analysis/data/data_analysis_raw_Batch10_Sim1.rds")
+#   dat <- readRDS(paste0("4_Analysis/data/data_analysis_raw_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+#   
+#   # remove rows till year 100
+#   dat <- dat[!dat$Year %in% c(0:99),]
+#   
+#   #replace NAs with 0
+#   dat[is.na(dat)] <- 0
+#   
+#   # calculate mean pop and mean hs
+#   dat <- dat %>% rowwise() %>% mutate(pop_mean = median(c(pop_sum87:pop_sum70), na.rm = T))
+#   dat <- dat %>% rowwise() %>% mutate(hs_mean = median(c(hs_change87:hs_change70), na.rm = T))
+#   dat$extProb2 <- 1- dat$extProb
+#   
+#   # Criterion A3 - Pop size
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.3, "VU", "Pop")
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "EN", "Pop")
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.8, "CR", "Pop")
+#   
+#   # Criterion A3 - HS
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.3, "VU", "HS")
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "EN", "HS")
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.8, "CR", "HS")
+#   
+#   # Criterion E - Extinction probability
+#   IUCN_classification <- MW(dat, IUCN_classification, 100, 0.1, "VU", "Ext")
+#   IUCN_classification <- MW(dat, IUCN_classification, 20, 0.2, "EN", "Ext")
+#   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "CR", "Ext")
+#   
+# }
+# 
+# # add the trait values to the data frame
+# optima <- c("marginal", "central")
+# breadth <- c("narrow", "wide")
+# rmax <- c("slow", "fast")
+# dispersal <- c("short", "long")
+# land_rep <- 1:3
+# BatchNum <- 1:16
+# 
+# #create data frame with all trait combinations
+# sims_long <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+# sims_long$BatchNum <- rep(1:16)
+# 
+# # create data frame with all parameter combinations for the IUCN classification time
+# IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+# 
+# save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.RData")
+# write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.csv", row.names = F)
 
-# performs the same code for every scenario
-for (i in 1:nrow(IUCN_classification)) {
-  BatchNum <- IUCN_classification[i, "BatchNum"]
-  land_rep <- IUCN_classification[i, "land_rep"]
-  
-  # Load data
-  #dat <- readRDS("4_Analysis/data/data_analysis_raw_Batch10_Sim1.rds")
-  dat <- readRDS(paste0("4_Analysis/data/data_analysis_raw_Batch", BatchNum, "_Sim", land_rep, ".rds"))
-  
-  # remove rows till year 100
-  dat <- dat[!dat$Year %in% c(0:99),]
-  
-  #replace NAs with 0
-  dat[is.na(dat)] <- 0
-  
-  # calculate mean pop and mean hs
-  dat <- dat %>% rowwise() %>% mutate(pop_mean = median(c(pop_sum87:pop_sum70), na.rm = T))
-  dat <- dat %>% rowwise() %>% mutate(hs_mean = median(c(hs_change87:hs_change70), na.rm = T))
-  dat$extProb2 <- 1- dat$extProb
-  
-  # Criterion A3 - Pop size
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.3, "VU", "Pop")
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "EN", "Pop")
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.8, "CR", "Pop")
-  
-  # Criterion A3 - HS
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.3, "VU", "HS")
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "EN", "HS")
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.8, "CR", "HS")
-  
-  # Criterion E - Extinction probability
-  IUCN_classification <- MW(dat, IUCN_classification, 100, 0.1, "VU", "Ext")
-  IUCN_classification <- MW(dat, IUCN_classification, 20, 0.2, "EN", "Ext")
-  IUCN_classification <- MW(dat, IUCN_classification, 10, 0.5, "CR", "Ext")
-  
-}
-
-# add the trait values to the data frame
-optima <- c("marginal", "central")
-breadth <- c("narrow", "wide")
-rmax <- c("slow", "fast")
-dispersal <- c("short", "long")
-land_rep <- 1:3
-BatchNum <- 1:16
-
-#create data frame with all trait combinations
-sims_long <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
-sims_long$BatchNum <- rep(1:16)
-
-# create data frame with all parameter combinations for the IUCN classification time
-IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
-
-save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.RData")
-write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_median.csv", row.names = F)
 
 # Plot the results
 
@@ -308,7 +350,147 @@ shared_legend <- extract_legend(legend)
 #Plot large grid
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
-# make the same but for every replicate
+#check for differences between using dispersal assumptions and not using dispersal assumptions
+which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp_quant)
+which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp_median)
+
+p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = optima, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = optima, y = EN_HS_disp_median), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = optima, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = optima, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche position")+
+  xlab("")+
+  ylim(c(0,60))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  ylab("Classification timepoint [years]")
+
+
+p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = breadth, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = breadth, y = EN_HS_disp_median), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = breadth, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = breadth, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Niche breadth")+
+  ylim(c(0,60))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = rmax, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = rmax, y = EN_HS_disp_median), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = rmax, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = rmax, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Growth rate")+
+  xlab("")+
+  ylim(c(0,60))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  ylab("Classification timepoint [years]")
+
+p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
+  geom_boxplot(aes(x = dispersal, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
+  geom_boxplot(aes(x = dispersal, y = EN_HS_disp_median), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
+  geom_boxplot(aes(x = dispersal, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+  geom_vline(xintercept = 1.5)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
+  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  ggtitle("Dispersal")+
+  ylim(c(0,60))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+# create and extract common legend
+colors <- c("Habitat suitability (A3)" = "red", "Habitat suitability (quant dispersal as.) (A3)" = "orange", "Habitat suitability (median dispersal as.) (A3)" = "blue")
+
+legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, color = "Habitat suitability (quant dispersal as.) (A3)"))+
+  geom_boxplot()+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
+  geom_boxplot(aes(x = BatchNum, y = VU_Ext, color = "Habitat suitability (median dispersal as.) (A3)"), position = position_nudge(x = 0.25), width = 0.2)+
+  theme_bw()+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"),
+        legend.position = "bottom")+
+  ylab("Timepoint of classification")+
+  scale_color_manual(values= colors, breaks = c("Habitat suitability (A3)", "Habitat suitability (quant dispersal as.) (A3)", "Habitat suitability (median dispersal as.) (A3)"))
+
+shared_legend <- extract_legend(legend)
+
+#Plot large grid
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+
+# make the same but for every replicate ---------
 
 # write moving window function
 MW_replicates <- function(data, new_data, timehorizon, threshold, category, metric){
@@ -321,7 +503,7 @@ MW_replicates <- function(data, new_data, timehorizon, threshold, category, metr
   } else if(metric == "HS") {
     column_data <- "hs_change"
   } else {
-    column_data <- "extProb2"
+    column_data <- "extProb"
   }
   
   # reduce timehorizon if it exceeds the maximum number of years in the data set
@@ -332,8 +514,18 @@ MW_replicates <- function(data, new_data, timehorizon, threshold, category, metr
   
   # for every year calculated the relative size to the size x years into the future
   for (i in 1:nrow(data)) {
-    rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon] & data$Rep == rep_nr, column_data]/data[data$Year == unique(data$Year)[i]  & data$Rep == rep_nr, column_data])
+    if(column_data == "extProb"){
+      # if(is.na(data[data$Year == unique(data$Year)[i+timehorizon], "replicate_runs"])){
+      #   rel_loss <- 1 - (data[tail(which(!is.na(dat$replicate_runs)), 1), "replicate_runs"]/data[data$Year == unique(data$Year)[i],"replicate_runs"])
+      #   #print(data[tail(which(!is.na(dat$replicate_runs)), 1), "replicate_runs"])
+      # } else {
+        rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon] & data$Rep == rep_nr, "replicate_runs"]/data[data$Year == unique(data$Year)[i] & data$Rep == rep_nr,"replicate_runs"])
+        #print(rel_loss)
+      #}
+    } else {
+    rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon] & data$Rep == rep_nr, column_data]/data[data$Year == unique(data$Year)[i] & data$Rep == rep_nr, column_data])
     #print(rel_loss)
+    }
     
     # controls if the relative loss exceeds the threshold
     if(rel_loss >= threshold){
@@ -372,13 +564,20 @@ for (i in 1:nrow(IUCN_classification)) {
   rep_nr <- IUCN_classification[i, "replicates"]
   
   # Load data
-  #dat <- readRDS("4_Analysis/data/data_analysis_raw_Batch10_Sim1.rds")
+  #dat <- readRDS("4_Analysis/data/data_analysis_raw_long_Batch10_Sim1.rds")
+  #dat2 <- readRDS("4_Analysis/data/Nr_replicates_year_Batch10_Sim1.rds")
   dat <- readRDS(paste0("4_Analysis/data/data_analysis_raw_long_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  dat2 <- readRDS(paste0("4_Analysis/data/Nr_replicates_year_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   
   # remove rows till year 100
   dat <- dat[!dat$Year %in% c(0:99),]
+  dat2 <- dat2[!dat2$Year %in% c(0:99),]
   
-  dat$extProb2 <- 1- dat$extProb
+  # join data sets
+  dat <- merge(dat, dat2, by = "Year", all = T)
+  
+  #set NAs to 0 in repicate runs column
+  dat[which(is.na(dat$replicate_runs)), "replicate_runs"] <- 0
   
   # Criterion A3 - Pop size
   IUCN_classification <- MW_replicates(dat, IUCN_classification, 10, 0.3, "VU", "Pop")
@@ -412,8 +611,8 @@ sims_long$BatchNum <- rep(1:16)
 # create data frame with all parameter combinations for the IUCN classification time
 IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
 
-save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates.RData")
-write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates.csv", row.names = F)
+save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates_updateextProb.RData")
+write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_allreplicates_updateextProb.csv", row.names = F)
 
 p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
