@@ -1,5 +1,9 @@
 # Miscellanous plots
 
+# create data frame with all parameter combinations for the IUCN classification time
+IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
+IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+
 # create the VU, EN, CR columns classification time for all metrices (Pop, Range, HS, Ext.Prob)
 IUCN_classification$VU_Pop <- NA
 IUCN_classification$EN_Pop <- NA

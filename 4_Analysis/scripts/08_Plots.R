@@ -29,10 +29,6 @@ replicates <- sample(0:99, 10)
 sims_long <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims_long$BatchNum <- rep(1:16)
 
-# create data frame with all parameter combinations for the IUCN classification time
-IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
-IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
-
 # prepare data sets
 data <- vector("list", 16)
 data_mean <- vector("list", 16)
