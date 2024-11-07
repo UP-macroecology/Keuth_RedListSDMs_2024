@@ -20,5 +20,21 @@ med_dist_long <- median(distances_long)
 quant_dist_short <- as.numeric(quantile(distances_short, probs = 0.95))
 quant_dist_long <- as.numeric(quantile(distances_long, probs = 0.95))
 
+#extract the mean
+mean_dist_short <- mean(distances_short)
+mean_dist_long <- mean(distances_long)
+
 # save dispersal distances
-save(med_dist_short, med_dist_long, quant_dist_short, quant_dist_long, file = "3_SDMs/data/values_dispersal_assumption.Rdata")
+save(med_dist_short, med_dist_long, quant_dist_short, quant_dist_long, mean_dist_short, mean_dist_long, file = "3_SDMs/data/values_dispersal_assumption.Rdata")
+
+# plot the distributions together with the mean, median and quantile line
+
+hist(distances_short, main = "Short dispersal distance", xlab = "Distances")
+lines(rep(mean_dist_short,2),c(0,700), col = "red", lwd=3)
+lines(rep(med_dist_short,2),c(0,700), col = "blue", lwd=3)
+lines(rep(quant_dist_short,2),c(0,700), col = "gold", lwd=3)
+
+hist(distances_long, main = "Long dispersal distance", xlab = "Distances", breaks = 60)
+lines(rep(mean_dist_long,2),c(0,700), col = "red", lwd=3)
+lines(rep(med_dist_long,2),c(0,700), col = "blue", lwd=3)
+lines(rep(quant_dist_long,2),c(0,700), col = "gold", lwd=3)
