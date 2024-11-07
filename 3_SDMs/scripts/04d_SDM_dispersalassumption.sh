@@ -9,4 +9,4 @@
 #SBATCH --nodelist=ecoc9z
 
 cd ${SLURM_SUBMIT_DIR}
-R CMD BATCH ./04c_SDM_dispersalassumption.R ./output-file-SDM_dispersal_assumption.Rout
+R CMD BATCH ./04d_SDM_dispersalassumption.R ./output-file-SDM_dispersal_assumption.Rout
