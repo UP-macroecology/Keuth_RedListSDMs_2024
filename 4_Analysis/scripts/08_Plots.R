@@ -3,7 +3,6 @@
 # load packages
 library(ggplot2)
 library(gridExtra)
-library(ggtext)
 library(dplyr)
 library(grid)
 
