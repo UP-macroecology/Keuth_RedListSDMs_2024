@@ -387,6 +387,7 @@ shared_legend <- extract_legend(legend)
 
 #Plot large grid
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+grid.arrange(p_pos, shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
 
 # plot of HS, population size and extinction probability over time --------
