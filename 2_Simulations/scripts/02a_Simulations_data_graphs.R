@@ -23,7 +23,7 @@ library(data.table)
 library(terra)
 
 # Function for calculating extinction probability
-source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/Functions/Extinction_probability.R")
+source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/Extinction_probability.R")
 
 # create data frame with all parameter combinations
 land_rep <- 1:3
