@@ -23,12 +23,12 @@ set.seed(8765)
 replicates <- sample(0:99, 10)
 
 #set up cluster
-ncores <- 24
+ncores <- 1
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
 # Loops for the single scenarios
-foreach(sim_nr=1:nrow(sims), .packages = c("data.table", "dplyr", "tidyr", "stringr")) %dopar% {
+foreach(sim_nr=16, .packages = c("data.table", "dplyr", "tidyr", "stringr")) %dopar% {
   
   # Prepare variables --------------
   rep_nr <- sims[sim_nr,]$land_rep
@@ -37,7 +37,8 @@ foreach(sim_nr=1:nrow(sims), .packages = c("data.table", "dplyr", "tidyr", "stri
   # Load data set
   # hs_median <- readRDS(paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   # hs_quant <- readRDS(paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  hs_mean <- readRDS(paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  # hs_mean <- readRDS(paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  hs_mean <- readRDS(paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   
   # calculate hs loss
   # hs_median <- lapply(hs_median, function(x){x$rel.hs.loss <- 100 - ((x$hs_plus10/ x$hs_startYear) * 100); return(x)})
@@ -67,7 +68,8 @@ foreach(sim_nr=1:nrow(sims), .packages = c("data.table", "dplyr", "tidyr", "stri
   # save data sets
   # saveRDS(df_median, file = paste0(sdm_dir, "results/hs_loss_wide_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   # saveRDS(df_quant, file = paste0(sdm_dir, "results/hs_loss_wide_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  saveRDS(df_mean, file = paste0(sdm_dir, "results/hs_loss_wide_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  # saveRDS(df_mean, file = paste0(sdm_dir, "results/hs_loss_wide_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(df_mean, file = paste0(sdm_dir, "results/hs_loss_wide_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 stopCluster(cl)

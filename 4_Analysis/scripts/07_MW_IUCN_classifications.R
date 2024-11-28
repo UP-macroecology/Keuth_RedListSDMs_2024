@@ -374,3 +374,10 @@ IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
 
 save(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_dispersalassumptions.RData")
 write.csv(IUCN_classification, file = "4_Analysis/data/IUCN_classification_times_dispersalassumptions.csv", row.names = F)
+
+
+test <- readRDS("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_empirical_Batch6_Sim1.rds")
+test$hs_mean <- rowMeans(test[,2:11])
+head(test[which(test$hs_mean >= 30), "startYear"],1)
+head(test[which(test$hs_mean >= 50), "startYear"],1)
+head(test[which(test$hs_mean >= 80), "startYear"],1)

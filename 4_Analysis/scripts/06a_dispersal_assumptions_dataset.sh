@@ -3,7 +3,7 @@
 #SBATCH --job-name=create_data_dispersal
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=24
+#SBATCH --cpus-per-task=1
 #SBATCH --time=24:00:00
 #SBATCH --mem=100gb
 #SBATCH --nodelist=ecoc9z

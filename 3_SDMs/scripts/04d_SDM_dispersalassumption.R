@@ -8,6 +8,7 @@ library(doParallel)
 
 #define file path
 sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
+sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/")
 
 # create data frame with all parameter combinations
 land_rep <- 1:3
@@ -24,15 +25,15 @@ set.seed(8765)
 replicates <- sample(0:99, 10)
 
 # load in the dispersal assumption values
-load(paste0(sdm_dir, "data/values_dispersal_assumption.Rdata"))
+#load(paste0(sdm_dir, "data/values_dispersal_assumption.Rdata"))
 
 #set up cluster
-ncores <- 24
+ncores <- 1
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
 # foreach loop through every single scenario
-foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
+foreach(sim_nr=16, .packages = c("terra", "data.table")) %dopar% {
 #for(sim_nr in 27){
   
   # Prepare variables --------------
@@ -42,95 +43,120 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
   BatchNum <- sims[sim_nr,]$BatchNum
   dispersal <- sims[sim_nr,]$dispersal
   
-  # hs_list_median <- vector("list", length = length(replicates))
-  # hs_list_quant <- vector("list", length = length(replicates))
-  hs_list_mean <- vector("list", length = length(replicates))
+  # # Load all individual dispersal files
+  # vec_distances <- c()
+  # for (replicate in 0:99) {
+  #   BatchNum_disp <- BatchNum + 16
+  #   dist <- read.table(paste0(sim_dir, "Outputs/Batch", BatchNum_disp, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"), header = T, sep = "\t")
+  #   dist <- subset(dist, dist$Year == 99)
+  #   vec_distances <- append(vec_distances, dist$DistMoved)
+  # }
+  # 
+  # save(vec_distances, file = paste0(sdm_dir, "results/vec_distances.Rdata"))
+  load(paste0(sdm_dir, "results/vec_distances.Rdata"))
   
-  # loop for every replicated run 
-  for (replicate_nr in 1:length(replicates)) {
-    
+  mean_dist <- mean(vec_distances)
+  
+  hs_list_median <- vector("list", length = length(replicates))
+  hs_list_quant <- vector("list", length = length(replicates))
+  hs_list_mean <- vector("list", length = length(replicates))
+
+  # loop for every replicated run
+  for (replicate_nr in 1) {
+
     # Create data set for the final hs values
     # df_median <- data.frame(startYear = 0:79, hs_startYear = NA, hs_plus10 = NA)
     # df_quant <- data.frame(startYear = 0:79, hs_startYear = NA, hs_plus10 = NA)
     df_mean <- data.frame(startYear = 0:79, hs_startYear = NA, hs_plus10 = NA)
-    
+
     # load the already calculated habitat suitabilities
     habitat <- readRDS(paste0(sdm_dir, "results/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     habitat <- habitat[[replicate_nr]]
-    
+
     # append the already calculated habitat values to the data set
     # df_median$hs_startYear <- habitat[1:80]
     # df_quant$hs_startYear <- habitat[1:80]
     df_mean$hs_startYear <- habitat[1:80]
-    
+
     # Load data
     load(paste0(sdm_dir, "predictions/Predictions_curr_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
     load(paste0(sdm_dir, "predictions/Predictions_fut_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
     performance_mean <- readRDS(paste0(sdm_dir, "evaluation/performance_measures/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     performance_mean <- performance_mean[[replicate_nr]]
-    
+
     # Create a background mask with target resolution and extent from climate layers
     bg <- terra::rast(paste0(sdm_dir, "data/landscapes/land", rep_nr, "_optima", optima, "_breadth", breadth, "_ccYear0.grd"))
     bg <- bg$temp
-    
+
     # Prepare pdf for plotting the results
-    pdf(paste0(sdm_dir, "plots/plots_dispersal_assumption_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
-    
+    pdf(paste0(sdm_dir, "plots/plots_dispersal_assumption_empirical_test_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
+
     # loop through every single year (necessary for our approach later)
-    for(year_nr in 0:79){
-    
+    for(year_nr in 0:10){
+
       # create SpatVector of presences (data set changes depending on the year)
       if (year_nr == 0){
         occ_rast <- terra::vect(as.matrix(ens_preds_bin[ens_preds_bin$mean_prob == 1, 1:2]))
       } else {
         occ_rast <- terra::vect(as.matrix(ens_fut_preds_bin[[year_nr]][ens_fut_preds_bin[[year_nr]]$mean_prob == 1, 1:2]))
       }
-    
+
       # only calculate the buffer if presences are available
       if(length(occ_rast) > 0){
-        
+
       # create a buffer of the radius of the sampled median dispersal distance around the presences (buffer size depends on the dispersal value of the respective scenario)
       if(dispersal == 5000){
         # v_buf_median <- terra::buffer(occ_rast, width = 10 *  med_dist_short)
         # v_buf_quant <- terra::buffer(occ_rast, width = 10 *  quant_dist_short)
-        v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist_short)
+        #v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist_short)
+        v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist)
       } else {
         # v_buf_median <- terra::buffer(occ_rast, width = 10 * med_dist_long)
         # v_buf_quant <- terra::buffer(occ_rast, width = 10 * quant_dist_long)
-        v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist_long)
+        #v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist_long)
+        v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist)
       }
-    
+
       # Create the buffer layer with the same resolution and spatial extent
       # disp_buf_median <- terra::mask(bg, v_buf_median)
       # disp_buf_quant <- terra::mask(bg, v_buf_quant)
       disp_buf_mean <- terra::mask(bg, v_buf_mean)
-      
-      plot(bg, col='grey90', legend=F)
-      plot(disp_buf_mean, add=T, col='grey60', legend=F)
-      plot(occ_rast, add = T, col= "red")
-    
+
+      # plot(bg, col='grey90', legend=F)
+      # plot(disp_buf_mean, add=T, col='grey60', legend=F)
+      # plot(occ_rast, add = T, col= "red")
+
       # Extract the habitat suitabilities for 10 years into the future
       fut_hs <- ens_fut_preds[[year_nr+10]]
-    
+      
+      # test the removing of values below the threshold
+      fut_hs_test <- fut_hs[which(fut_hs$mean_prob >= performance_mean[performance_mean$Algorithm == "mean_prob",'mean_thresh']),]
+      r_fut_test <- terra::rast(fut_hs_test[,1:3])
+
       # set future HS values outside of the buffer to 0
       r_fut <- terra::rast(fut_hs[,1:3])
       # fut_new_median <- terra::mask(r_fut, disp_buf_median, updatevalue=0)
       # fut_new_quant <- terra::mask(r_fut, disp_buf_quant, updatevalue=0)
       fut_new_mean <- terra::mask(r_fut, disp_buf_mean, updatevalue=0)
-    
+
       # Plot predictions with dispersal assumptions
-      plot(fut_new_mean)
-    
+      #plot(fut_new_mean)
+      plot(r_fut)
+      plot(disp_buf_mean, add=T, col='grey60', legend=F)
+      
+      plot(r_fut_test)
+      plot(disp_buf_mean, add=T, col='grey60', legend=F)
+
       # Extract HS values
       # df_hs_median <- terra::as.data.frame(fut_new_median, xy = T)
       # df_hs_quant <- terra::as.data.frame(fut_new_quant, xy = T)
       df_hs_mean <- terra::as.data.frame(fut_new_mean, xy = T)
-      
+
       #remove cells below a threshold of habitat suitability
       # df_hs_median <- df_hs_median[which(df_hs_median$mean_prob >= performance_mean[performance_mean$Algorithm == "mean_prob",'mean_thresh']),]
       # df_hs_quant <- df_hs_quant[which(df_hs_quant$mean_prob >= performance_mean[performance_mean$Algorithm == "mean_prob",'mean_thresh']),]
       df_hs_mean <- df_hs_mean[which(df_hs_mean$mean_prob >= performance_mean[performance_mean$Algorithm == "mean_prob",'mean_thresh']),]
-      
+
       # calculate the habitat suitability sum
       # df_median[which(df_median$startYear == year_nr), "hs_plus10"] <- sum(df_hs_median[,"mean_prob"], na.rm = T)
       # df_quant[which(df_quant$startYear == year_nr), "hs_plus10"] <- sum(df_hs_quant[,"mean_prob"], na.rm = T)
@@ -143,19 +169,20 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
       }
     }
     dev.off()
-    
+
     # add the data set as an element of the list
     # hs_list_median[[replicate_nr]] <- df_median
     # hs_list_quant[[replicate_nr]] <- df_quant
     hs_list_mean[[replicate_nr]] <- df_mean
-    
+
   }
-  
+
   # save the calculated habitat suitability values
   # saveRDS(hs_list_median, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   # saveRDS(hs_list_quant, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  saveRDS(hs_list_mean, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  
+  #saveRDS(hs_list_mean, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  #saveRDS(hs_list_mean, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+
 } #close foreach loop
 #stopCluster(cl)
 
@@ -168,9 +195,11 @@ rm(list=ls())
 # 
 # # Test it with one SDM scenario
 # load("3_SDMs/data/Predictions_curr_Batch6_Sim3_Replication33.RData")
-# load("3_SDMs/data/Predictions_fut_Batch6_Sim3_Replication33.RData")
+# load("3_SDMs/data/Predictions_fut_Batch7_Sim3_Replication87.RData")
 # bg <- terra::rast("3_SDMs/data/land1_optima0.27_breadth0.045_ccYear0.grd")
 # bg <- bg$temp
+#performance_mean <- readRDS("3_SDMs/data/performance_mean_SDM_Batch7_Sim3.rds")
+#performance_mean <- performance_mean[[1]]
 # 
 # # Plot occurrences in landscape
 # plot(ens_preds_bin[ens_preds_bin$mean_prob== 1, "y"] ~ ens_preds_bin[ens_preds_bin$mean_prob== 1, "x"], xlim = c(0, 511000),
