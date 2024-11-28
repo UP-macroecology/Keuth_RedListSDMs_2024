@@ -11,12 +11,11 @@ library(scales)
 library(tibble)
 library(terra)
 library(randomForest)
-library(mecofun)
 library(data.table)
 
 # Load functions
-#source("/import/ecoc9z/data-zurell/keuth/final_simulations/Functions/evalSDM.R") 
-#source("/import/ecoc9z/data-zurell/keuth/final_simulations/Functions/response_curves.R")
+source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/evalSDM.R") 
+source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/response_curves.R")
 
 #define file path
 sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
@@ -41,7 +40,7 @@ cl <- makeCluster(ncores)
 registerDoParallel(cl)
                      
 # Loops for the SDM fitting
-foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble", "terra", "randomForest", "mecofun", "data.table")) %dopar% {
+foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble", "terra", "randomForest", "data.table")) %dopar% {
      
   # Prepare variables --------------
   rep_nr <- sims[sim_nr,]$land_rep
