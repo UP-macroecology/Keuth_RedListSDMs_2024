@@ -28,12 +28,12 @@ replicates <- sample(0:99, 10)
 #load(paste0(sdm_dir, "data/values_dispersal_assumption.Rdata"))
 
 #set up cluster
-ncores <- 1
+ncores <- 12
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
 # foreach loop through every single scenario
-foreach(sim_nr=16, .packages = c("terra", "data.table")) %dopar% {
+foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
 #for(sim_nr in 27){
   
   # Prepare variables --------------
@@ -43,26 +43,29 @@ foreach(sim_nr=16, .packages = c("terra", "data.table")) %dopar% {
   BatchNum <- sims[sim_nr,]$BatchNum
   dispersal <- sims[sim_nr,]$dispersal
   
-  # # Load all individual dispersal files
-  # vec_distances <- c()
-  # for (replicate in 0:99) {
-  #   BatchNum_disp <- BatchNum + 16
-  #   dist <- read.table(paste0(sim_dir, "Outputs/Batch", BatchNum_disp, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"), header = T, sep = "\t")
-  #   dist <- subset(dist, dist$Year == 99)
-  #   vec_distances <- append(vec_distances, dist$DistMoved)
-  # }
-  # 
-  # save(vec_distances, file = paste0(sdm_dir, "results/vec_distances.Rdata"))
-  load(paste0(sdm_dir, "results/vec_distances.Rdata"))
+  # Load all individual dispersal files
+  vec_distances <- c()
+  for (replicate in 0:99) {
+    BatchNum_disp <- BatchNum + 16
+    dist <- read.table(paste0(sim_dir, "Outputs/Batch", BatchNum_disp, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"), header = T, sep = "\t")
+    dist <- subset(dist, dist$Year == 99)
+    vec_distances <- append(vec_distances, dist$DistMoved)
+  }
+
+  save(vec_distances, file = paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
+  #load(paste0(sdm_dir, "results/vec_distances.Rdata"))
+  
+  # remove the 0s out of the data set
+  vec_distances <- vec_distances[!vec_distances == 0]
   
   mean_dist <- mean(vec_distances)
   
-  hs_list_median <- vector("list", length = length(replicates))
-  hs_list_quant <- vector("list", length = length(replicates))
+  #hs_list_median <- vector("list", length = length(replicates))
+  #hs_list_quant <- vector("list", length = length(replicates))
   hs_list_mean <- vector("list", length = length(replicates))
 
   # loop for every replicated run
-  for (replicate_nr in 1) {
+  for (replicate_nr in 1:10) {
 
     # Create data set for the final hs values
     # df_median <- data.frame(startYear = 0:79, hs_startYear = NA, hs_plus10 = NA)
@@ -92,7 +95,7 @@ foreach(sim_nr=16, .packages = c("terra", "data.table")) %dopar% {
     pdf(paste0(sdm_dir, "plots/plots_dispersal_assumption_empirical_test_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
 
     # loop through every single year (necessary for our approach later)
-    for(year_nr in 0:10){
+    for(year_nr in 1:89){
 
       # create SpatVector of presences (data set changes depending on the year)
       if (year_nr == 0){
@@ -181,7 +184,7 @@ foreach(sim_nr=16, .packages = c("terra", "data.table")) %dopar% {
   # saveRDS(hs_list_median, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   # saveRDS(hs_list_quant, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   #saveRDS(hs_list_mean, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  #saveRDS(hs_list_mean, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(hs_list_mean, file = paste0(sdm_dir, "results/habitat_suitability_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 #stopCluster(cl)

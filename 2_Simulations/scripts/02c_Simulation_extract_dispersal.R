@@ -25,7 +25,7 @@ library(data.table)
 library(terra)
 
 # Function for calculating extinction probability
-source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/Functions/Extinction_probability.R")
+source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/Extinction_probability.R")
 
 # create data frame with all parameter combinations
 land_rep <- 1:3
@@ -37,11 +37,11 @@ dispersal <- c(5000, 15000)
 sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims$BatchNum <- rep(1:16, each = 3)
 
-ncores <- 1
+ncores <- 12
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
-foreach(sim_nr=16, .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra")) %dopar% {
+foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra")) %dopar% {
   # Extract parameter values
   rep_nr <- sims[sim_nr,]$land_rep
   optima <- sims[sim_nr,]$optima
