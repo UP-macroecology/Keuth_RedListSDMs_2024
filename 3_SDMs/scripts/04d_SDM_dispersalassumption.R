@@ -52,7 +52,8 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
     vec_distances <- append(vec_distances, dist$DistMoved)
   }
 
-  save(vec_distances, file = paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
+  save(vec_distances, file = paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
+  #load(paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
   #load(paste0(sdm_dir, "results/vec_distances.Rdata"))
   
   # remove the 0s out of the data set
@@ -132,12 +133,16 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
       # Extract the habitat suitabilities for 10 years into the future
       fut_hs <- ens_fut_preds[[year_nr+10]]
       
-      # test the removing of values below the threshold
-      fut_hs_test <- fut_hs[which(fut_hs$mean_prob >= performance_mean[performance_mean$Algorithm == "mean_prob",'mean_thresh']),]
-      r_fut_test <- terra::rast(fut_hs_test[,1:3])
+      r_fut <- terra::rast(fut_hs[,1:3])
+
+      # remove values below the threshold
+      # fut_hs_thresh <- fut_hs[which(fut_hs$mean_prob >= performance_mean[performance_mean$Algorithm == "mean_prob",'mean_thresh']),]
+      # if(nrow(fut_hs_thresh) > 1){
+      # r_fut_thresh <- terra::rast(fut_hs_thresh[,1:3])
+      # }
 
       # set future HS values outside of the buffer to 0
-      r_fut <- terra::rast(fut_hs[,1:3])
+      #
       # fut_new_median <- terra::mask(r_fut, disp_buf_median, updatevalue=0)
       # fut_new_quant <- terra::mask(r_fut, disp_buf_quant, updatevalue=0)
       fut_new_mean <- terra::mask(r_fut, disp_buf_mean, updatevalue=0)
@@ -145,10 +150,9 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
       # Plot predictions with dispersal assumptions
       #plot(fut_new_mean)
       plot(r_fut)
-      plot(disp_buf_mean, add=T, col='grey60', legend=F)
+      plot(disp_buf_mean, add=T, col='grey60', legend=F, main = "Future predictions")
       
-      plot(r_fut_test)
-      plot(disp_buf_mean, add=T, col='grey60', legend=F)
+      plot(fut_new_mean, main = "Future predictions with dispersal assumption")
 
       # Extract HS values
       # df_hs_median <- terra::as.data.frame(fut_new_median, xy = T)
@@ -170,7 +174,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
         # df_quant[which(df_quant$startYear == year_nr), "hs_plus10"] <- 0
         df_mean[which(df_mean$startYear == year_nr), "hs_plus10"] <- 0
       }
-    }
+     }
     dev.off()
 
     # add the data set as an element of the list
