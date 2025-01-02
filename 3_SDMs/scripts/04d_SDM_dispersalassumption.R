@@ -28,7 +28,7 @@ replicates <- sample(0:99, 10)
 #load(paste0(sdm_dir, "data/values_dispersal_assumption.Rdata"))
 
 #set up cluster
-ncores <- 12
+ncores <- 48
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
@@ -44,16 +44,16 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
   dispersal <- sims[sim_nr,]$dispersal
   
   # Load all individual dispersal files
-  vec_distances <- c()
-  for (replicate in 0:99) {
-    BatchNum_disp <- BatchNum + 16
-    dist <- read.table(paste0(sim_dir, "Outputs/Batch", BatchNum_disp, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"), header = T, sep = "\t")
-    dist <- subset(dist, dist$Year == 99)
-    vec_distances <- append(vec_distances, dist$DistMoved)
-  }
+  # vec_distances <- c()
+  # for (replicate in 0:99) {
+  #   BatchNum_disp <- BatchNum + 16
+  #   dist <- read.table(paste0(sim_dir, "Outputs/Batch", BatchNum_disp, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"), header = T, sep = "\t")
+  #   dist <- subset(dist, dist$Year == 99)
+  #   vec_distances <- append(vec_distances, dist$DistMoved)
+  # }
 
-  save(vec_distances, file = paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
-  #load(paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
+  #save(vec_distances, file = paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
+  load(paste0(sdm_dir, "results/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
   #load(paste0(sdm_dir, "results/vec_distances.Rdata"))
   
   # remove the 0s out of the data set
@@ -93,10 +93,10 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
     bg <- bg$temp
 
     # Prepare pdf for plotting the results
-    pdf(paste0(sdm_dir, "plots/plots_dispersal_assumption_empirical_test_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
+    pdf(paste0(sdm_dir, "plots/plots_dispersal_assumption_empirical_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
 
     # loop through every single year (necessary for our approach later)
-    for(year_nr in 1:89){
+    for(year_nr in 0:79){
 
       # create SpatVector of presences (data set changes depending on the year)
       if (year_nr == 0){
@@ -109,17 +109,19 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
       if(length(occ_rast) > 0){
 
       # create a buffer of the radius of the sampled median dispersal distance around the presences (buffer size depends on the dispersal value of the respective scenario)
-      if(dispersal == 5000){
-        # v_buf_median <- terra::buffer(occ_rast, width = 10 *  med_dist_short)
-        # v_buf_quant <- terra::buffer(occ_rast, width = 10 *  quant_dist_short)
-        #v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist_short)
-        v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist)
-      } else {
-        # v_buf_median <- terra::buffer(occ_rast, width = 10 * med_dist_long)
-        # v_buf_quant <- terra::buffer(occ_rast, width = 10 * quant_dist_long)
-        #v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist_long)
-        v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist)
-      }
+      # if(dispersal == 5000){
+      #   # v_buf_median <- terra::buffer(occ_rast, width = 10 *  med_dist_short)
+      #   # v_buf_quant <- terra::buffer(occ_rast, width = 10 *  quant_dist_short)
+      #   #v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist_short)
+      #   v_buf_mean <- terra::buffer(occ_rast, width = 10 *  mean_dist)
+      # } else {
+      #   # v_buf_median <- terra::buffer(occ_rast, width = 10 * med_dist_long)
+      #   # v_buf_quant <- terra::buffer(occ_rast, width = 10 * quant_dist_long)
+      #   #v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist_long)
+      #   v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist)
+      # }
+        
+      v_buf_mean <- terra::buffer(occ_rast, width = 10 * mean_dist)
 
       # Create the buffer layer with the same resolution and spatial extent
       # disp_buf_median <- terra::mask(bg, v_buf_median)
@@ -132,7 +134,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
 
       # Extract the habitat suitabilities for 10 years into the future
       fut_hs <- ens_fut_preds[[year_nr+10]]
-      
+
       r_fut <- terra::rast(fut_hs[,1:3])
 
       # remove values below the threshold
@@ -151,7 +153,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
       #plot(fut_new_mean)
       plot(r_fut)
       plot(disp_buf_mean, add=T, col='grey60', legend=F, main = "Future predictions")
-      
+
       plot(fut_new_mean, main = "Future predictions with dispersal assumption")
 
       # Extract HS values
@@ -174,7 +176,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
         # df_quant[which(df_quant$startYear == year_nr), "hs_plus10"] <- 0
         df_mean[which(df_mean$startYear == year_nr), "hs_plus10"] <- 0
       }
-     }
+    }
     dev.off()
 
     # add the data set as an element of the list
