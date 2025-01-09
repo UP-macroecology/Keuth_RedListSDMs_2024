@@ -112,14 +112,14 @@ load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
 r_current <- terra::rast(ens_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch1_Rep4_Land1.pdf")
-plot(r_current)
+terra::plot(r_current, legend = F, pax=list(side=0))
 dev.off()
 
 load("4_Analysis/data/Predictions_curr_Batch2_Sim1_Replication4.RData")
 r_current <- terra::rast(ens_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-plot(r_current)
+terra::plot(r_current, legend = F, pax=list(side=0))
 dev.off()
 
 load("4_Analysis/data/Predictions_fut_Batch1_Sim1_Replication4.RData")
@@ -129,7 +129,7 @@ fut_preds_30 <- ens_fut_preds[[20]]
 r_fut_30 <- terra::rast(fut_preds_30[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-plot(r_fut_30)
+plot(r_fut_30, legend = F, pax=list(side=0))
 dev.off()
 
 load("4_Analysis/data/Predictions_fut_Batch2_Sim1_Replication4.RData")
@@ -139,5 +139,7 @@ fut_preds_30 <- ens_fut_preds[[40]]
 r_fut_30 <- terra::rast(fut_preds_30[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-plot(r_fut_30)
+plot(r_fut_30, legend = F, pax=list(side=0))
 dev.off()
+
+# Plot landscapes

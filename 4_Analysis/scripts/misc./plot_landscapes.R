@@ -41,51 +41,62 @@ save(l_tn, l_pre, file = "/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Si
 
 
 # # Nicht fuer den Cluster
-# load("4_Analysis/Landscapes/land1_temp_pre.Rdata")
-# plot(l_pre)
-# png('4_Analysis/Landscapes/land1_pre.png', height=2*nrow(l_pre), width=2*ncol(l_pre)) 
-# plot(l_pre, maxpixels=2*ncell(l_pre), cex.axis = 1.5)
-# dev.off()
-# 
-# png('4_Analysis/Landscapes/land1_temp.png', height=2*nrow(l_tn), width=2*ncol(l_tn)) 
-# plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5)
-# dev.off()
-# 
-# load("4_Analysis/Landscapes/land2_temp_pre.Rdata")
-# plot(l_pre)
-# png('4_Analysis/Landscapes/land2_pre.png', height=2*nrow(l_pre), width=2*ncol(l_pre)) 
-# plot(l_pre, maxpixels=2*ncell(l_pre), cex.axis = 1.5)
-# dev.off()
-# 
-# png('4_Analysis/Landscapes/land2_temp.png', height=2*nrow(l_tn), width=2*ncol(l_tn)) 
-# plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5)
-# dev.off()
-# 
-# load("4_Analysis/Landscapes/land3_temp_pre.Rdata")
-# plot(l_pre)
-# png('4_Analysis/Landscapes/land3_pre.png', height=2*nrow(l_pre), width=2*ncol(l_pre)) 
-# plot(l_pre, maxpixels=2*ncell(l_pre), cex.axis = 1.5)
-# dev.off()
-# 
-# png('4_Analysis/Landscapes/land3_temp.png', height=2*nrow(l_tn), width=2*ncol(l_tn)) 
-# plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5)
-# dev.off()
-# 
-# # plot niches
-# land <- raster("4_Analysis/Landscapes/land1_optima0.5_breadth0.055_ccYear0.asc")
-# 
-# png('4_Analysis/Landscapes/land1_niche.png', height=2*nrow(land), width=2*ncol(land)) 
-# plot(land, maxpixels=2*ncell(land), cex.axis = 1.5)
-# dev.off()
-# 
-# land <- raster("4_Analysis/Landscapes/land2_optima0.5_breadth0.055_ccYear0.asc")
-# 
-# png('4_Analysis/Landscapes/land2_niche.png', height=2*nrow(land), width=2*ncol(land)) 
-# plot(land, maxpixels=2*ncell(land), cex.axis = 1.5)
-# dev.off()
-# 
-# land <- raster("4_Analysis/Landscapes/land3_optima0.5_breadth0.055_ccYear0.asc")
-# 
-# png('4_Analysis/Landscapes/land3_niche.png', height=2*nrow(land), width=2*ncol(land)) 
-# plot(land, maxpixels=2*ncell(land), cex.axis = 1.5)
-# dev.off()
+load("4_Analysis/Landscapes/land1_temp_pre.Rdata")
+plot(l_pre, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+png('4_Analysis/Landscapes/land1_pre.png', height=2*nrow(l_pre), width=2*ncol(l_pre))
+plot(l_pre, maxpixels=2*ncell(l_pre), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+png('4_Analysis/Landscapes/land1_temp.png', height=2*nrow(l_tn), width=2*ncol(l_tn))
+plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+load("4_Analysis/Landscapes/land2_temp_pre.Rdata")
+plot(l_pre)
+png('4_Analysis/Landscapes/land2_pre.png', height=2*nrow(l_pre), width=2*ncol(l_pre))
+plot(l_pre, maxpixels=2*ncell(l_pre), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+png('4_Analysis/Landscapes/land2_temp.png', height=2*nrow(l_tn), width=2*ncol(l_tn))
+plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+load("4_Analysis/Landscapes/land3_temp_pre.Rdata")
+plot(l_pre)
+png('4_Analysis/Landscapes/land3_pre.png', height=2*nrow(l_pre), width=2*ncol(l_pre))
+plot(l_pre, maxpixels=2*ncell(l_pre), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+png('4_Analysis/Landscapes/land3_temp.png', height=2*nrow(l_tn), width=2*ncol(l_tn))
+plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+# Plot legend
+png('4_Analysis/Landscapes/land_legend.png', height=nrow(l_tn), width=ncol(l_tn))
+plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5, col = colorRampPalette(c("royalblue3", "yellow", "brown1"))(255), xaxt='n', yaxt = "n", legend.only = T, legend.width = 3, legend.shrink = 1, axis.args = list(cex.axis = 3))
+dev.off()
+
+# plot niches
+land <- raster("4_Analysis/Landscapes/land1_optima0.5_breadth0.055_ccYear0.asc")
+
+png('4_Analysis/Landscapes/land1_niche.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+land <- raster("4_Analysis/Landscapes/land2_optima0.5_breadth0.055_ccYear0.asc")
+
+png('4_Analysis/Landscapes/land2_niche.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+land <- raster("4_Analysis/Landscapes/land3_optima0.5_breadth0.055_ccYear0.asc")
+
+png('4_Analysis/Landscapes/land3_niche.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F)
+dev.off()
+
+# Legend
+png('4_Analysis/Landscapes/niche_legend.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend.only = T, legend.width = 3, legend.shrink = 1, axis.args = list(cex.axis = 3))
+dev.off()
+

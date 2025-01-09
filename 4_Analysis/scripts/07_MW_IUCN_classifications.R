@@ -303,15 +303,18 @@ IUCN_classification <- expand.grid(land_rep = land_rep, BatchNum = BatchNum)
 IUCN_classification$VU_HS <- NA
 IUCN_classification$EN_HS <- NA
 IUCN_classification$CR_HS <- NA
-IUCN_classification$VU_HS_disp_median <- NA
-IUCN_classification$EN_HS_disp_median <- NA
-IUCN_classification$CR_HS_disp_median <- NA
-IUCN_classification$VU_HS_disp_quant <- NA
-IUCN_classification$EN_HS_disp_quant <- NA
-IUCN_classification$CR_HS_disp_quant <- NA
-IUCN_classification$VU_HS_disp_mean <- NA
-IUCN_classification$EN_HS_disp_mean <- NA
-IUCN_classification$CR_HS_disp_mean <- NA
+IUCN_classification$VU_HS_disp <- NA
+IUCN_classification$EN_HS_disp <- NA
+IUCN_classification$CR_HS_disp <- NA
+# IUCN_classification$VU_HS_disp_median <- NA
+# IUCN_classification$EN_HS_disp_median <- NA
+# IUCN_classification$CR_HS_disp_median <- NA
+# IUCN_classification$VU_HS_disp_quant <- NA
+# IUCN_classification$EN_HS_disp_quant <- NA
+# IUCN_classification$CR_HS_disp_quant <- NA
+# IUCN_classification$VU_HS_disp_mean <- NA
+# IUCN_classification$EN_HS_disp_mean <- NA
+# IUCN_classification$CR_HS_disp_mean <- NA
 
 # performs the same code for every scenario
 for (i in 1:nrow(IUCN_classification)) {
@@ -334,27 +337,33 @@ for (i in 1:nrow(IUCN_classification)) {
   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.8, "CR", "HS")
   
   # calculate time point of classification for using dispersal assumptions
-  dat_median <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", land_rep, ".rds"))
-  dat_quant <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", land_rep, ".rds"))
-  dat_mean <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  dat_disp <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  # dat_median <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_median_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  # dat_quant <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_0.95quantile_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  # dat_mean <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_mean_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   
   #calculate the mean hs_loss for every startYear
-  dat_median$hs_mean <- rowMeans(dat_median[,2:11])
-  dat_quant$hs_mean <- rowMeans(dat_quant[,2:11])
-  dat_mean$hs_mean <- rowMeans(dat_mean[,2:11])
-  
+  dat_disp$hs_mean <- rowMeans(dat_disp[,2:11])
+  # dat_median$hs_mean <- rowMeans(dat_median[,2:11])
+  # dat_quant$hs_mean <- rowMeans(dat_quant[,2:11])
+  # dat_mean$hs_mean <- rowMeans(dat_mean[,2:11])
+
   # obtain the year when the criterion is fulfilled
-  IUCN_classification[i, "VU_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 30), "startYear"],1)
-  IUCN_classification[i, "EN_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 50), "startYear"],1)
-  IUCN_classification[i, "CR_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 80), "startYear"],1)
+  IUCN_classification[i, "VU_HS_disp"] <- head(dat_disp[which(dat_disp$hs_mean >= 30), "startYear"],1)
+  IUCN_classification[i, "EN_HS_disp"] <- head(dat_disp[which(dat_disp$hs_mean >= 50), "startYear"],1)
+  IUCN_classification[i, "CR_HS_disp"] <- head(dat_disp[which(dat_disp$hs_mean >= 80), "startYear"],1)
   
-  IUCN_classification[i, "VU_HS_disp_quant"] <- head(dat_quant[which(dat_quant$hs_mean >= 30), "startYear"],1)
-  IUCN_classification[i, "EN_HS_disp_quant"] <- head(dat_quant[which(dat_quant$hs_mean >= 50), "startYear"],1)
-  IUCN_classification[i, "CR_HS_disp_quant"] <- head(dat_quant[which(dat_quant$hs_mean >= 80), "startYear"],1)
-  
-  IUCN_classification[i, "VU_HS_disp_mean"] <- head(dat_mean[which(dat_mean$hs_mean >= 30), "startYear"],1)
-  IUCN_classification[i, "EN_HS_disp_mean"] <- head(dat_mean[which(dat_mean$hs_mean >= 50), "startYear"],1)
-  IUCN_classification[i, "CR_HS_disp_mean"] <- head(dat_mean[which(dat_mean$hs_mean >= 80), "startYear"],1)
+  # IUCN_classification[i, "VU_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 30), "startYear"],1)
+  # IUCN_classification[i, "EN_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 50), "startYear"],1)
+  # IUCN_classification[i, "CR_HS_disp_median"] <- head(dat_median[which(dat_median$hs_mean >= 80), "startYear"],1)
+  # 
+  # IUCN_classification[i, "VU_HS_disp_quant"] <- head(dat_quant[which(dat_quant$hs_mean >= 30), "startYear"],1)
+  # IUCN_classification[i, "EN_HS_disp_quant"] <- head(dat_quant[which(dat_quant$hs_mean >= 50), "startYear"],1)
+  # IUCN_classification[i, "CR_HS_disp_quant"] <- head(dat_quant[which(dat_quant$hs_mean >= 80), "startYear"],1)
+  # 
+  # IUCN_classification[i, "VU_HS_disp_mean"] <- head(dat_mean[which(dat_mean$hs_mean >= 30), "startYear"],1)
+  # IUCN_classification[i, "EN_HS_disp_mean"] <- head(dat_mean[which(dat_mean$hs_mean >= 50), "startYear"],1)
+  # IUCN_classification[i, "CR_HS_disp_mean"] <- head(dat_mean[which(dat_mean$hs_mean >= 80), "startYear"],1)
 }
 
 # add the trait values to the data frame

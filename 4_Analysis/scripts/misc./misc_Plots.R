@@ -1,25 +1,28 @@
 # Miscellanous plots
 
+library(ggplot2)
+library(gridExtra)
 source("Functions/extract_legend.R")
 # Plot dispersal assumptions in comparison
 
 load("4_Analysis/data/IUCN_classification_times_dispersalassumptions.RData")
 
 #check for differences between using dispersal assumptions and not using dispersal assumptions
-which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp_quant)
-which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp_median)
-which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp_mean)
+which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
+which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
+which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
 
-p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS_disp_mean))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = optima, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = optima, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = optima, y = EN_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = optima, y = EN_HS_disp_median), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = optima, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = optima, y = CR_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = optima, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = optima, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+IUCN_classification$optima <- as.character(IUCN_classification$optima)
+IUCN_classification[which(IUCN_classification$optima == "marginal"), "optima"] <- "range-contracting"
+IUCN_classification[which(IUCN_classification$optima == "central"), "optima"] <- "range-shifting"
+
+p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
+  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.40))+
+  geom_boxplot(aes(x = optima, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = optima, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = optima, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -32,25 +35,22 @@ p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS_disp_mean))+
   annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
   annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
-  ggtitle("Niche position")+
+  ggtitle("Range dynamics")+
   xlab("")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
+        axis.title = element_text(size = 24), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   ylab("Classification timepoint [years]")
 
 
-p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS_disp_mean))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = breadth, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = breadth, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = breadth, y = EN_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = breadth, y = EN_HS_disp_median), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = breadth, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = breadth, y = CR_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = breadth, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = breadth, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = breadth, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = breadth, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = breadth, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -65,20 +65,17 @@ p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS_disp_mean))+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Niche breadth")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
-p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS_disp_mean))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = rmax, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = rmax, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = rmax, y = EN_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = rmax, y = EN_HS_disp_median), position = position_nudge(x = 0.09), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = rmax, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = rmax, y = CR_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = rmax, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = rmax, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = rmax, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = rmax, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = rmax, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -94,21 +91,18 @@ p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS_disp_mean))+
   ggtitle("Growth rate")+
   xlab("")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
+        axis.title = element_text(size = 24), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   ylab("Classification timepoint [years]")
 
-p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS_disp_mean))+
-  geom_boxplot(width = 0.06, col = "red", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = dispersal, y = VU_HS_disp_median), position = position_nudge(x = -0.24), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = dispersal, y = VU_HS_disp_quant), position = position_nudge(x = - 0.33), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = dispersal, y = EN_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = dispersal, y = EN_HS_disp_median), position = position_nudge(x = 0.11), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = dispersal, y = EN_HS_disp_quant), position = position_nudge(x = 0), width = 0.06, col = "orange")+
-  geom_boxplot(aes(x = dispersal, y = CR_HS_disp_mean), width = 0.06, col = "red", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = dispersal, y = CR_HS_disp_median), position = position_nudge(x = 0.43), width = 0.06, col = "blue")+
-  geom_boxplot(aes(x = dispersal, y = CR_HS_disp_quant), position = position_nudge(x = 0.33), width = 0.06, col = "orange")+
+p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = dispersal, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = dispersal, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = dispersal, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -123,23 +117,22 @@ p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS_disp_mean))+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Dispersal")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
+        axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
 # create and extract common legend
-colors <- c("Habitat suitability (mean dispersal as.) (A3)" = "red", "Habitat suitability (quant dispersal as.) (A3)" = "orange", "Habitat suitability (median dispersal as.) (A3)" = "blue")
+colors <- c("Habitat suitability (A3)" = "red", "Habitat suitability (dispersal assumption) (A3)" = "blue")
 
-legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (quant dispersal as.) (A3)"))+
+legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (A3)"))+
   geom_boxplot()+
-  geom_boxplot(aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (mean dispersal as.) (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
-  geom_boxplot(aes(x = BatchNum, y = VU_HS, color = "Habitat suitability (median dispersal as.) (A3)"), position = position_nudge(x = 0.25), width = 0.2)+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (dispersal assumption) (A3)"), position = position_nudge(x = 0.25), width = 0.2)+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 24), legend.key.size = unit(1.5, "cm"),
         legend.position = "bottom")+
   ylab("Timepoint of classification")+
-  scale_color_manual(values= colors, breaks = c("Habitat suitability (mean dispersal as.) (A3)", "Habitat suitability (quant dispersal as.) (A3)", "Habitat suitability (median dispersal as.) (A3)"))
+  scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Habitat suitability (dispersal assumption) (A3)"))
 
 shared_legend <- extract_legend(legend)
 
