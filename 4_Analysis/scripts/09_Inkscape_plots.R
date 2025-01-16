@@ -6,6 +6,8 @@ library(data.table)
 library(dplyr)
 library(terra)
 
+# Load functions
+source("Functions/extract_legend.R")
 
 # Load data
 
@@ -75,10 +77,10 @@ for (i in 1:16){
 # Comparison graph of habitat loss, population size and extinction probability
 
 ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1.2, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(linewidth = 1.2, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
   geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
@@ -89,10 +91,10 @@ ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
 ggsave("Inkscape/images/comparison_graph_Batch1.pdf")
 
 ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "gold")+
-  geom_line(linewidth = 1.2, col = "gold")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "#FF6A6A")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_line(linewidth = 1.2, col = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "gold")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "gold")+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
   geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
@@ -102,9 +104,25 @@ ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
 
 ggsave("Inkscape/images/comparison_graph_Batch2.pdf")
 
-# Abundance plots of the simulation
+# Extract legend for the plots
 
-pop_Batch1 <- fread("")
+colors <- c("relative Population size" = "gold", "relative Habitat suitability" = "#FF6A6A", "Extinction probability" = "blue")
+
+legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "relative Habitat suitability"))+
+  geom_line(linewidth = 1)+
+  geom_line(aes(x = Year, y = meanPop, color = "relative Population size"), linewidth = 1)+
+  geom_line(aes(x = Year, y = meanExt, color = "Extinction probability"), linewidth = 1)+
+  ylab("")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "right", , legend.title = element_blank(), 
+        legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"))+
+  scale_color_manual(values= colors)
+
+shared_legend <- extract_legend(legend)
+
+plot(shared_legend)
+
+ggsave("Inkscape/images/legend_simulation_results.pdf")
 
 # Habitat suitability predictions
 
@@ -112,34 +130,86 @@ load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
 r_current <- terra::rast(ens_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch1_Rep4_Land1.pdf")
-terra::plot(r_current, legend = F, pax=list(side=0))
+plot(r_current, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
 dev.off()
 
 load("4_Analysis/data/Predictions_curr_Batch2_Sim1_Replication4.RData")
 r_current <- terra::rast(ens_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-terra::plot(r_current, legend = F, pax=list(side=0))
+plot(r_current, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
 dev.off()
 
 load("4_Analysis/data/Predictions_fut_Batch1_Sim1_Replication4.RData")
 
-# extract year 30
-fut_preds_30 <- ens_fut_preds[[20]]
-r_fut_30 <- terra::rast(fut_preds_30[,1:3])
+# extract year 20 (for range-contracting)
+fut_preds <- ens_fut_preds[[20]]
+r_fut <- terra::rast(fut_preds[,1:3])
 
-pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-plot(r_fut_30, legend = F, pax=list(side=0))
+pdf("Inkscape/images/SDM_predictions_map_future_Batch1_Rep4_Land1.pdf")
+plot(r_fut, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
 dev.off()
 
 load("4_Analysis/data/Predictions_fut_Batch2_Sim1_Replication4.RData")
 
-# extract year 30
-fut_preds_30 <- ens_fut_preds[[40]]
-r_fut_30 <- terra::rast(fut_preds_30[,1:3])
+# extract year 40 (for range-shifting)
+fut_preds <- ens_fut_preds[[30]]
+r_fut <- terra::rast(fut_preds[,1:3])
 
-pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-plot(r_fut_30, legend = F, pax=list(side=0))
+pdf("Inkscape/images/SDM_predictions_map_future_Batch2_Rep4_Land1.pdf")
+plot(r_fut, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
 dev.off()
 
-# Plot landscapes
+# Extract legend
+pdf("Inkscape/images/SDM_predictions_legend.pdf")
+plot(r_current, axes = F, col = rev(terrain.colors(100)), range = c(0,100), plg = list(cex = 1.5))
+dev.off()
+
+# Abundance plots of the simulation
+
+# For the first species
+pop_Batch1 <- readRDS("4_Analysis/data/Batch1_Sim1_Land1_Pop_Rep4.rds")
+pop_Batch2 <- readRDS("4_Analysis/data/Batch2_Sim1_Land1_Pop_Rep4.rds")
+load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
+
+# Abundance plot for year 0
+pop_Batch1_current <- subset(pop_Batch1, pop_Batch1$Year == 100)
+pop_Batch1_current_full <- merge(ens_preds[,c(1:2)], pop_Batch1_current[,c(4:5,7)], by = c("x","y"), all.x = T)
+pop_Batch1_current_full[which(is.na(pop_Batch1_current_full$NInd)),"NInd"] <- 0
+r_abu_current <- rast(as.data.frame(pop_Batch1_current_full[,c(1:3)]))
+
+pdf("Inkscape/images/Abundances_map_current_Batch1_Rep4_Land1.pdf")
+plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+dev.off()
+
+pop_Batch2_current <- subset(pop_Batch2, pop_Batch2$Year == 100)
+pop_Batch2_current_full <- merge(ens_preds[,c(1:2)], pop_Batch2_current[,c(4:5,7)], by = c("x","y"), all.x = T)
+pop_Batch2_current_full[which(is.na(pop_Batch2_current_full$NInd)),"NInd"] <- 0
+r_abu_current <- rast(as.data.frame(pop_Batch2_current_full[,c(1:3)]))
+
+pdf("Inkscape/images/Abundances_map_current_Batch2_Rep4_Land1.pdf")
+plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+dev.off()
+
+# Plot future
+pop_Batch1_future <- subset(pop_Batch1, pop_Batch1$Year == 120)
+pop_Batch1_future_full <- merge(ens_preds[,c(1:2)], pop_Batch1_future[,c(4:5,7)], by = c("x","y"), all.x = T)
+pop_Batch1_future_full[which(is.na(pop_Batch1_future_full$NInd)),"NInd"] <- 0
+r_abu_future <- rast(as.data.frame(pop_Batch1_future_full[,c(1:3)]))
+
+pdf("Inkscape/images/Abundances_map_future_Batch1_Rep4_Land1.pdf")
+plot(r_abu_future, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+dev.off()
+
+pop_Batch2_future <- subset(pop_Batch2, pop_Batch2$Year == 130)
+pop_Batch2_future_full <- merge(ens_preds[,c(1:2)], pop_Batch2_future[,c(4:5,7)], by = c("x","y"), all.x = T)
+pop_Batch2_future_full[which(is.na(pop_Batch2_future_full$NInd)),"NInd"] <- 0
+r_abu_future <- rast(as.data.frame(pop_Batch2_future_full[,c(1:3)]))
+
+pdf("Inkscape/images/Abundances_map_future_Batch2_Rep4_Land1.pdf")
+plot(r_abu_future, axes = F, range = c(0,11), legend = F, col = c("#F2F2F2"))
+dev.off()
+
+pdf("Inkscape/images/Abundance_legend.pdf")
+plot(r_abu_current, axes = F, range = c(0,11), plg = list(cex = 1.5), col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+dev.off()

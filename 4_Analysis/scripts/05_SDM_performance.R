@@ -5,11 +5,11 @@ library(data.table)
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
-library(ggtext)
+#library(ggtext)
 library(grid)
 
 # Load in function
-source("4_Analysis/functions/extract_legend.R")
+source("Functions/extract_legend.R")
 
 # Prepare simulation data
 # create data frame with all parameter combinations
@@ -48,12 +48,12 @@ performance$BatchNum <- factor(performance$BatchNum, levels = c("1", "9", "5", "
 # Plot performance -----------
 # Plot performance in small plots ----------
 p_pos <- #ggplot(performance %>% filter(landRep == 3), aes(x= optima, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= optima, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= optima, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
@@ -62,12 +62,12 @@ p_pos <- #ggplot(performance %>% filter(landRep == 3), aes(x= optima, y = mean_A
   ggtitle("Niche position")
 
 p_breadth <- #ggplot(performance %>% filter(landRep == 3), aes(x= breadth, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= breadth, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= breadth, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
   theme(axis.title = element_blank(), axis.text = element_text(size = 18), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
   #scale_fill_brewer(palette = "PRGn")+
@@ -75,12 +75,12 @@ p_breadth <- #ggplot(performance %>% filter(landRep == 3), aes(x= breadth, y = m
   ggtitle("Niche breadth")
 
 p_rmax <-# ggplot(performance %>% filter(landRep == 3), aes(x= rmax, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= rmax, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= rmax, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
@@ -89,12 +89,12 @@ p_rmax <-# ggplot(performance %>% filter(landRep == 3), aes(x= rmax, y = mean_AU
   ggtitle("Growth rate")
 
 p_disp <- #ggplot(performance %>% filter(landRep == 3), aes(x= dispersal, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= dispersal, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= dispersal, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
   theme(axis.title = element_blank(), axis.text = element_text(size = 18), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
   #scale_fill_brewer(palette = "PRGn")+
@@ -106,10 +106,10 @@ legend <- ggplot(performance %>% filter(landRep == 1), aes(x= dispersal, y = mea
   geom_boxplot()+
   ylab("AUC")+
   theme_bw()+
-  theme(axis.text.x = element_markdown(), axis.title.x = element_blank(), axis.text = element_text(size = 18),
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.key.size = unit(1.5, 'cm'), 
-        legend.title = element_text(size=18, face = "bold"), #change legend title font size
-        legend.text = element_text(size=13), legend.position = "bottom")+
+        legend.title = element_text(size=20, face = "bold"), #change legend title font size
+        legend.text = element_text(size=17), legend.position = "bottom")+
   scale_fill_manual(values = c("#9460A5", "#C2A5CF", "#A6DBA0", "#388E5A"), labels = c('GLM', 'Random Forest', "MaxEnt", "Ensemble"))
 
 shared_legend <- extract_legend(legend)

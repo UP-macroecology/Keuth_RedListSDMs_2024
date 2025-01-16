@@ -8,21 +8,21 @@ source("Functions/extract_legend.R")
 load("4_Analysis/data/IUCN_classification_times_dispersalassumptions.RData")
 
 #check for differences between using dispersal assumptions and not using dispersal assumptions
-which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
-which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
-which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
+# which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
+# which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
+# which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
 
 IUCN_classification$optima <- as.character(IUCN_classification$optima)
 IUCN_classification[which(IUCN_classification$optima == "marginal"), "optima"] <- "range-contracting"
 IUCN_classification[which(IUCN_classification$optima == "central"), "optima"] <- "range-shifting"
 
 p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.40))+
-  geom_boxplot(aes(x = optima, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = optima, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = optima, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
+  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.40))+
+  geom_boxplot(aes(x = optima, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = optima, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = optima, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -45,12 +45,12 @@ p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
 
 
 p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.4))+
-  geom_boxplot(aes(x = breadth, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = breadth, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = breadth, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
+  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = breadth, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = breadth, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = breadth, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -70,12 +70,12 @@ p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
 p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.4))+
-  geom_boxplot(aes(x = rmax, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = rmax, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = rmax, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
+  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = rmax, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = rmax, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = rmax, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -97,12 +97,12 @@ p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
   ylab("Classification timepoint [years]")
 
 p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "red", position = position_nudge(x = -0.4))+
-  geom_boxplot(aes(x = dispersal, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.1, fill = "red", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = dispersal, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "blue")+
-  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.1, fill = "red", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = dispersal, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "blue")+
+  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = dispersal, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = dispersal, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = dispersal, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -122,17 +122,17 @@ p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
 # create and extract common legend
-colors <- c("Habitat suitability (A3)" = "red", "Habitat suitability (dispersal assumption) (A3)" = "blue")
+colors <- c("Habitat suitability (A3)" = "#F04242", "Habitat suitability with dispersal assumption (A3)" = "#2D7673")
 
 legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (A3)"))+
   geom_boxplot()+
-  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (dispersal assumption) (A3)"), position = position_nudge(x = 0.25), width = 0.2)+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability with dispersal assumption (A3)"), position = position_nudge(x = 0.25), width = 0.2)+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 24), legend.key.size = unit(1.5, "cm"),
         legend.position = "bottom")+
   ylab("Timepoint of classification")+
-  scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Habitat suitability (dispersal assumption) (A3)"))
+  scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Habitat suitability with dispersal assumption (A3)"))
 
 shared_legend <- extract_legend(legend)
 
@@ -2756,4 +2756,326 @@ shared_legend <- extract_legend(legend)
 #Plot the large grid
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(1.5,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
+
+
+
+# Check plots susanne recommended
+library(data.table)
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+
+# unique trait values
+optima <- c("range-contracting", "range-shifting")
+breadth <- c("narrow", "wide")
+rmax <- c("slow", "fast")
+dispersal <- c("short", "long")
+land_rep <- 1:3
+BatchNum <- 1:16
+set.seed(8765)
+replicates <- sample(0:99, 10)
+
+#create data frame with all trait combinations
+sims_long <- expand.grid(optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims_long$BatchNum <- rep(1:16)
+
+# prepare data sets
+data <- vector("list", 16)
+data_mean <- vector("list", 16)
+
+for (i in 1:16){
+  # data set for land replication 1
+  tmp1 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim1.rds"))
+  # data set for land replication 2
+  tmp2 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim2.rds"))
+  # data set for land replication 3
+  tmp3 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim3.rds"))
+  
+  #rbind the different data sets
+  data[[i]] <- rbind(tmp1, tmp2)
+  data[[i]] <- rbind(data[[i]], tmp3)
+  
+  #add traits to data set
+  data[[i]]$optima <- sims_long[which(sims_long$BatchNum == i),]$optima
+  data[[i]]$breadth <- sims_long[which(sims_long$BatchNum == i),]$breadth
+  data[[i]]$rmax <- sims_long[which(sims_long$BatchNum == i),]$rmax
+  data[[i]]$dispersal <- sims_long[which(sims_long$BatchNum == i),]$dispersal
+  
+  #calculate habitat loss
+  data[[i]]$hs_loss <- 1- data[[i]]$hs_change
+  
+  #set NAs to 1 (only occurr at the very end of the simulation time)
+  data[[i]][which(is.na(data[[i]]$hs_loss)), "hs_loss"] <- 1
+  
+  #transform column
+  data[[i]]$land <- as.character(data[[i]]$land)
+  
+  # calculate mean and standard deviation of population size, habitat size and extinction probability
+  data_mean[[i]] <- data[[i]] %>% group_by(Year) %>% summarise(meanPop = mean(pop_sum), sdPop = sd(pop_sum), meanHS = mean(hs_change), sdHS = sd(hs_change),
+                                                               meanExt = mean(extProb), sdExt = sd(extProb), .groups='keep')
+  
+  #add traits to data set
+  data_mean[[i]]$optima <- sims_long[which(sims_long$BatchNum == i),]$optima
+  data_mean[[i]]$breadth <- sims_long[which(sims_long$BatchNum == i),]$breadth
+  data_mean[[i]]$rmax <- sims_long[which(sims_long$BatchNum == i),]$rmax
+  data_mean[[i]]$dispersal <- sims_long[which(sims_long$BatchNum == i),]$dispersal
+  
+  # change time column
+  data_mean[[i]]$Year <- data_mean[[i]]$Year - 100
+}
+
+# append data to large data frame
+data_append <- do.call(rbind, data)
+
+# remove values larger than 1 for pop_sum and hs_loss
+data_adapted <- lapply(data, function(x){
+  x[which(x$hs_loss < 0), "hs_loss"] <- 0; 
+  x[which(x$pop_sum > 1), "pop_sum"] <- 1; 
+  return(x)
+})
+
+data_adapted_long <- do.call(rbind, data_adapted)
+data_adapted_long$predictions <- NA
+data_adapted_long <- as.data.frame(data_adapted_long)
+
+# split in range-shifting and range contracting species
+data_shifting <- subset(data_adapted_long, data_adapted_long$optima == "range-shifting")
+data_contracting <- subset(data_adapted_long, data_adapted_long$optima == "range-contracting")
+
+# create different data sets for the different models
+data_breadth_contracting <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_breadth_contracting$land <- rep(1:3, each = 100, times = 2)
+data_breadth_contracting$breadth <- rep(c("narrow", "wide"), each = 300)
+data_breadth_contracting$breadth <- factor(data_breadth_contracting$breadth, levels = c("wide", "narrow"))
+data_breadth_contracting$predictions <- NA
+data_breadth_contracting$land <- as.factor(data_breadth$land)
+
+data_rmax_contracting <-data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_rmax_contracting$land <- rep(1:3, each = 100, times = 2)
+data_rmax_contracting$rmax <- rep(c("slow", "fast"), each = 300)
+data_rmax_contracting$predictions <- NA
+data_rmax_contracting$land <- as.factor(data_rmax$land)
+
+data_dispersal_contracting <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_dispersal_contracting$land <- rep(1:3, each = 100, times = 2)
+data_dispersal_contracting$dispersal <- rep(c("short", "long"), each = 300)
+data_dispersal_contracting$predictions <- NA
+data_dispersal_contracting$land <- as.factor(data_dispersal$land)
+
+data_breadth_shifting <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_breadth_shifting$land <- rep(1:3, each = 100, times = 2)
+data_breadth_shifting$breadth <- rep(c("narrow", "wide"), each = 300)
+data_breadth_shifting$breadth <- factor(data_breadth_shifting$breadth, levels = c("wide", "narrow"))
+data_breadth_shifting$predictions <- NA
+data_breadth_shifting$land <- as.factor(data_breadth$land)
+
+data_rmax_shifting <-data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_rmax_shifting$land <- rep(1:3, each = 100, times = 2)
+data_rmax_shifting$rmax <- rep(c("slow", "fast"), each = 300)
+data_rmax_shifting$predictions <- NA
+data_rmax_shifting$land <- as.factor(data_rmax$land)
+
+data_dispersal_shifting <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_dispersal_shifting$land <- rep(1:3, each = 100, times = 2)
+data_dispersal_shifting$dispersal <- rep(c("short", "long"), each = 300)
+data_dispersal_shifting$predictions <- NA
+data_dispersal_shifting$land <- as.factor(data_dispersal$land)
+
+# create data frame with combinations of trait and land replication
+land_rep <- 1:3
+breadth <- c("narrow", "wide")
+
+sims <- expand.grid(land = land_rep, breadth = breadth)
+sims$rmax <- rep(c("slow", "fast"), each = 3)
+sims$dispersal <- rep(c("short", "long"), each = 3)
+
+# calculate the different models
+for (sim_nr in 1:nrow(sims)){
+  # extract trait values
+  breadth_nr <- sims[sim_nr,]$breadth
+  rmax_nr <- sims[sim_nr,]$rmax
+  dispersal_nr <- sims[sim_nr,]$dispersal
+  land_nr <- sims[sim_nr,]$land
+  
+  # subset data set
+  data_sub_breadth_contracting <- subset(data_contracting, data_contracting$land == land_nr & data_contracting$breadth == breadth_nr)
+  data_sub_rmax_contracting <- subset(data_contracting, data_contracting$land == land_nr & data_contracting$rmax == rmax_nr)
+  data_sub_dispersal_contracting <- subset(data_contracting, data_contracting$land == land_nr & data_contracting$dispersal == dispersal_nr)
+  
+  data_sub_breadth_shifting <- subset(data_shifting, data_shifting$land == land_nr & data_shifting$breadth == breadth_nr)
+  data_sub_rmax_shifting <- subset(data_shifting, data_shifting$land == land_nr & data_shifting$rmax == rmax_nr)
+  data_sub_dispersal_shifting <- subset(data_shifting, data_shifting$land == land_nr & data_shifting$dispersal == dispersal_nr)
+  
+  # calculate the different models
+  model_breadth_contracting <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth_contracting, family = "binomial")
+  model_rmax_contracting <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax_contracting, family = "binomial")
+  model_dispersal_contracting <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal_contracting, family = "binomial")
+  
+  model_breadth_shifting <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth_shifting, family = "binomial")
+  model_rmax_shifting <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax_shifting, family = "binomial")
+  model_dispersal_shifting <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal_shifting, family = "binomial")
+  
+  # save the model outputs
+  print(paste0("land_nr: ", land_nr, " & breadth: ", breadth_nr, "& contracting"))
+  print(summary(model_breadth_contracting))
+  print(paste0("land_nr: ", land_nr, " & rmax: ", rmax_nr, "& contracting"))
+  print(summary(model_rmax_contracting))
+  print(paste0("land_nr: ", land_nr, " & dispersal: ", dispersal_nr, "& contracting"))
+  print(summary(model_dispersal_contracting))
+  
+  print(paste0("land_nr: ", land_nr, " & breadth: ", breadth_nr, "& shifting"))
+  print(summary(model_breadth_shifting))
+  print(paste0("land_nr: ", land_nr, " & rmax: ", rmax_nr, "& shifting"))
+  print(summary(model_rmax_shifting))
+  print(paste0("land_nr: ", land_nr, " & dispersal: ", dispersal_nr, "& shifting"))
+  print(summary(model_dispersal_shifting))
+  
+  #make predictions to data
+  predictions_breadth_contracting <- predict(model_breadth_contracting, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_breadth_contracting[which(data_breadth_contracting$land == land_nr & data_breadth_contracting$breadth == breadth_nr),"predictions"] <- predictions_breadth_contracting$fit
+  data_breadth_contracting[which(data_breadth_contracting$land == land_nr & data_breadth_contracting$breadth == breadth_nr),"lower95"] <- predictions_breadth_contracting$fit - 1.96*predictions_breadth_contracting$se.fit
+  data_breadth_contracting[which(data_breadth_contracting$land == land_nr & data_breadth_contracting$breadth == breadth_nr),"upper95"] <- predictions_breadth_contracting$fit + 1.96*predictions_breadth_contracting$se.fit
+  
+  predictions_rmax_contracting <- predict(model_rmax_contracting, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_rmax_contracting[which(data_rmax_contracting$land == land_nr & data_rmax_contracting$rmax == rmax_nr),"predictions"] <- predictions_rmax_contracting$fit
+  data_rmax_contracting[which(data_rmax_contracting$land == land_nr & data_rmax_contracting$rmax == rmax_nr),"lower95"] <- predictions_rmax_contracting$fit - 1.96*predictions_rmax_contracting$se.fit
+  data_rmax_contracting[which(data_rmax_contracting$land == land_nr & data_rmax_contracting$rmax == rmax_nr),"upper95"] <- predictions_rmax_contracting$fit + 1.96*predictions_rmax_contracting$se.fit
+  
+  predictions_dispersal_contracting <- predict(model_dispersal_contracting, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_dispersal_contracting[which(data_dispersal_contracting$land == land_nr & data_dispersal_contracting$dispersal == dispersal_nr),"predictions"] <- predictions_dispersal_contracting$fit
+  data_dispersal_contracting[which(data_dispersal_contracting$land == land_nr & data_dispersal_contracting$dispersal == dispersal_nr),"lower95"] <- predictions_dispersal_contracting$fit - 1.96*predictions_dispersal_contracting$se.fit
+  data_dispersal_contracting[which(data_dispersal_contracting$land == land_nr & data_dispersal_contracting$dispersal == dispersal_nr),"upper95"] <- predictions_dispersal_contracting$fit + 1.96*predictions_dispersal_contracting$se.fit
+
+  predictions_breadth_shifting <- predict(model_breadth_shifting, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_breadth_shifting[which(data_breadth_shifting$land == land_nr & data_breadth_shifting$breadth == breadth_nr),"predictions"] <- predictions_breadth_shifting$fit
+  data_breadth_shifting[which(data_breadth_shifting$land == land_nr & data_breadth_shifting$breadth == breadth_nr),"lower95"] <- predictions_breadth_shifting$fit - 1.96*predictions_breadth_shifting$se.fit
+  data_breadth_shifting[which(data_breadth_shifting$land == land_nr & data_breadth_shifting$breadth == breadth_nr),"upper95"] <- predictions_breadth_shifting$fit + 1.96*predictions_breadth_shifting$se.fit
+  
+  predictions_rmax_shifting <- predict(model_rmax_shifting, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_rmax_shifting[which(data_rmax_shifting$land == land_nr & data_rmax_shifting$rmax == rmax_nr),"predictions"] <- predictions_rmax_shifting$fit
+  data_rmax_shifting[which(data_rmax_shifting$land == land_nr & data_rmax_shifting$rmax == rmax_nr),"lower95"] <- predictions_rmax_shifting$fit - 1.96*predictions_rmax_shifting$se.fit
+  data_rmax_shifting[which(data_rmax_shifting$land == land_nr & data_rmax_shifting$rmax == rmax_nr),"upper95"] <- predictions_rmax_shifting$fit + 1.96*predictions_rmax_shifting$se.fit
+  
+  predictions_dispersal_shifting <- predict(model_dispersal_shifting, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_dispersal_shifting[which(data_dispersal_shifting$land == land_nr & data_dispersal_shifting$dispersal == dispersal_nr),"predictions"] <- predictions_dispersal_shifting$fit
+  data_dispersal_shifting[which(data_dispersal_shifting$land == land_nr & data_dispersal_shifting$dispersal == dispersal_nr),"lower95"] <- predictions_dispersal_shifting$fit - 1.96*predictions_dispersal_shifting$se.fit
+  data_dispersal_shifting[which(data_dispersal_shifting$land == land_nr & data_dispersal_shifting$dispersal == dispersal_nr),"upper95"] <- predictions_dispersal_shifting$fit + 1.96*predictions_dispersal_shifting$se.fit
+  }
+
+# Plot the results
+source("Functions/extract_legend.R")
+
+p_breadth_contracting <- ggplot(data_breadth_contracting, aes(x=hs_loss, y = predictions, col = land, linetype = breadth))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), legend.position = c(0.92, 0.91),
+        axis.title.x = element_blank(),axis.title = element_text(size = 18), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Niche breadth - Range contracting")
+
+p_rmax_contracting <- ggplot(data_rmax_contracting, aes(x=hs_loss, y = predictions, col = land, linetype = rmax))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18),  plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.92, 0.9), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Growth rate - Range contracting")
+
+p_dispersal_contracting <- ggplot(data_dispersal_contracting, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.92, 0.9), legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Dispersal - Range contracting")
+
+p_breadth_shifting <- ggplot(data_breadth_shifting, aes(x=hs_loss, y = predictions, col = land, linetype = breadth))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), legend.position = c(0.92, 0.91),
+        axis.title = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Niche breadth - Range shifting")
+
+p_rmax_shifting <- ggplot(data_rmax_shifting, aes(x=hs_loss, y = predictions, col = land, linetype = rmax))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18),  plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.92, 0.9), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"),
+        axis.title.y = element_blank())+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Growth rate - Range shifting")
+
+p_dispersal_shifting <- ggplot(data_dispersal_shifting, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.92, 0.9), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Dispersal - Range shifting")
+
+legend <- ggplot(data_dispersal_contracting, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("relative Population size")+
+  theme_bw()+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), 
+        legend.title = element_text(size = 23), legend.text = element_text(size = 18), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  guides(linetype = "none", colour = guide_legend(title = "Landscape"))+
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  ggtitle("Dispersal")
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p_breadth_contracting, p_breadth_shifting, p_rmax_contracting, p_rmax_shifting, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,0.8))
+grid.arrange(arrangeGrob(p_dispersal_contracting, p_dispersal_shifting, t0, t0, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,0.8))
 

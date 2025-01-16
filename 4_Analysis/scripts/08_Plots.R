@@ -87,6 +87,8 @@ data_adapted_long <- do.call(rbind, data_adapted)
 data_adapted_long$predictions <- NA
 data_adapted_long <- as.data.frame(data_adapted_long)
 
+save(data_adapted_long, file="4_Analysis/data/raw_data_longformat.RData")
+
 # Plot the results -----
 
 # Population size against habitat suitability (updated) ---------------
@@ -101,6 +103,7 @@ data_optima$land <- as.factor(data_optima$land)
 data_breadth <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
 data_breadth$land <- rep(1:3, each = 100, times = 2)
 data_breadth$breadth <- rep(c("narrow", "wide"), each = 300)
+data_breadth$breadth <- factor(data_breadth$breadth, levels = c("wide", "narrow"))
 data_breadth$predictions <- NA
 data_breadth$land <- as.factor(data_breadth$land)
 
@@ -181,6 +184,8 @@ for (sim_nr in 1:nrow(sims)){
 }
 sink()
 
+save(data_optima, data_breadth, data_rmax, data_dispersal, file = "4_Analysis/data/data_model_poploss_hsloss.Rdata")
+
 ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
   geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
   geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
@@ -190,12 +195,17 @@ ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optim
   ylab("relative Population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23), plot.title = element_text(size = 28, face = "italic"),
-        legend.position = c(0.92, 0.95),  legend.title = element_blank(), legend.text = element_text(size = 23),
+        legend.position = c(0.91, 0.85),  legend.title = element_text(size = 23), legend.text = element_text(size = 23),
         legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
-  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
-  ggtitle("Range dynamics")
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  ggtitle("Range dynamics")+
+  labs(colour = "Landscape", linetype = NULL)+
+  guides(linetype = guide_legend(order = 1))
+
+grid.arrange(p_pos, shared_legend, ncol=2, nrow = 1, widths = c(10,1))
+
 
 p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
   geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
@@ -206,7 +216,7 @@ p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetyp
   ylab("relative Population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
-        legend.position = c(0.87, 0.91),  legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.position = c(0.85, 0.89),  legend.title = element_blank(), legend.text = element_text(size = 18), 
         legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
@@ -221,7 +231,7 @@ p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, li
   xlab("Habitat loss")+
   ylab("relative Population size")+
   theme_bw()+
-  theme(axis.text = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), legend.position = c(0.92, 0.91),
+  theme(axis.text = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), legend.position = c(0.92, 0.90),
         axis.title = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
@@ -237,7 +247,7 @@ p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype
   ylab("relative Population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18),  plot.title = element_text(size = 23, face = "italic"), 
-        legend.position = c(0.92, 0.9), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+        legend.position = c(0.92, 0.89), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
@@ -252,7 +262,7 @@ p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land
   ylab("relative Population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
-        legend.position = c(0.92, 0.9), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.position = c(0.91, 0.89), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), 
         legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
@@ -277,7 +287,7 @@ legend <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, lin
 
 shared_legend <- extract_legend(legend)
 
-grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,0.8))
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,1))
 
 # IUCN classification time - updated plot -------
 
