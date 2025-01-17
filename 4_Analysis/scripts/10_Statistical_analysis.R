@@ -65,8 +65,9 @@ list_optima <- split(data_optima, data_optima$land)
 
 # apply model
 model_optima_l1 <- lm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]])
-summary(model_optima_l1)
-anova(model_optima_l1)
+model_optima_l1_2 <- glm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]], family = "binomial")
+summary(model_optima_l1_2)
+anova(model_optima_l1_2)
 
 model_optima <- lm(predictions ~ hs_loss + optima + land + hs_loss*optima + hs_loss*land, data=data_optima)
 summary(model_optima)
@@ -83,3 +84,38 @@ anova(model_rmax)
 model_dispersal <- lm(predictions ~ hs_loss + dispersal + land + hs_loss*dispersal + hs_loss*land, data=data_dispersal)
 summary(model_dispersal)
 anova(model_dispersal)
+
+
+load("4_Analysis/data/raw_data_longformat.RData")
+
+#separate data set for all landscapes
+
+list_landscapes <- split(data_adapted_long, data_adapted_long$land)
+
+#start with just the optima model
+model_optima_l1 <- glm(pop_sum ~ hs_loss + optima + hs_loss*optima, data=list_landscapes[[1]], family = "binomial")
+plot(model_optima_l1)
+summary(model_optima_l1)
+anova(model_optima_l1)
+
+
+model_l1 <- glm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, data=list_landscapes[[1]], family = "binomial")
+plot(model_l1)
+summary(model_l1)
+anova(model_l1)
+
+model_l2 <- glm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, data=list_landscapes[[2]], family = "binomial")
+plot(model_l2)
+summary(model_l2)
+anova(model_l2)
+
+model_l3 <- glm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, data=list_landscapes[[3]], family = "binomial")
+plot(model_l3)
+summary(model_l3)
+anova(model_l3)
+
+library(modelsummary)
+models <- list(Land1 = model_l1, Land2 = model_l2, Land3 = model_l3)
+
+modelsummary(models, statistic = c("s.e. = {std.error}", "p = {p.value}"))
+modelsummary(models, output = "4_Analysis/plots/Paper/table_models_poploss_hsloss.html", statistic = c("s.e. = {std.error}", "p = {p.value}"))
