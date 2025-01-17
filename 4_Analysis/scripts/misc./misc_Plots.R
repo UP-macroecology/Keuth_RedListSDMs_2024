@@ -17,12 +17,12 @@ IUCN_classification[which(IUCN_classification$optima == "marginal"), "optima"] <
 IUCN_classification[which(IUCN_classification$optima == "central"), "optima"] <- "range-shifting"
 
 p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.40))+
-  geom_boxplot(aes(x = optima, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = optima, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = optima, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.40))+
+  geom_boxplot(aes(x = optima, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = optima, y = EN_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = optima, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = optima, y = CR_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = optima, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#3EA39F")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -39,18 +39,18 @@ p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   xlab("")+
   ylim(c(0,60))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
-        axis.title = element_text(size = 24), legend.position = "", plot.title = element_text(size = 20, face = "italic"), 
+        axis.title = element_text(size = 24), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   ylab("Classification timepoint [years]")
 
 
 p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.4))+
-  geom_boxplot(aes(x = breadth, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = breadth, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = breadth, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = breadth, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = breadth, y = EN_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = breadth, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = breadth, y = CR_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = breadth, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#3EA39F")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -70,12 +70,12 @@ p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
 p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.4))+
-  geom_boxplot(aes(x = rmax, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = rmax, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = rmax, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = rmax, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = rmax, y = EN_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = rmax, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = rmax, y = CR_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = rmax, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#3EA39F")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -97,12 +97,12 @@ p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
   ylab("Classification timepoint [years]")
 
 p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
-  geom_boxplot(width = 0.1, fill = "#F04242", position = position_nudge(x = -0.4))+
-  geom_boxplot(aes(x = dispersal, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = -0.07))+
-  geom_boxplot(aes(x = dispersal, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#2D7673")+
-  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.1, fill = "#F04242", position = position_nudge(x = 0.26))+
-  geom_boxplot(aes(x = dispersal, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#2D7673")+
+  geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.4))+
+  geom_boxplot(aes(x = dispersal, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = dispersal, y = EN_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = -0.07))+
+  geom_boxplot(aes(x = dispersal, y = EN_HS_disp), position = position_nudge(x = 0.07), width = 0.1, fill = "#3EA39F")+
+  geom_boxplot(aes(x = dispersal, y = CR_HS), width = 0.1, fill = "#F36868", position = position_nudge(x = 0.26))+
+  geom_boxplot(aes(x = dispersal, y = CR_HS_disp), position = position_nudge(x = 0.4), width = 0.1, fill = "#3EA39F")+
   geom_vline(xintercept = 1.5)+
   geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
@@ -122,7 +122,7 @@ p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
 # create and extract common legend
-colors <- c("Habitat suitability (A3)" = "#F04242", "Habitat suitability with dispersal assumption (A3)" = "#2D7673")
+colors <- c("Habitat suitability (A3)" = "#F36868", "Habitat suitability with dispersal assumption (A3)" = "#3EA39F")
 
 legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (A3)"))+
   geom_boxplot()+
