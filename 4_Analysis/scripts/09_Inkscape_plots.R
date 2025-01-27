@@ -84,7 +84,7 @@ ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
   geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), axis.title.y = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.1,1.35))
 
@@ -98,7 +98,7 @@ ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
   geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
   geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 18), axis.title = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), axis.title.y = element_blank(), legend.position = "")+
   xlim(c(0,75))+
   ylim(c(-0.1,1.35))
 
@@ -115,8 +115,9 @@ legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "relative Ha
   ylab("")+
   theme_bw()+
   theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "right", , legend.title = element_blank(), 
-        legend.text = element_text(size = 15), legend.key.size = unit(1, "cm"))+
-  scale_color_manual(values= colors)
+        legend.text = element_text(size = 30), legend.key.size = unit(2, "cm"), legend.key.width = unit(2.5, "cm"))+
+  scale_color_manual(values= colors, breaks = c("relative Habitat suitability", "relative Population size", "Extinction probability"))+
+  guides(color = guide_legend(override.aes = list(linewidth = 3)))
 
 shared_legend <- extract_legend(legend)
 
@@ -162,11 +163,11 @@ dev.off()
 
 # Extract legend
 pdf("Inkscape/images/SDM_predictions_legend.pdf")
-plot(r_current, axes = F, col = rev(terrain.colors(100)), range = c(0,100), plg = list(cex = 1.5))
+plot(r_current, axes = F, col = rev(terrain.colors(100)), range = c(0,100), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
 dev.off()
 
 # Abundance plots of the simulation
-
+library(RColorBrewer)
 # For the first species
 pop_Batch1 <- readRDS("4_Analysis/data/Batch1_Sim1_Land1_Pop_Rep4.rds")
 pop_Batch2 <- readRDS("4_Analysis/data/Batch2_Sim1_Land1_Pop_Rep4.rds")
@@ -211,5 +212,5 @@ plot(r_abu_future, axes = F, range = c(0,11), legend = F, col = c("#F2F2F2"))
 dev.off()
 
 pdf("Inkscape/images/Abundance_legend.pdf")
-plot(r_abu_current, axes = F, range = c(0,11), plg = list(cex = 1.5), col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+plot(r_abu_current, axes = F, range = c(0,11), col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
 dev.off()
