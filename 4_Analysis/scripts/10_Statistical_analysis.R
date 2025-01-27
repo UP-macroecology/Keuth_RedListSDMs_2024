@@ -26,9 +26,10 @@ shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$metric ==
 shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$metric == "Ext")$VU)
 # all of them are not normally distributed and I even have some values that have no variance -> which test can I use
 
-model_VU <- lm(VU ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long)
-model_EN <- lm(EN ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long)
-model_CR <- lm(CR ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long)
+model_VU <- glm(VU ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
+model_EN <- glm(EN ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
+model_CR <- glm(CR ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
+par(mfrow=c(2,2))
 plot(model_VU)
 plot(model_EN)
 plot(model_CR)
@@ -60,30 +61,30 @@ pairwise.t.test(IUCN_classification_long$CR, IUCN_classification_long$metric, p.
 
 load("4_Analysis/data/data_model_poploss_hsloss.Rdata")
 
-# seperate data sets per landscape
-list_optima <- split(data_optima, data_optima$land)
-
-# apply model
-model_optima_l1 <- lm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]])
-model_optima_l1_2 <- glm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]], family = "binomial")
-summary(model_optima_l1_2)
-anova(model_optima_l1_2)
-
-model_optima <- lm(predictions ~ hs_loss + optima + land + hs_loss*optima + hs_loss*land, data=data_optima)
-summary(model_optima)
-anova(model_optima)
-
-model_breadth <- lm(predictions ~ hs_loss + breadth + land + hs_loss*breadth + hs_loss*land, data=data_breadth)
-summary(model_breadth)
-anova(model_breadth)
-
-model_rmax <- lm(predictions ~ hs_loss + rmax + land + hs_loss*rmax + hs_loss*land, data=data_rmax)
-summary(model_rmax)
-anova(model_rmax)
-
-model_dispersal <- lm(predictions ~ hs_loss + dispersal + land + hs_loss*dispersal + hs_loss*land, data=data_dispersal)
-summary(model_dispersal)
-anova(model_dispersal)
+# # seperate data sets per landscape
+# list_optima <- split(data_optima, data_optima$land)
+# 
+# # apply model
+# model_optima_l1 <- lm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]])
+# model_optima_l1_2 <- glm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]], family = "binomial")
+# summary(model_optima_l1_2)
+# anova(model_optima_l1_2)
+# 
+# model_optima <- lm(predictions ~ hs_loss + optima + land + hs_loss*optima + hs_loss*land, data=data_optima)
+# summary(model_optima)
+# anova(model_optima)
+# 
+# model_breadth <- lm(predictions ~ hs_loss + breadth + land + hs_loss*breadth + hs_loss*land, data=data_breadth)
+# summary(model_breadth)
+# anova(model_breadth)
+# 
+# model_rmax <- lm(predictions ~ hs_loss + rmax + land + hs_loss*rmax + hs_loss*land, data=data_rmax)
+# summary(model_rmax)
+# anova(model_rmax)
+# 
+# model_dispersal <- lm(predictions ~ hs_loss + dispersal + land + hs_loss*dispersal + hs_loss*land, data=data_dispersal)
+# summary(model_dispersal)
+# anova(model_dispersal)
 
 
 load("4_Analysis/data/raw_data_longformat.RData")
@@ -98,7 +99,7 @@ plot(model_optima_l1)
 summary(model_optima_l1)
 anova(model_optima_l1)
 
-
+# then put together a model with all traits
 model_l1 <- glm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, data=list_landscapes[[1]], family = "binomial")
 plot(model_l1)
 summary(model_l1)
@@ -117,5 +118,13 @@ anova(model_l3)
 library(modelsummary)
 models <- list(Land1 = model_l1, Land2 = model_l2, Land3 = model_l3)
 
-modelsummary(models, statistic = c("s.e. = {std.error}", "p = {p.value}"))
-modelsummary(models, output = "4_Analysis/plots/Paper/table_models_poploss_hsloss.html", statistic = c("s.e. = {std.error}", "p = {p.value}"))
+modelsummary(models, statistic = c("s.e. = {std.error}", "p = {p.value}{stars}"), coef_rename = c('hs_loss' = 'HS loss', 'optimarange-shifting' = 'Niche optima (range-shifting)'
+                                                                                           , "breadthwide" = "Niche breadth (wide)", "rmaxfast" = "Growth rate (fast)",
+                                                                                           "dispersallong" = "Dispersal distance (long)", "hs_loss × optimarange-shifting" = "HS loss * Niche optima (range shifting)",
+                                                                                           "hs_loss × breadthwide" = "HS loss * Niche breadth (wide)", "hs_loss × rmaxfast" = "HS loss * Growth rate (fast)",
+                                                                                           "hs_loss × dispersallong" = "HS loss * Dispersal distance (long)"))
+modelsummary(models, output = "4_Analysis/plots/Paper/table_models_poploss_hsloss.html", statistic = c("s.e. = {std.error}", "p = {p.value}{stars}"), coef_rename = c('hs_loss' = 'HS loss', 'optimarange-shifting' = 'Niche optima (range-shifting)'
+                                                                                                                                                               , "breadthwide" = "Niche breadth (wide)", "rmaxfast" = "Growth rate (fast)",
+                                                                                                                                                               "dispersallong" = "Dispersal distance (long)", "hs_loss × optimarange-shifting" = "HS loss * Niche optima (range shifting)",
+                                                                                                                                                               "hs_loss × breadthwide" = "HS loss * Niche breadth (wide)", "hs_loss × rmaxfast" = "HS loss * Growth rate (fast)",
+                                                                                                                                                               "hs_loss × dispersallong" = "HS loss * Dispersal distance (long)"))
