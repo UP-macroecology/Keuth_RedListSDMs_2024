@@ -3,9 +3,9 @@
 #SBATCH --job-name=Cluster_clean
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=keuth@uni-potsdam.de
-#SBATCH --cpus-per-task=48
+#SBATCH --cpus-per-task=10
 #SBATCH --time=24:00:00
-#SBATCH --mem=300gb
+#SBATCH --mem=200gb
 #SBATCH --nodelist=ecoc9z
 
 cd ${SLURM_SUBMIT_DIR}

@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --time=24:00:00
 #SBATCH --mem=100gb
-#SBATCH --nodelist=ecoc9z
+#SBATCH --nodelist=ecoc9
 
 cd ${SLURM_SUBMIT_DIR}
 R CMD BATCH ./09b_Inkscape_plots.R ./output-file-Inkscape_plots.Rout

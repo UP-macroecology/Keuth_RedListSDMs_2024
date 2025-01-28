@@ -25,7 +25,7 @@ replicates <- sample(0:99, 10)
 #load(paste0(sdm_dir, "data/values_dispersal_assumption.Rdata"))
 
 #set up cluster
-ncores <- 48
+ncores <- 10
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
@@ -47,6 +47,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dplyr", "data.table")) %dopar% {
     tmp <- fread(paste0(sim_dir, "Outputs/Batch", BatchNum_disp, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"))
     tmp <- tmp %>% select(., -c("RepSeason", "Species", "IndID", "Status"))
     df <- rbind(df, tmp)
+    rm(tmp)
   }
 
   df <-df[-1,]

@@ -8,36 +8,36 @@ library(terra)
 
 #define file path
 sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/")
-sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
+sdm_dir <- file.path("/mnt/ibb_share/zurell_transfer/Keuth_SDMExtinctions/03_SDMs/")
 
 for(BatchNum in 1:16){
   # Load data (current prediction of SDMs)
   load(paste0(sdm_dir, "predictions/Predictions_curr_Batch", BatchNum, "_Sim1_Replication4.RData"))
-  
+
   #Rasterize data
   r_current <- terra::rast(ens_preds[,1:3])
-  
+
   #plot the results for the prediction of current habitat suitability
   pdf(paste0(sdm_dir, "plots/Inkscape_maps/SDM_predictions_map_current_Batch", BatchNum, "_Rep4_Land1.pdf"))
   plot(r_current, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
   dev.off()
-  
+
   # Load data (future predictions of SDMs)
   load(paste0(sdm_dir, "predictions/Predictions_fut_Batch", BatchNum, "_Sim1_Replication4.RData"))
-  
+
   # extract two different years (I am not sure which one I should select)
   fut_preds_20 <- ens_fut_preds[[20]]
   fut_preds_30 <- ens_fut_preds[[30]]
-  
+
   #Rasterize data
   r_fut_20 <- terra::rast(fut_preds_20[,1:3])
   r_fut_30 <- terra::rast(fut_preds_30[,1:3])
-  
+
   #plot the results of both years
   pdf(paste0(sdm_dir, "plots/Inkscape_maps/SDM_predictions_map_future20_Batch", BatchNum, "_Rep4_Land1.pdf"))
   plot(r_fut_20, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
   dev.off()
-  
+
   pdf(paste0(sdm_dir, "plots/Inkscape_maps/SDM_predictions_map_future30_Batch", BatchNum, "_Rep4_Land1.pdf"))
   plot(r_fut_30, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
   dev.off()
@@ -71,7 +71,7 @@ for(BatchNum in 1:16){
   r_abu_fut_20 <- rast(as.data.frame(pop_fut_20_full[,c(1:3)]))
   
   # if there are no abundances in the data sets I set one color for the whole map otherwise I use a palette
-  if(length(pop_fut_20_full$NInd) == 1){
+  if(length(unique(pop_fut_20_full$NInd)) == 1){
     pdf(paste0(sdm_dir, "plots/Inkscape_maps/Abundances_map_future20_Batch", BatchNum, "_Rep4_Land1.pdf"))
     plot(r_abu_fut_20, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2"))
     dev.off()
@@ -91,7 +91,7 @@ for(BatchNum in 1:16){
   r_abu_fut_30 <- rast(as.data.frame(pop_fut_30_full[,c(1:3)]))
   
   # if there are no abundances in the data sets I set one color for the whole map otherwise I use a palette
-  if(length(pop_fut_30_full$NInd) == 1){
+  if(length(unique(pop_fut_30_full$NInd)) == 1){
     pdf(paste0(sdm_dir, "plots/Inkscape_maps/Abundances_map_future30_Batch", BatchNum, "_Rep4_Land1.pdf"))
     plot(r_abu_fut_30, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2"))
     dev.off()
