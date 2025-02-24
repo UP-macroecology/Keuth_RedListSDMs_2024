@@ -4,89 +4,11 @@
 library(dplyr)
 library(tidyr)
 library(stringr)
-
-# Testing the differences between classification times between the single trait levels
-
-load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
-
-# extract data for VU and elongate data set and clean columns
-IUCN_classification_long <- IUCN_classification %>% select(BatchNum:VU_Pop,VU_HS, VU_Ext, optima:dispersal) %>% pivot_longer(., c(4:6), names_to = "metric", values_to = "VU") %>%
-  mutate(metric = str_remove(metric, "VU_"))
-IUCN_classification_long <- IUCN_classification %>% select(BatchNum:replicates, EN_Pop,EN_HS, EN_Ext, optima:dispersal) %>% 
-  pivot_longer(., c(4:6), names_to = "metric", values_to = "EN") %>% mutate(metric = str_remove(metric, "EN_")) %>% full_join(IUCN_classification_long, .)
-IUCN_classification_long <- IUCN_classification %>% select(BatchNum:replicates, CR_Pop,CR_HS, CR_Ext, optima:dispersal) %>% 
-  pivot_longer(., c(4:6), names_to = "metric", values_to = "CR") %>% mutate(metric = str_remove(metric, "CR_")) %>% full_join(IUCN_classification_long, .)
-
-
-# test for normality
-shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$optima == "marginal")$VU)
-shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$optima == "central")$VU)
-shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$metric == "Pop")$VU)
-shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$metric == "HS")$VU)
-shapiro.test(subset(IUCN_classification_long, IUCN_classification_long$metric == "Ext")$VU)
-# all of them are not normally distributed and I even have some values that have no variance -> which test can I use
-
-model_VU <- glm(VU ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
-model_EN <- glm(EN ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
-model_CR <- glm(CR ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
-par(mfrow=c(2,2))
-plot(model_VU)
-plot(model_EN)
-plot(model_CR)
-# only for VU it looks weird, the rest looks okayish
-
-summary(model_VU)
-# Weirdly enough we have significant differences between the different niche breadths, but none between the growth rate and dispersal
-anova(model_VU)
-
-# Post-hoc comparison
-TukeyHSD(aov(model_VU))
-pairwise.t.test(IUCN_classification_long$VU, IUCN_classification_long$metric, p.adjust.method = "bonferroni")
-
-summary(model_EN)
-# For this all traits are significant
-anova(model_VU)
-# Again only metric, optima and breadth are relevant for the model (still the question why breadth it doesn't look like it in the plot)
-TukeyHSD(aov(model_EN))
-pairwise.t.test(IUCN_classification_long$EN, IUCN_classification_long$metric, p.adjust.method = "bonferroni")
-
-summary(model_CR)
-anova(model_CR)
-# for CR all traits are significant
-TukeyHSD(aov(model_CR))
-pairwise.t.test(IUCN_classification_long$CR, IUCN_classification_long$metric, p.adjust.method = "bonferroni")
+library(lme4)
+library(DHARMa)
 
 # Testing the difference/ effect of the traits on the hs-loss/pop-loss relationship
 # ANCOVA
-
-load("4_Analysis/data/data_model_poploss_hsloss.Rdata")
-
-# # seperate data sets per landscape
-# list_optima <- split(data_optima, data_optima$land)
-# 
-# # apply model
-# model_optima_l1 <- lm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]])
-# model_optima_l1_2 <- glm(predictions ~ hs_loss + optima + hs_loss*optima, data=list_optima[[1]], family = "binomial")
-# summary(model_optima_l1_2)
-# anova(model_optima_l1_2)
-# 
-# model_optima <- lm(predictions ~ hs_loss + optima + land + hs_loss*optima + hs_loss*land, data=data_optima)
-# summary(model_optima)
-# anova(model_optima)
-# 
-# model_breadth <- lm(predictions ~ hs_loss + breadth + land + hs_loss*breadth + hs_loss*land, data=data_breadth)
-# summary(model_breadth)
-# anova(model_breadth)
-# 
-# model_rmax <- lm(predictions ~ hs_loss + rmax + land + hs_loss*rmax + hs_loss*land, data=data_rmax)
-# summary(model_rmax)
-# anova(model_rmax)
-# 
-# model_dispersal <- lm(predictions ~ hs_loss + dispersal + land + hs_loss*dispersal + hs_loss*land, data=data_dispersal)
-# summary(model_dispersal)
-# anova(model_dispersal)
-
-
 load("4_Analysis/data/raw_data_longformat.RData")
 
 #separate data set for all landscapes
@@ -124,7 +46,126 @@ modelsummary(models, statistic = c("s.e. = {std.error}", "p = {p.value}{stars}")
                                                                                            "hs_loss × breadthwide" = "HS loss * Niche breadth (wide)", "hs_loss × rmaxfast" = "HS loss * Growth rate (fast)",
                                                                                            "hs_loss × dispersallong" = "HS loss * Dispersal distance (long)"))
 modelsummary(models, output = "4_Analysis/plots/Paper/table_models_poploss_hsloss.html", statistic = c("s.e. = {std.error}", "p = {p.value}{stars}"), coef_rename = c('hs_loss' = 'HS loss', 'optimarange-shifting' = 'Niche optima (range-shifting)'
-                                                                                                                                                               , "breadthwide" = "Niche breadth (wide)", "rmaxfast" = "Growth rate (fast)",
+
+                                                                                                                                                                                                                                                                                                                               , "breadthwide" = "Niche breadth (wide)", "rmaxfast" = "Growth rate (fast)",
                                                                                                                                                                "dispersallong" = "Dispersal distance (long)", "hs_loss × optimarange-shifting" = "HS loss * Niche optima (range shifting)",
-                                                                                                                                                               "hs_loss × breadthwide" = "HS loss * Niche breadth (wide)", "hs_loss × rmaxfast" = "HS loss * Growth rate (fast)",
+                                                                                                                                                             "hs_loss × breadthwide" = "HS loss * Niche breadth (wide)", "hs_loss × rmaxfast" = "HS loss * Growth rate (fast)",
                                                                                                                                                                "hs_loss × dispersallong" = "HS loss * Dispersal distance (long)"))
+
+# working on including landscape as a random effect
+null_model <- glm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+                      hs_loss:dispersal, data = data_adapted_long, family = "binomial")
+
+  
+  
+model_rs <- glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+                                 hs_loss:dispersal + (1+land|land), data = data_adapted_long, family = "binomial",control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
+
+model_ri_op2 <- glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+                                 hs_loss:dispersal + (1|land), data = data_adapted_long,control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 200000)), family = "binomial")
+
+model_wo_in <- glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + (1|land), data = data_adapted_long, family = "binomial")
+
+
+aa <- allFit(model_ri_op2)
+ss <- summary(aa)
+ss$ fixef               ## fixed effects
+ss$ llik                ## log-likelihoods
+ss$ sdcor               ## SDs and correlations
+ss$ theta               ## Cholesky factors
+ss$ which.OK            ## which fits worked
+# model_randomslope <- glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+#                              hs_loss:dispersal + (1+land|land), data = data_adapted_long, family = "binomial")
+# 
+# null_model <- glm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+#                              hs_loss:dispersal, data = data_adapted_long, family = "binomial")
+
+anova(model_ri_op2, null_model) #model with random intercept as a lower AIC
+anova(model_rs, model_ri_op2) #model with random slope doesn't have the lower AIC
+# -> the model with the randomintercept seems to be the most parsimonious one
+# still I have to figure out the whole model diagnostic situation
+
+# check for model diagnostic using DHARMa package
+library(DHARMa)
+simulationOutput <- simulateResiduals(fittedModel = model_ri_op2, plot = F)
+
+plot(simulationOutput) # KS test and Dispersion test are both significant indicating a slight under dispersion
+
+testZeroInflation(simulationOutput)
+testDispersion(simulationOutput)
+# my model shows an underdispersion
+
+#Conclusion: the best model is the model which just includes a random intercept and nothing more
+# when looking at the model diagnostics my model shows a slight underdispersion, which is not too worse as it biases the p-value in the direction of a more
+# conservative estimation; it indicates that I use too many predictors in my model (well that makes sense)
+# I am not 100% sure how to continue as all of this doesn't confidently allow me to use the mode
+
+library(brms)
+
+model_mbrms <- brms::brm(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+                           hs_loss:dispersal + (1|land),
+                           data = data_adapted_long, family = zero_one_inflated_beta(), chains = 3,
+                           iter = 3000, warmup = 1000)
+save(model_mbrms, file= "4_Analysis/Model Results/Model_Brms.Rdata")
+
+load("4_Analysis/data/Model_Brms_cluster.Rdata")
+
+plot(model_mbrms)
+pp_check(model_mbrms)
+
+hmc_diagnostics <- nuts_params(model_mbrms)
+div_trans <- sum(subset(hmc_diagnostics, Parameter == "divergent__")$Value)
+print(paste("divergent transitions:", div_trans))
+#divergent transition from 0 should (if not 0 than there are random spikes in the data where my optimizer doesn't reach it)
+n_eff_ratios <- neff_ratio(model_mbrms) #minimum should not be smaller than 0.1
+
+# effective number of samples in bulk and tail:
+out_sum <- summary(model_mbrms)
+n_eff_ratio_bulk <- out_sum$fixed$Bulk_ESS/out_sum$total_ndraws
+n_eff_ratio_tail <- out_sum$fixed$Tail_ESS/out_sum$total_ndraws
+
+#####
+# # Testing the differences between classification times between the single trait levels
+# 
+# load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+# 
+# # extract data for VU and elongate data set and clean columns
+# IUCN_classification_long <- IUCN_classification %>% select(BatchNum:VU_Pop,VU_HS, VU_Ext, optima:dispersal) %>% pivot_longer(., c(4:6), names_to = "metric", values_to = "VU") %>%
+#   mutate(metric = str_remove(metric, "VU_"))
+# IUCN_classification_long <- IUCN_classification %>% select(BatchNum:replicates, EN_Pop,EN_HS, EN_Ext, optima:dispersal) %>% 
+#   pivot_longer(., c(4:6), names_to = "metric", values_to = "EN") %>% mutate(metric = str_remove(metric, "EN_")) %>% full_join(IUCN_classification_long, .)
+# IUCN_classification_long <- IUCN_classification %>% select(BatchNum:replicates, CR_Pop,CR_HS, CR_Ext, optima:dispersal) %>% 
+#   pivot_longer(., c(4:6), names_to = "metric", values_to = "CR") %>% mutate(metric = str_remove(metric, "CR_")) %>% full_join(IUCN_classification_long, .)
+# 
+# IUCN_range <- as.data.frame(subset(IUCN_classification_long, IUCN_classification_long$optima == "marginal"))
+# model_VU <- lm(formula = IUCN_range$CR ~ IUCN_range$metric)
+# 
+# model_VU <- glm(VU ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
+# model_EN <- glm(EN ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
+# model_CR <- glm(CR ~ metric + optima + breadth + rmax + dispersal, data = IUCN_classification_long, family = "poisson")
+# par(mfrow=c(2,2))
+# plot(model_VU)
+# plot(model_EN)
+# plot(model_CR)
+# # only for VU it looks weird, the rest looks okayish
+# 
+# summary(model_VU)
+# # Weirdly enough we have significant differences between the different niche breadths, but none between the growth rate and dispersal
+# anova(model_VU)
+# 
+# # Post-hoc comparison
+# TukeyHSD(aov(model_VU))
+# pairwise.t.test(IUCN_classification_long$VU, IUCN_classification_long$metric, p.adjust.method = "bonferroni")
+# 
+# summary(model_EN)
+# # For this all traits are significant
+# anova(model_VU)
+# # Again only metric, optima and breadth are relevant for the model (still the question why breadth it doesn't look like it in the plot)
+# TukeyHSD(aov(model_EN))
+# pairwise.t.test(IUCN_classification_long$EN, IUCN_classification_long$metric, p.adjust.method = "bonferroni")
+# 
+# summary(model_CR)
+# anova(model_CR)
+# # for CR all traits are significant
+# TukeyHSD(aov(model_CR))
+# pairwise.t.test(IUCN_classification_long$CR, IUCN_classification_long$metric, p.adjust.method = "bonferroni")

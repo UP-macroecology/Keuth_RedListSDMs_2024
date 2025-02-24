@@ -41,6 +41,13 @@ for (sim_nr in 1:nrow(sims)) {
   performance <- rbind(performance, tmp)
 }
 
+# calculate mean + sd for ensemble model
+ensemble <- subset(performance, performance$Algorithm == "mean_prob")
+mean(ensemble$mean_AUC)
+sd(ensemble$mean_AUC)
+mean(ensemble$mean_TSS)
+sd(ensemble$mean_TSS)
+
 #convert specific columns
 performance$Algorithm <- factor(performance$Algorithm, levels = c("GLM", "RF", "Maxent", "mean_prob"))
 performance$BatchNum <- factor(performance$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
