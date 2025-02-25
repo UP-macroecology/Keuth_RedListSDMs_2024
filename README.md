@@ -29,30 +29,30 @@ In this script, I calculate the extinction probability of each year and extract 
 
 *Script:* 02b_Simulations_Results_Plots.R
 
-In this script, I plot the abundances, extinction probabilities and real habitat loss values for all different species and landscapes for exploratory purposes
+In this script, I plot the abundances, extinction probabilities and real habitat loss values for all different species and landscapes for exploratory purposes.
 
 *Script:* 02c_Simulation_extract_dispersal.R
 
-In this script, I rerun the simulations to extract the empirical dispersal distances of every species.
+In this script, I rerun the simulations to extract the dispersal distances of every individual for every single year. This is done for every species and every replicated landscape.
 
 *misc. Scripts:*
 
-*Script:* Simulation_nr_replicateruns.R: Here, I obtained how many replicate runs still had a viable population in every year.
+*Script:* Simulation_nr_replicateruns.R: Here, I extract the number of replicated runs with a viable population size for every year from the simulation outputs.
 
 *Script:* text_labels_plots.R: This script contains text labels for various plots.
 
-*Script:* Cluster_clean.R:
+*Script:* Cluster_clean.R: This script is used to reduce the amount of data files on the HPC. Dispersal distances of individuals are stored in seperate files for every single replicated run. From these files I extract the data I need and store it all together in an Rdata file.
 
 ## 3. SDMs
 As the second step, I fitted SDMs using the simulation data.
 
 *Script:* 03_Spatial_Thinning.R
 
-In this script, I first obtain the absences and then thin the data points by removing every second cell. To obtain the absences I marked every cell that was not occupied by an individual in the respective replicated run as absence. After that I thinned the data points.
+In this script, I first obtain the absences and then thin the data points by removing every second cell. To obtain the absences I marked every cell that was not occupied by an individual in the respective replicated run as absence.
 
 *Script:* 04_SDM.R
 
-I estimated SDMs to ten randomly selected replicated runs. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every year under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold (obtained by maxTSS) and sumed up the habitat suitability for the other cells. I evaluated the performance of the SDMs against all 99 replicated runs that were not used for the fitting of the SDM.
+I estimated SDMs to ten randomly selected replicated runs using the presences and absences and the climate data from the simulation. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every year under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold (obtained by maxTSS) and sumed up the habitat suitability for the other cells. I evaluated the performance of the SDMs against all 99 replicated runs that were not used for the fitting of the SDM.
 
 *Script:* 04d_SDM_dispersalassumption.R
 
@@ -64,9 +64,9 @@ In this script, I used dispersal assumptions based on empirical dispersal distan
 
 *Script:* 04b_plot_predictions.R: In this script I plotted the predictions of all algorithms for year 0 and further also plotted the occurrence points of the respective scenario on top of it.
 
-*Script:* 04a_SDM_rangesize.R: I further calculated the range size of each species by marking a cell as a presence if the habitat suitability was above a certain threshold (masTSS) and summing up the number of cells.
+*Script:* 04a_SDM_rangesize.R: In this script, I did an additional calculation. I calculated the range size of each species by marking a cell as a presence if the habitat suitability was above a certain threshold (masTSS) and summing up the number of cells.
 
-*Script:* ensemble_testing.R: This script was used for trouble-shooting, when I obtained weird performance values for my ensemble. Here, I tested the differences in the predictions between the three algorithms and the ensemble model.
+*Script:* ensemble_testing.R: This script was used for trouble-shooting. When I first fitted my models I obtained weird performance values for my ensemble model. Here, I obtained the differences in the predictions between the three algorithms and the ensemble model. Now, I just keep the code in case I need it again some day.
 
 *Script:* plot_occurrences.R: Here, I plot the presences and absences of the different species.
 
@@ -79,10 +79,11 @@ Here, I plot and statistically analyse the results.
 
 *Script:* 5_SDM_performance.R
 
-Plots of the different performance measures of the different SDM algorithms.
+Boxplots of the different performance values for all SDM algorithms and the ensemble.
 
 *Script:* 06a_dispersal_assumptions_dataset.R
 
+Here, I calculate the habitat loss for every "start Year" (meaning the year in which I check if the species fulfills the criteria) to 10 years into the future. This is needed to later determine the classification time points when using dispersal assumptions in SDMs.
 
 *Script:* 06_create_dataset.R
 
@@ -90,6 +91,7 @@ In this script, I joined all the different values I obtained during my workflow 
 
 *Script:* 07_MW_IUCN_classifications.R
 
+Here, I obtain the classification time point, when a species would be assessed in the IUCN Red List. For this I write a function, which calculates population loss and habitat loss respective to the start Year of the assessment. I then look for every year, if the species would fulfill the criteria of the IUCN Red List in one of the three threatened categories and if not proceed with the next year. This means that if a species was predicted to reach a habitat loss of 30% by year 10, the year 0 would be marked as classification time point for listing the species as “Vulnerable” under criterion A3 and using the metric sum of SDM-derived habitat suitabilities. If the species was predicted to reach a habitat loss of 30% only by year 35, then the year 25 would be marked as classification time for the “Vulnerable” category.
 
 *Script:* 08_Plots.R
 
@@ -97,17 +99,23 @@ This script includes all plots I made during the exploratory analysis as well as
 
 *Script:* 09a_popdata_Inkscape.R
 
+In this script, I create a shorter data set for later creating plots with it. For this, I extract one replicate run from the pop data set and adjust calculation of coordinates.
+
 *Script:* 09b_Inkscape_plots.R
+
+This script is used to produce plots which are needed for figures, which are created in Inkscape. I saved plots of the habitat suitability predictions for the first landscape for current and future (year 20+30) SDM predictions and also the abundances of species for the same year obtained from the simulation model.
 
 *Script:* 09_Inkscape_plots.R
 
+Here, I created various plots, which I used in several figures in the paper. This includes time trajectories of habitat size, population size and extinction probability, SDM predictions for current and future climatic conditions and the spatial distribution of the abundances of the species. All of this is done for two species in the first landscape.
+
 *Script:* 10_Statistical_anaylsis.R
+
+Here, I tried several different statistical analysis for investigating the influence of the traits on the classification time points and on the population loss - habitat loss relationship. For the first analysis I tested a multi-way ANOVA, but decided against it. For the second analysis, I used GLMs and GLMER but had problems with overdispersion and convergence, which is why I transitioned to using a Bayesian model.
 
 *Script:* 11_Bayesian_models_cluster.R
 
 *misc. Scripts:*
-
-
 
 *Script:* dispersal_values.R:
 
