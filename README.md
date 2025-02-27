@@ -37,7 +37,7 @@ In this script, I rerun the simulations to extract the dispersal distances of ev
 
 *misc. Scripts:*
 
-*Script:* Simulation_nr_replicateruns.R: Here, I extract the number of replicated runs with a viable population size for every year from the simulation outputs.
+*Simulation_nr_replicateruns.R*: Here, I extract the number of replicated runs with a viable population size for every year from the simulation outputs.
 
 *Script:* text_labels_plots.R: This script contains text labels for various plots.
 
