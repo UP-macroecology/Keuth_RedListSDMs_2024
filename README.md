@@ -39,9 +39,9 @@ In this script, I rerun the simulations to extract the dispersal distances of ev
 
 *Simulation_nr_replicateruns.R*: Here, I extract the number of replicated runs with a viable population size for every year from the simulation outputs.
 
-*Script:* text_labels_plots.R: This script contains text labels for various plots.
+*text_labels_plots.R*: This script contains text labels for various plots.
 
-*Script:* Cluster_clean.R: This script is used to reduce the amount of data files on the HPC. Dispersal distances of individuals are stored in seperate files for every single replicated run. From these files I extract the data I need and store it all together in an Rdata file.
+*Cluster_clean.R*: This script is used to reduce the amount of data files on the HPC. Dispersal distances of individuals are stored in seperate files for every single replicated run. From these files I extract the data I need and store it all together in an Rdata file.
 
 ## 3. SDMs
 As the second step, I fitted SDMs using the simulation data.
@@ -60,19 +60,19 @@ In this script, I used dispersal assumptions based on empirical dispersal distan
 
 *misc. Scripts:*
 
-*Script:* 04_SDM_2.R: This script is a replicate script of 04_SDM.R to increase the speed of the SDM calculation.
+*04_SDM_2.R*: This script is a replicate script of 04_SDM.R to increase the speed of the SDM calculation.
 
-*Script:* 04b_plot_predictions.R: In this script I plotted the predictions of all algorithms for year 0 and further also plotted the occurrence points of the respective scenario on top of it.
+*04b_plot_predictions.R*: In this script I plotted the predictions of all algorithms for year 0 and further also plotted the occurrence points of the respective scenario on top of it.
 
-*Script:* 04a_SDM_rangesize.R: In this script, I did an additional calculation. I calculated the range size of each species by marking a cell as a presence if the habitat suitability was above a certain threshold (masTSS) and summing up the number of cells.
+*04a_SDM_rangesize.R*: In this script, I did an additional calculation. I calculated the range size of each species by marking a cell as a presence if the habitat suitability was above a certain threshold (masTSS) and summing up the number of cells.
 
-*Script:* ensemble_testing.R: This script was used for trouble-shooting. When I first fitted my models I obtained weird performance values for my ensemble model. Here, I obtained the differences in the predictions between the three algorithms and the ensemble model. Now, I just keep the code in case I need it again some day.
+*ensemble_testing.R*: This script was used for trouble-shooting. When I first fitted my models I obtained weird performance values for my ensemble model. Here, I obtained the differences in the predictions between the three algorithms and the ensemble model. Now, I just keep the code in case I need it again some day.
 
-*Script:* plot_occurrences.R: Here, I plot the presences and absences of the different species.
+*plot_occurrences.R*: Here, I plot the presences and absences of the different species.
 
-*Script:* plot_SDM_predictions_current.R: In this script, I plotted the predicitons of habitat suitability and binarized habitat suitability for all species of current climate conditions.
+*plot_SDM_predictions_current.R*: In this script, I plotted the predicitons of habitat suitability and binarized habitat suitability for all species of current climate conditions.
 
-*Script:* plot_SDM_predictions_future.R: In this script, I plotted the predicitons of habitat suitability and the occurrences under climate change.
+*plot_SDM_predictions_future.R*: In this script, I plotted the predicitons of habitat suitability and the occurrences under climate change.
 
 ## 4. Analysis
 Here, I plot and statistically analyse the results.
@@ -119,8 +119,8 @@ In this script, I perform a random-intercept Bayesian model to evaluate the effe
 
 *misc. Scripts:*
 
-*Script:* misc_Plots.R: This script includes some misc. Plots, which I did throughout the whole plotting process but didn't end up in the final paper.
+*misc_Plots.R*: This script includes some misc. Plots, which I did throughout the whole plotting process but didn't end up in the final paper.
 
-*Script:* occupancy_plots.R: Plots of the occupancy probability of the different scenarios and landscapes.
+*occupancy_plots.R*: Plots of the occupancy probability of the different scenarios and landscapes.
 
-*Script:* plot_landscapes.R: In this script, I plotted the different landscapes separated into the different environmental variables and also for the one example virtual species niche.
+*plot_landscapes.R*: In this script, I plotted the different landscapes separated into the different environmental variables and also for the one example virtual species niche.
