@@ -13,7 +13,7 @@ To establish the parameters for the simulation model I first test different para
 my simulation model. In the different scripts I tested different niche positions, different niche breadths and different dispersal distances. For the dispersal distance I modelled a short dispersal distance and a long dispersal distance with a double exponential kernel. For the long dispersal distance I also tested different probabilities for the long dispersal distance. The results of the parameter testing can be found in the ReadMe.txt.
 
 ## 2. Simulations
-As a first step, I simulated the population dynamics of the different species under climate change in the three neutral landscapes.
+As a first step for the study, I simulated the population dynamics of the different species under climate change in the three neutral landscapes.
 
 *Script:* 01_CreateLandscape.R
 
@@ -83,7 +83,7 @@ Boxplots of the different performance values for all SDM algorithms and the ense
 
 *Script:* 06a_dispersal_assumptions_dataset.R
 
-Here, I calculate the habitat loss for every "start Year" (meaning the year in which I check if the species fulfills the criteria) to 10 years into the future. This is needed to later determine the classification time points when using dispersal assumptions in SDMs.
+Here, I calculate the habitat loss for every "start Year" (meaning the year in which I check if the species fulfills the criteria) to 10 years into the future. This is needed to later determine the classification time points when using dispersal assumptions in SDMs under criterion A3.
 
 *Script:* 06_create_dataset.R
 
@@ -91,15 +91,15 @@ In this script, I joined all the different values I obtained during my workflow 
 
 *Script:* 07_MW_IUCN_classifications.R
 
-Here, I obtain the classification time point, when a species would be assessed in the IUCN Red List. For this I write a function, which calculates population loss and habitat loss respective to the start Year of the assessment. I then look for every year, if the species would fulfill the criteria of the IUCN Red List in one of the three threatened categories and if not proceed with the next year. This means that if a species was predicted to reach a habitat loss of 30% by year 10, the year 0 would be marked as classification time point for listing the species as “Vulnerable” under criterion A3 and using the metric sum of SDM-derived habitat suitabilities. If the species was predicted to reach a habitat loss of 30% only by year 35, then the year 25 would be marked as classification time for the “Vulnerable” category.
+Here, I obtain the classification time point, when a species would be assessed in the IUCN Red List under two criteria using three metrics. For this I write a function, which calculates population loss and habitat loss respective to the start Year of the assessment. I then look for every year, if the species would fulfill the criteria of the IUCN Red List in one of the three threatened categories and if not proceed with the next year. This means that if a species was predicted to reach a habitat loss of 30% by year 10, the year 0 would be marked as classification time point for listing the species as “Vulnerable” under criterion A3 and using the metric sum of SDM-derived habitat suitabilities. If the species was predicted to reach a habitat loss of 30% only by year 35, then the year 25 would be marked as classification time for the “Vulnerable” category.
 
 *Script:* 08_Plots.R
 
-This script includes all plots I made during the exploratory analysis as well as the final plots.
+This script includes the plots that are used in the paper as well as some exploratory plots.
 
 *Script:* 09a_popdata_Inkscape.R
 
-In this script, I create a shorter data set for later creating plots with it. For this, I extract one replicate run from the pop data set and adjust calculation of coordinates.
+In this script, I create a shorter data set of the abundance values for later creating plots with it. For this, I extract one replicate run from the pop data set and adjust calculation of coordinates.
 
 *Script:* 09b_Inkscape_plots.R
 
@@ -111,17 +111,16 @@ Here, I created various plots, which I used in several figures in the paper. Thi
 
 *Script:* 10_Statistical_anaylsis.R
 
-Here, I tried several different statistical analysis for investigating the influence of the traits on the classification time points and on the population loss - habitat loss relationship. For the first analysis I tested a multi-way ANOVA, but decided against it. For the second analysis, I used GLMs and GLMER but had problems with overdispersion and convergence, which is why I transitioned to using a Bayesian model.
+Here, I tried several different statistical analysis for investigating the influence of the traits on the classification time points and on the population loss - habitat loss relationship. For the first analysis I tested a multi-way ANOVA for detemining the effects of the traits on the classification time point, but decided against it. For the second analysis, I used GLMs and GLMER but had problems with overdispersion and convergence, which is why I transitioned to using a Bayesian model.
 
 *Script:* 11_Bayesian_models_cluster.R
 
+In this script, I perform a random-intercept Bayesian model to evaluate the effects of the landscape and the traits on the population loss.
+
 *misc. Scripts:*
 
-*Script:* dispersal_values.R:
-
-*Script:* misc_Plots.R:
+*Script:* misc_Plots.R: This script includes some misc. Plots, which I did throughout the whole plotting process but didn't end up in the final paper.
 
 *Script:* occupancy_plots.R: Plots of the occupancy probability of the different scenarios and landscapes.
 
-*Script:* plot_landscapes.R: In this script I plotted the predictions of the ensemble model for every single year and further also plotted the occurrence points of the respective scenario on top of it.
-
+*Script:* plot_landscapes.R: In this script, I plotted the different landscapes separated into the different environmental variables and also for the one example virtual species niche.
