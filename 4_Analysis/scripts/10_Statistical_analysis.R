@@ -17,6 +17,10 @@ load("4_Analysis/data/raw_data_longformat.RData")
 # save(model_mbrms, file= "4_Analysis/Model Results/Model_Brms.Rdata")
 
 load("4_Analysis/data/Model_Brms_cluster.Rdata")
+model_mbrms_ri <- model_mbrms
+load("4_Analysis/data/Model_Brms_cluster_wo_randomeffect.Rdata")
+
+loo(model_mbrms, model_mbrms_ri)
 
 #check model fit
 plot(model_mbrms)
@@ -36,6 +40,10 @@ n_eff_ratio_tail <- out_sum$fixed$Tail_ESS/out_sum$total_ndraws
 
 # look at model summary
 s <- summary(model_mbrms)
+summary(model_mbrms, waic = T)
+effective_sample(model_mbrms)
+coef(model_mbrms)
+fixef(model_mbrms)
 # I obtain divergent warnings, but Rhat and the EFF look all good so presumably the model as a whole converged
 
 #Extract the levels of the random effect
@@ -123,6 +131,12 @@ lines(hs, exp(sd3)/(1+exp(sd3)))
 lines(hs, exp(ld1)/(1+exp(ld1)), lty = "dashed")
 lines(hs, exp(ld2)/(1+exp(ld2)), lty = "dashed")
 lines(hs, exp(ld3)/(1+exp(ld3)), lty = "dashed")
+
+# Plot the results in a table
+get_estimates(model_mbrms)
+modelsummary(model_mbrms, statistic = "mad")
+
+report_table(model_mbrms, verbose = F)
 
 #####
 # # Testing the differences between classification times between the single trait levels
@@ -255,4 +269,6 @@ modelsummary(models, statistic = c("s.e. = {std.error}", "p = {p.value}{stars}")
                                                                                                   "hs_loss × dispersallong" = "HS loss * Dispersal distance (long)"))
 modelsummary(models, output = "4_Analysis/plots/Paper/table_models_poploss_hsloss.html", statistic = c("s.e. = {std.error}", "p = {p.value}{stars}"), coef_rename = c('hs_loss' = 'HS loss', 'optimarange-shifting' = 'Niche optima (range-shifting)'
                                                                                                                                                                       
-                                                                                                                                                                      
+  
+))                                                                                                                                                                
+model <- suppressWarnings(brm(mpg ~ qsec + wt, data = mtcars, refresh = 0, iter = 300))

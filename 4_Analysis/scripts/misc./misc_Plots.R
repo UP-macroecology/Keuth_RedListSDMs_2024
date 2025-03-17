@@ -1,9 +1,26 @@
-# Miscellanous plots
+# Miscellaneous plots
 
 library(ggplot2)
 library(gridExtra)
 source("Functions/extract_legend.R")
 # Plot dispersal assumptions in comparison
+
+#prepare Plots for proposal for Damaris
+# load data
+load("4_Analysis/Model Results/Model_Brms_cluster.Rdata")
+s <- summary(model_mbrms)
+fixed_effects <- s$fixed
+fixed_effects <- data.frame(names = row.names(fixed_effects), fixed_effects)
+effects_model <- coef(model_mbrms)
+
+# start first basic plot
+ggplot(fixed_effects, aes(x=Estimate, y = names))+
+  geom_pointrange(aes(xmin = l.95..CI, xmax = u.95..CI))+
+  geom_vline(xintercept = 0, linetype = "dashed", color = "lightgrey")+
+  theme(axis.title.y = element_blank(), axis.text = element_text(size = 12),
+        axis.title = element_text(size = 15), panel.grid = element_blank(), panel.background = element_rect(fill = "white"), 
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+  
 
 load("4_Analysis/data/IUCN_classification_times_dispersalassumptions.RData")
 
