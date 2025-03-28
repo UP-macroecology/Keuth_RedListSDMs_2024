@@ -52,62 +52,63 @@ sd(ensemble$mean_TSS)
 performance$Algorithm <- factor(performance$Algorithm, levels = c("GLM", "RF", "Maxent", "mean_prob"))
 performance$BatchNum <- factor(performance$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
 
-performance$optima <- as.character(performance$optima)
-performance[which(performance$optima == "marginal"), "optima"] <- "range-contracting"
-performance[which(performance$optima == "central"), "optima"] <- "range-shifting"
+performance$optima <- factor(performance$optima, levels = c("marginal", "central"))
+# performance$optima <- as.character(performance$optima)
+# performance[which(performance$optima == "marginal"), "optima"] <- "range-contracting"
+# performance[which(performance$optima == "central"), "optima"] <- "range-shifting"
 
 # Plot performance -----------
 # Plot performance in small plots ----------
 p_pos <- #ggplot(performance %>% filter(landRep == 3), aes(x= optima, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= optima, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= optima, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
+        axis.title = element_text(size = 22), legend.position = "", plot.title = element_text(size = 24, face = "italic"))+
   #scale_fill_brewer(palette = "PRGn")+
   scale_fill_manual(values = c("#9460A5", "#C2A5CF", "#A6DBA0", "#388E5A"))+
-  ggtitle("Range dynamics")
+  ggtitle("Niche position")
 
 p_breadth <- #ggplot(performance %>% filter(landRep == 3), aes(x= breadth, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= breadth, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= breadth, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
-  theme(axis.title = element_blank(), axis.text = element_text(size = 18), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
+  theme(axis.title = element_blank(), axis.text = element_text(size = 20), legend.position = "", plot.title = element_text(size = 24, face = "italic"))+
   #scale_fill_brewer(palette = "PRGn")+
   scale_fill_manual(values = c("#9460A5", "#C2A5CF", "#A6DBA0", "#388E5A"))+
   ggtitle("Niche breadth")
 
 p_rmax <-# ggplot(performance %>% filter(landRep == 3), aes(x= rmax, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= rmax, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= rmax, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
+        axis.title = element_text(size = 22), legend.position = "", plot.title = element_text(size = 24, face = "italic"))+
   #scale_fill_brewer(palette = "PRGn")+
   scale_fill_manual(values = c("#9460A5", "#C2A5CF", "#A6DBA0", "#388E5A"))+
   ggtitle("Growth rate")
 
 p_disp <- #ggplot(performance %>% filter(landRep == 3), aes(x= dispersal, y = mean_AUC, color = Algorithm))+
-  ggplot(performance, aes(x= dispersal, y = mean_TSS, fill = Algorithm))+
+  ggplot(performance, aes(x= dispersal, y = mean_AUC, fill = Algorithm))+
   geom_boxplot()+
-  # ylab("AUC")+
-  # ylim(c(0.85,1))+
-  ylab("TSS")+
-  ylim(c(0.6,1))+
+  ylab("AUC")+
+  ylim(c(0.85,1))+
+  # ylab("TSS")+
+  # ylim(c(0.6,1))+
   theme_bw()+
-  theme(axis.title = element_blank(), axis.text = element_text(size = 18), legend.position = "", plot.title = element_text(size = 18, face = "italic"))+
+  theme(axis.title = element_blank(), axis.text = element_text(size = 20), legend.position = "", plot.title = element_text(size = 24, face = "italic"))+
   #scale_fill_brewer(palette = "PRGn")+
   scale_fill_manual(values = c("#9460A5", "#C2A5CF", "#A6DBA0", "#388E5A"))+
   ggtitle("Dispersal")
@@ -117,10 +118,10 @@ legend <- ggplot(performance %>% filter(landRep == 1), aes(x= dispersal, y = mea
   geom_boxplot()+
   ylab("AUC")+
   theme_bw()+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.key.size = unit(1.5, 'cm'), 
-        legend.title = element_text(size=20, face = "bold"), #change legend title font size
-        legend.text = element_text(size=17), legend.position = "bottom")+
+        legend.title = element_text(size=22, face = "bold"), #change legend title font size
+        legend.text = element_text(size=20), legend.position = "bottom")+
   scale_fill_manual(values = c("#9460A5", "#C2A5CF", "#A6DBA0", "#388E5A"), labels = c('GLM', 'Random Forest', "MaxEnt", "Ensemble"))
 
 shared_legend <- extract_legend(legend)

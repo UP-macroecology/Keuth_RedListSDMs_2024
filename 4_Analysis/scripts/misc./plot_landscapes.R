@@ -77,26 +77,27 @@ plot(l_tn, maxpixels=2*ncell(l_tn), cex.axis = 1.5, col = colorRampPalette(c("ro
 dev.off()
 
 # plot niches
-land <- raster("4_Analysis/Landscapes/land1_optima0.5_breadth0.055_ccYear0.asc")
+land <- raster("4_Analysis/data/land1_optima0.5_breadth0.055_ccYear0.asc")
 
-png('4_Analysis/Landscapes/land1_niche.png', height=2*nrow(land), width=2*ncol(land))
-plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F)
+png('Inkscape/images/land1_niche.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
-land <- raster("4_Analysis/Landscapes/land2_optima0.5_breadth0.055_ccYear0.asc")
+land <- raster("4_Analysis/data/land2_optima0.5_breadth0.055_ccYear0.asc")
 
-png('4_Analysis/Landscapes/land2_niche.png', height=2*nrow(land), width=2*ncol(land))
-plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F)
+png('Inkscape/images/land2_niche.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
-land <- raster("4_Analysis/Landscapes/land3_optima0.5_breadth0.055_ccYear0.asc")
+land <- raster("4_Analysis/data/land3_optima0.5_breadth0.055_ccYear0.asc")
 
-png('4_Analysis/Landscapes/land3_niche.png', height=2*nrow(land), width=2*ncol(land))
-plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F)
+png('Inkscape/images/land3_niche.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
 # Legend
-png('4_Analysis/Landscapes/niche_legend.png', height=2*nrow(land), width=2*ncol(land))
-plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend.only = T, legend.width = 3, legend.shrink = 1, axis.args = list(cex.axis = 3))
+png('Inkscape/images/niche_legend.png', height=2*nrow(land), width=2*ncol(land))
+plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend.only = T, legend.width = 3, legend.shrink = 1, axis.args = list(cex.axis = 3), mar = c(1, 1, 1, 6), col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
+
 dev.off()
 

@@ -31,17 +31,17 @@ data_mean <- vector("list", 16)
 
 for (i in 1:16){
   # data set for land replication 1
-  tmp1 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim1.rds"))
+  data[[i]] <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim1.rds"))
   # data set for land replication 2
-  tmp2 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim2.rds"))
+  #tmp2 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim2.rds"))
   # data set for land replication 3
-  tmp3 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim3.rds"))
+  #tmp3 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim3.rds"))
   # the data sets include the abundance and the extinction probability from the simulation, and the habitat suitability predicted by the mean ensemble model of the three algorithms using a threshold value for 
   # calculating the sums of habitat suitability
   
   #rbind the different data sets
-  data[[i]] <- rbind(tmp1, tmp2)
-  data[[i]] <- rbind(data[[i]], tmp3)
+  #data[[i]] <- rbind(tmp1, tmp2)
+  #data[[i]] <- rbind(data[[i]], tmp3)
   
   #add traits to data set
   data[[i]]$optima <- sims_long[which(sims_long$BatchNum == i),]$optima
@@ -56,7 +56,7 @@ for (i in 1:16){
   data[[i]][which(is.na(data[[i]]$hs_loss)), "hs_loss"] <- 1
   
   #transform column
-  data[[i]]$land <- as.character(data[[i]]$land)
+  #data[[i]]$land <- as.character(data[[i]]$land)
   
   # calculate mean and standard deviation of population size, habitat size and extinction probability
   data_mean[[i]] <- data[[i]] %>% group_by(Year) %>% summarise(meanPop = mean(pop_sum), sdPop = sd(pop_sum), meanHS = mean(hs_change), sdHS = sd(hs_change),
@@ -76,31 +76,33 @@ for (i in 1:16){
 
 # Comparison graph of habitat loss, population size and extinction probability
 
-ggplot(data_mean[[1]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+ggplot(data_mean[[1]] %>% filter(), aes(x = Year, y = meanHS))+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.3, fill = "#FF6A6A")+
   geom_line(linewidth = 1.2, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), alpha = 0.3, fill = "gold")+
   geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "gold")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.3, fill = "blue")+
   geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), axis.title.y = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), legend.position = "")+
+  ylab("simulated/ predicted value")+
   xlim(c(0,75))+
-  ylim(c(-0.1,1.35))
+  ylim(c(-0.05,1.05))
 
 ggsave("Inkscape/images/comparison_graph_Batch1.pdf")
 
 ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.15, fill = "#FF6A6A")+
+  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.3, fill = "#FF6A6A")+
   geom_line(linewidth = 1.2, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.15, fill = "gold")+
+  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.3, fill = "gold")+
   geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "gold")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.15, fill = "blue")+
+  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.3, fill = "blue")+
   geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), axis.title.y = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), legend.position = "")+
+  ylab("simulated/ predicted value")+
   xlim(c(0,75))+
-  ylim(c(-0.1,1.35))
+  ylim(c(-0.05,1.05))
 
 ggsave("Inkscape/images/comparison_graph_Batch2.pdf")
 
@@ -131,14 +133,14 @@ load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
 r_current <- terra::rast(ens_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch1_Rep4_Land1.pdf")
-plot(r_current, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
+plot(r_current, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
 load("4_Analysis/data/Predictions_curr_Batch2_Sim1_Replication4.RData")
 r_current <- terra::rast(ens_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_current_Batch2_Rep4_Land1.pdf")
-plot(r_current, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
+plot(r_current, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
 load("4_Analysis/data/Predictions_fut_Batch1_Sim1_Replication4.RData")
@@ -148,7 +150,7 @@ fut_preds <- ens_fut_preds[[20]]
 r_fut <- terra::rast(fut_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_future_Batch1_Rep4_Land1.pdf")
-plot(r_fut, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
+plot(r_fut, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
 load("4_Analysis/data/Predictions_fut_Batch2_Sim1_Replication4.RData")
@@ -158,12 +160,12 @@ fut_preds <- ens_fut_preds[[30]]
 r_fut <- terra::rast(fut_preds[,1:3])
 
 pdf("Inkscape/images/SDM_predictions_map_future_Batch2_Rep4_Land1.pdf")
-plot(r_fut, legend = F, axes = F, col = rev(terrain.colors(100)), range = c(0,1))
+plot(r_fut, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
 dev.off()
 
 # Extract legend
 pdf("Inkscape/images/SDM_predictions_legend.pdf")
-plot(r_current, axes = F, col = rev(terrain.colors(100)), range = c(0,100), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
+plot(r_current, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))), range = c(0,100), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
 dev.off()
 
 # Abundance plots of the simulation

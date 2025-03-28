@@ -2,6 +2,8 @@
 
 library(ggplot2)
 library(gridExtra)
+library(dplyr)
+library(grid)
 source("Functions/extract_legend.R")
 # Plot dispersal assumptions in comparison
 
@@ -11,16 +13,165 @@ load("4_Analysis/Model Results/Model_Brms_cluster.Rdata")
 s <- summary(model_mbrms)
 fixed_effects <- s$fixed
 fixed_effects <- data.frame(names = row.names(fixed_effects), fixed_effects)
-effects_model <- coef(model_mbrms)
+fixed_effects$names <- factor(fixed_effects$names, levels=rev(c("Intercept", "hs_loss","optimarangeMshifting", "breadthwide", "rmaxfast", "dispersallong", 
+"hs_loss:optimarangeMshifting", "hs_loss:breadthwide", "hs_loss:rmaxfast", "hs_loss:dispersallong")))
+fixed_effects$color_group <- 1
+fixed_effects[grep(":", fixed_effects[,"names"]), "color_group"] <- 3
+fixed_effects[c(3:6), "color_group"] <- 2
+fixed_effects$color_group <- as.factor(fixed_effects$color_group)
+
+
+
+# Population size against habitat suitability (updated) ---------------
+
+load("4_Analysis/data/raw_data_longformat.RData")
+
+# create different data sets for the different models
+data_optima <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_optima$land <- rep(1:3, each = 100, times = 2)
+data_optima$optima <- rep(c("range-shifting", "range-contracting"), each = 300)
+data_optima$predictions <- NA
+data_optima$land <- as.factor(data_optima$land)
+
+data_breadth <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_breadth$land <- rep(1:3, each = 100, times = 2)
+data_breadth$breadth <- rep(c("narrow", "wide"), each = 300)
+data_breadth$breadth <- factor(data_breadth$breadth, levels = c("wide", "narrow"))
+data_breadth$predictions <- NA
+data_breadth$land <- as.factor(data_breadth$land)
+
+data_rmax <-data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_rmax$land <- rep(1:3, each = 100, times = 2)
+data_rmax$rmax <- rep(c("slow", "fast"), each = 300)
+data_rmax$predictions <- NA
+data_rmax$land <- as.factor(data_rmax$land)
+
+data_dispersal <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_dispersal$land <- rep(1:3, each = 100, times = 2)
+data_dispersal$dispersal <- rep(c("short", "long"), each = 300)
+data_dispersal$predictions <- NA
+data_dispersal$land <- as.factor(data_dispersal$land)
+
+# create data frame with combinations of trait and land replication
+land_rep <- 1:3
+optima <- c("range-contracting", "range-shifting")
+
+sims <- expand.grid(land = land_rep, optima = optima)
+sims$optima <- as.character(sims$optima)
+sims$breadth <- rep(c("narrow", "wide"), each = 3)
+sims$rmax <- rep(c("slow", "fast"), each = 3)
+sims$dispersal <- rep(c("short", "long"), each = 3)
+
+# calculate the different models
+for (sim_nr in 1:nrow(sims)){
+  # extract trait values
+  optima_nr <- sims[sim_nr,]$optima
+  breadth_nr <- sims[sim_nr,]$breadth
+  rmax_nr <- sims[sim_nr,]$rmax
+  dispersal_nr <- sims[sim_nr,]$dispersal
+  land_nr <- sims[sim_nr,]$land
+  
+  # subset data set
+  data_sub_optima <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$optima == optima_nr)
+  data_sub_breadth <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$breadth == breadth_nr)
+  data_sub_rmax <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$rmax == rmax_nr)
+  data_sub_dispersal <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$dispersal == dispersal_nr)
+  
+  # calculate the different models
+  model_optima <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_optima, family = "binomial")
+  model_breadth <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth, family = "binomial")
+  model_rmax <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax, family = "binomial")
+  model_dispersal <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal, family = "binomial")
+  
+  # save the model outputs
+  print(paste0("land_nr: ", land_nr, " & optima: ", optima_nr))
+  print(summary(model_optima))
+  print(paste0("land_nr: ", land_nr, " & breadth: ", breadth_nr))
+  print(summary(model_breadth))
+  print(paste0("land_nr: ", land_nr, " & rmax: ", rmax_nr))
+  print(summary(model_rmax))
+  print(paste0("land_nr: ", land_nr, " & dispersal: ", dispersal_nr))
+  print(summary(model_dispersal))
+  
+  #make predictions to data
+  predictions_optima <- predict(model_optima, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"predictions"] <- predictions_optima$fit
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"lower95"] <- predictions_optima$fit - 1.96*predictions_optima$se.fit
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"upper95"] <- predictions_optima$fit + 1.96*predictions_optima$se.fit
+  
+  predictions_breadth <- predict(model_breadth, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"predictions"] <- predictions_breadth$fit
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"lower95"] <- predictions_breadth$fit - 1.96*predictions_breadth$se.fit
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"upper95"] <- predictions_breadth$fit + 1.96*predictions_breadth$se.fit
+  
+  predictions_rmax <- predict(model_rmax, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"predictions"] <- predictions_rmax$fit
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"lower95"] <- predictions_rmax$fit - 1.96*predictions_rmax$se.fit
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"upper95"] <- predictions_rmax$fit + 1.96*predictions_rmax$se.fit
+  
+  predictions_dispersal <- predict(model_dispersal, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"predictions"] <- predictions_dispersal$fit
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"lower95"] <- predictions_dispersal$fit - 1.96*predictions_dispersal$se.fit
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"upper95"] <- predictions_dispersal$fit + 1.96*predictions_dispersal$se.fit
+}
 
 # start first basic plot
-ggplot(fixed_effects, aes(x=Estimate, y = names))+
-  geom_pointrange(aes(xmin = l.95..CI, xmax = u.95..CI))+
+p_effects <- ggplot(fixed_effects, aes(x=Estimate, y = names, color = color_group))+
+  geom_pointrange(aes(xmin = l.95..CI, xmax = u.95..CI),fatten = 2, size =0.5)+
   geom_vline(xintercept = 0, linetype = "dashed", color = "lightgrey")+
   theme(axis.title.y = element_blank(), axis.text = element_text(size = 12),
         axis.title = element_text(size = 15), panel.grid = element_blank(), panel.background = element_rect(fill = "white"), 
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-  
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1), legend.position = "")+
+  scale_color_manual(values = c("black", "blue", "#FF4040"))+
+  xlab("Estimates")+
+  scale_y_discrete(labels= c("Intercept" = "Intercept", "hs_loss" = "Habitat loss", "optimarangeMshifting" = "Niche position \n(range-shifting)", 
+                             "breadthwide" = "Niche breadth (wide)", "rmaxfast" = "Growth rate (fast)", "dispersallong" = "Dispersal distance \n(long)", 
+                             "hs_loss:optimarangeMshifting" = "Habitat loss : Niche \nposition (range-shifting)", 
+                             "hs_loss:breadthwide"= "Habitat loss : Niche \nbreadth (wide)", "hs_loss:rmaxfast" = "Habitat loss : Growth \nrate (fast)", 
+                             "hs_loss:dispersallong" = "Habitat loss : Dispersal \ndistance (long)"))
+
+p_pop_hs <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), 
+        legend.position = c(0.89, 0.85),  legend.title = element_text(size = 13), legend.text = element_text(size = 12),
+        legend.key.size = unit(1,"line"))+ #axis.title.x = element_blank(),
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  labs(colour = "Landscape", linetype = NULL)+
+  guides(linetype = guide_legend(order = 1))
+
+pdf("4_Analysis/plots/misc. plots/plot_proposal.pdf")
+grid.arrange(p_effects, p_pop_hs, ncol=2, nrow = 1, widths = c(1.3,2))
+dev.off()
+
+library(ggpubr)
+png("4_Analysis/plots/misc. plots/plot_proposal_v3.png", width = 1917, height = 780)
+ggarrange(p_pop_hs, NULL, p_effects, ncol=3, nrow = 1, widths = c(2,0.05,1.3), labels = c("A", "B"))
+dev.off()
+
+ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), 
+        legend.position = c(0.93, 0.88),  legend.title = element_text(size = 16), legend.text = element_text(size = 15),
+        legend.key.size = unit(1,"line"))+ #axis.title.x = element_blank(),
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  labs(colour = "Landscape", linetype = NULL)+
+  guides(linetype = guide_legend(order = 1))
 
 load("4_Analysis/data/IUCN_classification_times_dispersalassumptions.RData")
 
@@ -29,9 +180,9 @@ load("4_Analysis/data/IUCN_classification_times_dispersalassumptions.RData")
 # which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
 # which(IUCN_classification$CR_HS != IUCN_classification$CR_HS_disp)
 
-IUCN_classification$optima <- as.character(IUCN_classification$optima)
-IUCN_classification[which(IUCN_classification$optima == "marginal"), "optima"] <- "range-contracting"
-IUCN_classification[which(IUCN_classification$optima == "central"), "optima"] <- "range-shifting"
+IUCN_classification$optima <- factor(IUCN_classification$optima, levels = c("marginal", "central"))
+#IUCN_classification[which(IUCN_classification$optima == "marginal"), "optima"] <- "range-contracting"
+#IUCN_classification[which(IUCN_classification$optima == "central"), "optima"] <- "range-shifting"
 
 p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.40))+
@@ -52,13 +203,13 @@ p_pos <- ggplot(IUCN_classification, aes(x = optima, y = VU_HS))+
   annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
   annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
-  ggtitle("Range dynamics")+
+  ggtitle("Niche position")+
   xlab("")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
-        axis.title = element_text(size = 24), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
+        axis.title = element_text(size = 22), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  ylab("Classification timepoint [years]")
+  ylab("Classification time [years]")
 
 
 p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
@@ -82,7 +233,7 @@ p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Niche breadth")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
@@ -108,10 +259,10 @@ p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
   ggtitle("Growth rate")+
   xlab("")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
-        axis.title = element_text(size = 24), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
+        axis.title = element_text(size = 22), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  ylab("Classification timepoint [years]")
+  ylab("Classification time [years]")
 
 p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
   geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.4))+
@@ -134,7 +285,7 @@ p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Dispersal")+
   ylim(c(0,60))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
@@ -146,7 +297,7 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_HS, fill = "Habit
   geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability with dispersal assumption (A3)"), position = position_nudge(x = 0.25), width = 0.2)+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 24), legend.key.size = unit(1.5, "cm"),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 22), legend.key.size = unit(1.5, "cm"),
         legend.position = "bottom")+
   ylab("Timepoint of classification")+
   scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Habitat suitability with dispersal assumption (A3)"))
