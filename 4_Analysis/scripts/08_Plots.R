@@ -88,6 +88,9 @@ data_adapted_long$predictions <- NA
 data_adapted_long <- as.data.frame(data_adapted_long)
 
 #save(data_adapted_long, file="4_Analysis/data/raw_data_longformat.RData")
+#load("4_Analysis/data/raw_data_longformat.RData")
+#data_adapted_long$hs_loss_squared <- I(data_adapted_long$hs_loss^2)
+#save(data_adapted_long, file="4_Analysis/data/data_bayes_model.Rdata")
 
 # Plot the results -----
 

@@ -6,7 +6,61 @@ library(tidyr)
 library(stringr)
 library(modelsummary)
 library(brms)
+library(ordbetareg)
 
+# Comparing the different models from the cluster against each other
+load("4_Analysis/Model Results/Model_ordbeta_full.Rdata")
+load("4_Analysis/Model Results/Model_ordbeta_wo_randomeffect.Rdata")
+load("4_Analysis/Model Results/Model_ordbeta_randomslope.Rdata")
+
+loo(null_model, model)
+loo(model, model_slope)
+
+
+# Testing the new syntax for beta regressions
+load("4_Analysis/data/data_bayes_model.Rdata")
+
+#extract two example species
+df_sub <- subset(data_adapted_long, c(data_adapted_long$breadth == "narrow", data_adapted_long$rmax == "slow", data_adapted_long$dispersal == "short"))
+
+ord_beta_model <- ordbetareg(pop_sum ~ hs_loss + optima + hs_loss:optima + (1|land), data = df_sub, control=list(adapt_delta=0.95), chains = 1, iter = 200, warmup = 100, refresh = 0)
+
+summary(model)
+
+plots <- pp_check_ordbeta(model,
+                          ndraws=100,
+                          outcome_label="Thermometer Rating",
+                          new_theme=ggthemes::theme_economist())
+
+ord_pred <- conditional_effects(ord_beta_model)[[2]]
+
+ord_pred %>% 
+  ggplot(aes(y=estimate__,x=optima)) +
+  geom_ribbon(aes(ymin=lower__,
+                  ymax=upper__),fill="blue",
+              alpha=0.5) +
+  geom_hline(yintercept=1,linetype=2) +
+  geom_line() 
++
+  theme_tufte2 +
+  scale_y_continuous(labels=scales::percent_format()) +
+  labs(y="% Seats Elected",
+       x="Power of Social Groups")
+
+
+model <- brm(
+  bf(
+    pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land),
+    phi ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land),
+    zoi ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land),
+    coi ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land)
+  ),
+  data = df_sub,
+  family = zero_one_inflated_beta(), chains = 4, cores = 4, control=list(adapt_delta=0.9),
+  iter = 2000, warmup = 1000
+)
+
+load("4_Analysis/Model Results/Model_ZOIB_Test_full.Rdata")
 # Testing the difference/ effect of the traits on the hs-loss/pop-loss relationship
 load("4_Analysis/data/raw_data_longformat.RData")
 
@@ -24,7 +78,7 @@ loo(model_mbrms, model_mbrms_ri)
 
 #check model fit
 plot(model_mbrms)
-pp_check(model_mbrms)
+pp_check(model)
 
 #check divergent transition
 hmc_diagnostics <- nuts_params(model_mbrms)
