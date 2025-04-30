@@ -4,14 +4,14 @@
 library(brms)
 library(ordbetareg)
 
-load("/import/ecoc9z/data-zurell/keuth/data_bayes_model.Rdata")
-#load("4_Analysis/data/data_bayes_model.Rdata")
-#df_sub <- subset(data_adapted_long, c(data_adapted_long$breadth == "narrow", data_adapted_long$rmax == "slow", data_adapted_long$dispersal == "short"))
-
-null_model <- ordbetareg(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, 
-                             data = data_adapted_long, control=list(adapt_delta=0.95), chains = 4, cores = 4, iter = 4000, warmup = 2000, refresh = 0)
-
-save(null_model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_randomeffect.Rdata")
+# load("/import/ecoc9z/data-zurell/keuth/data_bayes_model.Rdata")
+# #load("4_Analysis/data/data_bayes_model.Rdata")
+# #df_sub <- subset(data_adapted_long, c(data_adapted_long$breadth == "narrow", data_adapted_long$rmax == "slow", data_adapted_long$dispersal == "short"))
+# 
+# null_model <- ordbetareg(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, 
+#                              data = data_adapted_long, control=list(adapt_delta=0.95), chains = 4, cores = 4, iter = 4000, warmup = 2000, refresh = 0)
+# 
+# save(null_model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_randomeffect.Rdata")
 
 # model <- brm(
 #   bf(
@@ -36,3 +36,15 @@ save(null_model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_random
 #                          iter = 3000, warmup = 2000)
 
 #save(model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")
+
+#load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_randomeffect.Rdata")
+load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")
+load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_randomslope.Rdata")
+
+# sink("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_comparison_null_ri.txt")
+# loo(model, null_model)
+# sink()
+
+sink("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_comparison_rs_ri.txt")
+loo(model_slope, model)
+sink()

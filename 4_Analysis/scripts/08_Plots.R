@@ -296,6 +296,10 @@ grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2,
 data_adapted_long$breadth <- factor(data_adapted_long$breadth, levels = c("wide", "narrow"))
 data_adapted_long$rmax <- factor(data_adapted_long$rmax, levels = c("fast", "slow"))
 data_adapted_long$dispersal <- factor(data_adapted_long$dispersal, levels = c("long", "short"))
+data_adapted_long$optima <- as.character(data_adapted_long$optima)
+data_adapted_long[which(data_adapted_long$optima == "range-contracting"), "optima"] <- "marginal"
+data_adapted_long[which(data_adapted_long$optima == "range-shifting"), "optima"] <- "central"
+data_adapted_long$optima <- factor(data_adapted_long$optima, levels = c("marginal", "central"))
 
 ggplot(data_adapted_long, aes(x=hs_loss, y = pop_sum, col = land, linetype = optima))+
   geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
@@ -327,12 +331,12 @@ p_pos <- ggplot(data_adapted_long, aes(x=hs_loss, y = pop_sum, col = land, linet
   ylab("Relative population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
-        legend.position = c(0.85, 0.89),  legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.position = c(0.9, 0.89),  legend.title = element_blank(), legend.text = element_text(size = 18), 
         legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
-  ggtitle("Range dynamics")+
+  ggtitle("Niche position")+
   guides(linetype = guide_legend(order = 1, override.aes = list(color = "black")))
 
 p_breadth <- ggplot(data_adapted_long, aes(x=hs_loss, y = pop_sum, col = land, linetype = breadth))+
@@ -358,7 +362,7 @@ p_rmax <- ggplot(data_adapted_long, aes(x=hs_loss, y = pop_sum, col = land, line
   ylab("Relative population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18),  plot.title = element_text(size = 23, face = "italic"), 
-        legend.position = c(0.92, 0.89), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+        legend.position = c(0.93, 0.89), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
@@ -373,7 +377,7 @@ p_dispersal <- ggplot(data_adapted_long, aes(x=hs_loss, y = pop_sum, col = land,
   ylab("Relative population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
-        legend.position = c(0.91, 0.89), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.position = c(0.92, 0.89), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), 
         legend.key.size = unit(2,"line"))+
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
