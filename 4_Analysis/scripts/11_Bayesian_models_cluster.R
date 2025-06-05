@@ -1,50 +1,37 @@
-# Bayesian models for the analysis of pop loss - hs loss relationship and the influences of the different variables
+# Model for analysing pop loss - hs loss relationship and the influence of the traits on it
 
-
+#Load packages
 library(brms)
 library(ordbetareg)
 
-# load("/import/ecoc9z/data-zurell/keuth/data_bayes_model.Rdata")
-# #load("4_Analysis/data/data_bayes_model.Rdata")
-# #df_sub <- subset(data_adapted_long, c(data_adapted_long$breadth == "narrow", data_adapted_long$rmax == "slow", data_adapted_long$dispersal == "short"))
-# 
-# null_model <- ordbetareg(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, 
-#                              data = data_adapted_long, control=list(adapt_delta=0.95), chains = 4, cores = 4, iter = 4000, warmup = 2000, refresh = 0)
-# 
-# save(null_model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_randomeffect.Rdata")
+load("/import/ecoc9z/data-zurell/keuth/data_bayes_model.Rdata")
 
-# model <- brm(
-#   bf(
-#     pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land),
-#     phi ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land),
-#     zoi ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land),
-#     coi ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land)
-#   ),
-#   data = data_adapted_long,
-#   family = zero_one_inflated_beta(), chains = 4, cores = 4, control=list(adapt_delta=0.9),
-#   iter = 4000, warmup = 2000
-# )
+#run null model without any random effects
+null_model <- ordbetareg(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, 
+                                                       data = data_adapted_long, control=list(adapt_delta=0.95), chains = 4, cores = 4, iter = 4000, warmup = 2000, refresh = 0)
+                         
+save(null_model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_randomeffect.Rdata")
 
-# to avoid convergence issues I could set delta to 0.99, iter to 10000
+# run model with random intercept
+model_intercept <- ordbetareg(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land), 
+                          data = data_adapted_long, control=list(adapt_delta=0.95), chains = 4, cores = 4, iter = 4000, warmup = 2000, refresh = 0)
 
-# prior <- get_prior(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1|land), 
-#                     data = data_adapted_long, family = zero_one_inflated_beta())
+save(model_intercept, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")
 
-# model_mbrms <- brms::brm(pop_sum ~ hs_loss + hs_loss_squared + optima + breadth + rmax + dispersal + hs_loss_squared:optima + hs_loss_squared:breadth + hs_loss_squared:rmax + 
-#                            hs_loss_squared:dispersal + (1|land),
-#                          data = data_adapted_long, family = zero_one_inflated_beta(), chains = 4, cores = 4, control=list(adapt_delta=0.9),
-#                          iter = 3000, warmup = 2000)
+# run model with random slope and random intercept
+model_slope <- ordbetareg(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal + (1+land|land), 
+                    data = data_adapted_long, control=list(adapt_delta=0.95), chains = 4, cores = 4, iter = 4000, warmup = 2000, refresh = 0)
 
-#save(model, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")
+save(model_slope, file= "/import/ecoc9z/data-zurell/keuth/Model_ordbeta_randomslope.Rdata")
 
-#load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_wo_randomeffect.Rdata")
-load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")
-load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_randomslope.Rdata")
+# Compare the different models based on loo (find the most parsimonious one)
 
-# sink("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_comparison_null_ri.txt")
-# loo(model, null_model)
-# sink()
+sink("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_comparison_null_ri.txt")
+loo(model_intercept, null_model)
+sink()
+#The model with the random intercept explains more variance
 
 sink("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_comparison_rs_ri.txt")
-loo(model_slope, model)
+loo(model_slope, model_intercept)
 sink()
+# The model with the random intercept explains similar variance as the one with the ranom slope -> continue with model with random intercept
