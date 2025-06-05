@@ -9,4 +9,4 @@
 #SBATCH --nodelist=ecoc9
 
 cd ${SLURM_SUBMIT_DIR}
-R CMD BATCH ./11a_Bayesian_models_cluster.R ./output-file-Bayesian_model.2.Rout
+R CMD BATCH ./11_Bayesian_models_cluster.R ./output-file-Bayesian_model.Rout
