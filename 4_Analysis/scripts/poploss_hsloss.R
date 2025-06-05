@@ -180,6 +180,8 @@ load("4_Analysis/Model Results/Model_ordbeta_full.Rdata")
 
 library(marginaleffects)
 
+load("4_Analysis/data/test.Rdata")
+
 avg_slopes(model, variables="optima")
 
 avg_slopes(model, variables="optima") %>%
