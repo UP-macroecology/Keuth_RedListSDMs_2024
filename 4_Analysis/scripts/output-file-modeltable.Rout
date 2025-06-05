@@ -1,0 +1,43 @@
+
+R version 4.2.2 Patched (2022-11-10 r83330) -- "Innocent and Trusting"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+During startup - Warning messages:
+1: Setting LC_MONETARY failed, using "C" 
+2: Setting LC_PAPER failed, using "C" 
+3: Setting LC_MEASUREMENT failed, using "C" 
+> library(modelsummary)
+> library(marginaleffects)
+> library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> 
+> load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")\
+Error: unexpected '\\' in "load("/import/ecoc9z/data-zurell/keuth/Model_ordbeta_full.Rdata")\"
+Execution halted
