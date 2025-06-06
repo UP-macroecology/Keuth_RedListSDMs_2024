@@ -21,6 +21,203 @@ fixed_effects[c(3:6), "color_group"] <- 2
 fixed_effects$color_group <- as.factor(fixed_effects$color_group)
 
 
+# create different data sets for the different models
+data_optima <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_optima$land <- rep(1:3, each = 100, times = 2)
+data_optima$optima <- rep(c("range-shifting", "range-contracting"), each = 300)
+data_optima$predictions <- NA
+data_optima$land <- as.factor(data_optima$land)
+
+data_breadth <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_breadth$land <- rep(1:3, each = 100, times = 2)
+data_breadth$breadth <- rep(c("narrow", "wide"), each = 300)
+data_breadth$breadth <- factor(data_breadth$breadth, levels = c("wide", "narrow"))
+data_breadth$predictions <- NA
+data_breadth$land <- as.factor(data_breadth$land)
+
+data_rmax <-data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_rmax$land <- rep(1:3, each = 100, times = 2)
+data_rmax$rmax <- rep(c("slow", "fast"), each = 300)
+data_rmax$predictions <- NA
+data_rmax$land <- as.factor(data_rmax$land)
+
+data_dispersal <- data.frame(hs_loss=rep(seq(0,1,length=100),6))
+data_dispersal$land <- rep(1:3, each = 100, times = 2)
+data_dispersal$dispersal <- rep(c("short", "long"), each = 300)
+data_dispersal$predictions <- NA
+data_dispersal$land <- as.factor(data_dispersal$land)
+
+# create data frame with combinations of trait and land replication
+land_rep <- 1:3
+optima <- c("range-contracting", "range-shifting")
+
+sims <- expand.grid(land = land_rep, optima = optima)
+sims$optima <- as.character(sims$optima)
+sims$breadth <- rep(c("narrow", "wide"), each = 3)
+sims$rmax <- rep(c("slow", "fast"), each = 3)
+sims$dispersal <- rep(c("short", "long"), each = 3)
+
+sink("4_Analysis/Model Results/GLM_Popsize_HSloss.txt")
+# calculate the different models
+for (sim_nr in 1:nrow(sims)){
+  # extract trait values
+  optima_nr <- sims[sim_nr,]$optima
+  breadth_nr <- sims[sim_nr,]$breadth
+  rmax_nr <- sims[sim_nr,]$rmax
+  dispersal_nr <- sims[sim_nr,]$dispersal
+  land_nr <- sims[sim_nr,]$land
+  
+  # subset data set
+  data_sub_optima <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$optima == optima_nr)
+  data_sub_breadth <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$breadth == breadth_nr)
+  data_sub_rmax <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$rmax == rmax_nr)
+  data_sub_dispersal <- subset(data_adapted_long, data_adapted_long$land == land_nr & data_adapted_long$dispersal == dispersal_nr)
+  
+  # calculate the different models
+  model_optima <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_optima, family = "binomial")
+  model_breadth <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_breadth, family = "binomial")
+  model_rmax <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_rmax, family = "binomial")
+  model_dispersal <- glm(pop_sum ~ hs_loss + I(hs_loss^2), data=data_sub_dispersal, family = "binomial")
+  
+  # save the model outputs
+  print(paste0("land_nr: ", land_nr, " & optima: ", optima_nr))
+  print(summary(model_optima))
+  print(paste0("land_nr: ", land_nr, " & breadth: ", breadth_nr))
+  print(summary(model_breadth))
+  print(paste0("land_nr: ", land_nr, " & rmax: ", rmax_nr))
+  print(summary(model_rmax))
+  print(paste0("land_nr: ", land_nr, " & dispersal: ", dispersal_nr))
+  print(summary(model_dispersal))
+  
+  #make predictions to data
+  predictions_optima <- predict(model_optima, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"predictions"] <- predictions_optima$fit
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"lower95"] <- predictions_optima$fit - 1.96*predictions_optima$se.fit
+  data_optima[which(data_optima$land == land_nr & data_optima$optima == optima_nr),"upper95"] <- predictions_optima$fit + 1.96*predictions_optima$se.fit
+  
+  predictions_breadth <- predict(model_breadth, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"predictions"] <- predictions_breadth$fit
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"lower95"] <- predictions_breadth$fit - 1.96*predictions_breadth$se.fit
+  data_breadth[which(data_breadth$land == land_nr & data_breadth$breadth == breadth_nr),"upper95"] <- predictions_breadth$fit + 1.96*predictions_breadth$se.fit
+  
+  predictions_rmax <- predict(model_rmax, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"predictions"] <- predictions_rmax$fit
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"lower95"] <- predictions_rmax$fit - 1.96*predictions_rmax$se.fit
+  data_rmax[which(data_rmax$land == land_nr & data_rmax$rmax == rmax_nr),"upper95"] <- predictions_rmax$fit + 1.96*predictions_rmax$se.fit
+  
+  predictions_dispersal <- predict(model_dispersal, newdata=data.frame(hs_loss=seq(0,1,length=100)),  type = "response", se.fit=T)
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"predictions"] <- predictions_dispersal$fit
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"lower95"] <- predictions_dispersal$fit - 1.96*predictions_dispersal$se.fit
+  data_dispersal[which(data_dispersal$land == land_nr & data_dispersal$dispersal == dispersal_nr),"upper95"] <- predictions_dispersal$fit + 1.96*predictions_dispersal$se.fit
+}
+sink()
+
+save(data_optima, data_breadth, data_rmax, data_dispersal, file = "4_Analysis/data/data_model_poploss_hsloss.Rdata")
+
+ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23), plot.title = element_text(size = 28, face = "italic"),
+        legend.position = c(0.91, 0.85),  legend.title = element_text(size = 23), legend.text = element_text(size = 23),
+        legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  ggtitle("Range dynamics")+
+  labs(colour = "Landscape", linetype = NULL)+
+  guides(linetype = guide_legend(order = 1))
+
+#grid.arrange(p_pos, shared_legend, ncol=2, nrow = 1, widths = c(10,1))
+
+
+p_pos <- ggplot(data_optima, aes(x=hs_loss, y = predictions, col = land, linetype = optima))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.85, 0.89),  legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Range dynamics")
+
+p_breadth <- ggplot(data_breadth, aes(x=hs_loss, y = predictions, col = land, linetype = breadth))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), legend.position = c(0.92, 0.90),
+        axis.title = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Niche breadth")
+
+p_rmax <- ggplot(data_rmax, aes(x=hs_loss, y = predictions, col = land, linetype = rmax))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18),  plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.92, 0.89), legend.title = element_blank(), legend.text = element_text(size = 18), legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Growth rate")
+
+p_dispersal <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha=0.1, fill='steelblue4') +
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 15), axis.title = element_text(size = 18), plot.title = element_text(size = 23, face = "italic"), 
+        legend.position = c(0.91, 0.89), axis.title.y = element_blank(), legend.title = element_blank(), legend.text = element_text(size = 18), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"), guide = "none")+
+  ggtitle("Dispersal")
+
+legend <- ggplot(data_dispersal, aes(x=hs_loss, y = predictions, col = land, linetype = dispersal))+
+  #geom_point()+
+  geom_line(linewidth = 2)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "dashed", linewidth = 1)+
+  theme(axis.text = element_text(size = 12), axis.title = element_text(size = 15), plot.title = element_text(size = 23, face = "italic"), 
+        legend.title = element_text(size = 23), legend.text = element_text(size = 18), 
+        legend.key.size = unit(2,"line"))+
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  guides(linetype = "none", colour = guide_legend(title = "Landscape"))+
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  ggtitle("Dispersal")
+
+shared_legend <- extract_legend(legend)
+
+grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,1))
+
+
 
 # Population size against habitat suitability (updated) ---------------
 
