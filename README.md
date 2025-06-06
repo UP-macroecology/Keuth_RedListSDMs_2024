@@ -1,6 +1,6 @@
 # Red List criteria underestimate climate-related extinction risk of range-shifting species
 
-Raya Keuth<sub>1</sub>, Susanne Fritz2<sub>3</sub>, Damaris Zurell<sub>1</sub>
+Raya Keuth<sup>1</sup>, Susanne Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</sup>
 
 1. University of Potsdam, Institute of Biochemistry and Biology, Potsdam, Germany
 2. German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig, Germany
