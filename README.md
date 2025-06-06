@@ -1,4 +1,34 @@
-# Quantifying extinction risk using SDMs
+# Red List criteria underestimate climate-related extinction risk of range-shifting species
+
+Raya Keuth<sub>1</sub>, Susanne Fritz2<sub>3</sub>, Damaris Zurell<sub>1</sub>
+
+1. University of Potsdam, Institute of Biochemistry and Biology, Potsdam, Germany
+2. German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig, Germany
+3. Institute of Biodiversity, Ecology and Evolution, Friedrich Schiller University Jena, Germany
+
+
+### ABSTRACT:
+
+Keywords: IUCN Red List, extinction risk, species distribution models, climate change, virtual species, spatially explicit population models
+
+This repository contains the R scripts needed to reproduce all results and plots.
+
+
+Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/6-1)
+
+---------------------------------------------------------------
+**Workflow**
+---------------------------------------------------------------
+
+---------------------------------------------------------------
+**Operating system info**
+---------------------------------------------------------------
+* R version 4.5.0 (2025-04-11)
+* Platform: x86_64-pc-linux-gnu (64-bit)
+* Running under: Linux Mint 21.3 Virginia
+
+* Attached packages:
+  
 
 The aim of this study is to test the validity of the guidelines of the IUCN Red List for assessing species threatened by climate change. As well as testing how different traits might influence the assessment of species threatened by climate change. For this, a spatially-explicit simulation of virtual species under a simulated climate change in three different artificial landscapes is used. Simulation data was used to fit different SDM algorithms according to the IUCN Red List Guidelines. The relationship between simulated population size and SDM-predicted habitat loss under scenarios of climate change was investigated and the classification time in the IUCN Red List is determined against criterion A3 and criterion E using simulated population size, SDM-predicted habitat loss and quantitative estimates of extinction probability.
 
