@@ -20,6 +20,25 @@ Funding: This study was supported by the German Research Foundation DFG (grant n
 **Workflow**
 ---------------------------------------------------------------
 
+### 1 - Artificial landscapes
+scripts [01]
+
+### 2 - Virtual species
+
+### 2 - Evaluation of simulation results
+
+### 3 - Spatial thinning
+
+### 4 - SDM fitting and validation
+
+### 5 - Data set preparation for statistical analysis
+
+### 6 - Statistical analysis
+
+### 7 - Visualisation of results
+
+
+
 ---------------------------------------------------------------
 **Operating system info**
 ---------------------------------------------------------------
