@@ -61,8 +61,8 @@ output_data/
 │   └── plots/
 ├── analysis_data/
 ├── plots/
-│   ├── plots
-│   └── detailed plots/
+│   ├── final_plots
+│   └── detailed_plots/
 └── model_results/
 
 scripts/
