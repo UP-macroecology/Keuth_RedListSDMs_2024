@@ -10,7 +10,11 @@
 
 #-------------------------------------------------------------------------------
 
-# Creation of virtual species for 4 different niche combinations (central vs. marginal niche position, narrow vs. wide niche)
+# Creation of virtual species niche for 4 different niche combinations (central vs. marginal niche position, narrow vs. wide niche)
+
+# The different values for the different virtual species niches are
+# niche position: marginal (0.27), central (0.5)
+# niche breadth: narrow (0.025), wide (0.035)
 
 # Load packages
 library(raster)
