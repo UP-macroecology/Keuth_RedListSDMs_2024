@@ -9,18 +9,18 @@ data/
 1_ParameterTesting/scripts
 1_ParameterTesting/ReadMe.txt
 2_Simulations/Plots
-3_SDMs/functions/
-4_Analysis/functions/
-4_Analysis/plots/
-3_SDMs/plots/
-4_Analysis/Model Results/
+3_SDMs/functions
+4_Analysis/functions
+4_Analysis/plots
+3_SDMs/plots
+4_Analysis/Model Results
 4_Analysis/Landscapes
 Notes
 Inkscape
 Literature
-Meeting Susanne 08.01/
-Writing/
-GFOe/
+Meeting Susanne 08.01
+Writing
+GFOe
 scripts/misc
 SDM_Extinctions.Rproj
 scripts/*.sh
