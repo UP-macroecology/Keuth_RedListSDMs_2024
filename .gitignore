@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 data
-1_ParameterTesting
 2_Simulations/Plots
 Functions/
 3_SDMs/functions/
@@ -20,5 +19,9 @@ Meeting Susanne 08.01/
 Writing/
 GFOe/
 scripts/misc
-*.sh
+1_ParameterTesting/results
+1_ParameterTesting/Plots
+1_ParameterTesting/data
+1_ParameterTesting/scripts
+1_ParameterTesting/ReadMe.txt
 
