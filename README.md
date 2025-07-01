@@ -61,8 +61,8 @@ output_data/
 │   ├── SDM_plots
 │   ├── plots
 │   └── detailed plots/
-├── data_analysis/
-├── model_results/
+├── analysis_data/
+└── model_results/
 
 scripts/
 functions/
