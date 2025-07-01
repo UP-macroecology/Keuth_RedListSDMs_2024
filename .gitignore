@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 data/
-./1_ParameterTesting
+./1_ParameterTesting/*
 1_ParameterTesting/Plots
 1_ParameterTesting/results
 1_ParameterTesting/scripts
@@ -23,6 +23,6 @@ Writing/
 GFOe/
 scripts/misc
 SDM_Extinctions.Rproj
-*.sh
+scripts/*.sh
 
 
