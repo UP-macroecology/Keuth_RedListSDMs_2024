@@ -182,6 +182,12 @@ library(marginaleffects)
 
 load("4_Analysis/data/test.Rdata")
 
+library(modelsummary)
+
+modelsummary::modelsummary(model)
+             , statistic = "conf.int",
+              metrics = "RMSE")
+
 avg_slopes(model, variables="optima")
 
 avg_slopes(model, variables="optima") %>%
