@@ -51,17 +51,18 @@ Simulations/
 output_data/
 ├── occurrences/
 ├── landscapes/
-├── algorithms/
-├── evaluation/
-│   ├── algorithm_output/
-│   └── performance_measures/
-├── predictions/
-│   ├── prediction_maps/
+├── SDMs
+│   ├── algorithms/
+│   ├── evaluation/
+│   │   ├── algorithm_output/
+│   │   └── performance_measures/
+│   ├── predictions/
+│   │   └──  prediction_maps/
+│   └── plots/
+├── analysis_data/
 ├── plots/
-│   ├── SDM_plots
 │   ├── plots
 │   └── detailed plots/
-├── analysis_data/
 └── model_results/
 
 scripts/
