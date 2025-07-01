@@ -1,3 +1,5 @@
+# Function to extract the legend from a ggplot object
+
 extract_legend <- function(my_ggp) {
   step1 <- ggplot_gtable(ggplot_build(my_ggp))
   step2 <- which(sapply(step1$grobs, function(x) x$name) == "guide-box")

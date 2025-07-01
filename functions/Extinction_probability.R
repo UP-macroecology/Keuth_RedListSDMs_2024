@@ -1,4 +1,4 @@
-# Define a function for calculating extinction probability
+# Function for calculating extinction probability based on the outputs from the RangeShifter simulations
 Calc_ExtProb <- function(pop_df,s) {
   require(dplyr)
   require(tidyr)
