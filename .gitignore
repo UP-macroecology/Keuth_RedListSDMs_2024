@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 data
-1_ParameterTesting/Plots
+1_ParameterTesting
 2_Simulations/Plots
 Functions/
 3_SDMs/functions/
@@ -14,7 +14,6 @@ SDM_Extinctions.Rproj
 Literature
 4_Analysis/Model Results/
 Notes
-1_ParameterTesting/results
 Inkscape
 4_Analysis/Landscapes
 Meeting Susanne 08.01/
