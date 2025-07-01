@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.Renviron
 data/
 ./1_ParameterTesting/*
 1_ParameterTesting/Plots
