@@ -1,4 +1,4 @@
-# Red List criteria underestimate climate-related extinction risk of  range-shifting species
+# Red List criteria underestimate climate-related extinction risk of range-shifting species
 
 
 #-------------------------------------------------------------------------------

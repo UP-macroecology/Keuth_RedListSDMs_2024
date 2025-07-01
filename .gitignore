@@ -24,5 +24,6 @@ GFOe
 scripts/misc
 SDM_Extinctions.Rproj
 scripts/*.sh
+functions
 
 
