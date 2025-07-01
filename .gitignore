@@ -4,6 +4,10 @@
 .Ruserdata
 data/
 ./1_ParameterTesting
+1_ParameterTesting/Plots
+1_ParameterTesting/results
+1_ParameterTesting/scripts
+1_ParameterTesting/ReadMe.txt
 2_Simulations/Plots
 3_SDMs/functions/
 4_Analysis/functions/
