@@ -117,7 +117,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "tibble", "sc
   
   # Load in required data ----------------------------
   pop <- fread(paste0(sim_dir, "Outputs/Batch", BatchNum, "_Sim", rep_nr, "_Land1_Pop.txt"))
-  extProb <- readRDS(paste0(sim_dir, "Outputs/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  extProb <- readRDS(paste0("analysis_data/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   
   # plot outputs ---------------------------------------------------------------------------------
   pdf(paste0(sim_dir, "Output_Maps/Plots_Batch", BatchNum, "_Sim", rep_nr, ".pdf"))
