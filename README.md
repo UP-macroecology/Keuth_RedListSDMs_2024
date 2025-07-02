@@ -21,22 +21,28 @@ Funding: This study was supported by the German Research Foundation DFG (grant n
 ---------------------------------------------------------------
 
 ### 1 - Artificial landscapes
-scripts [01]
+scripts [01](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/01_Create_Landscapes.R)
 
 ### 2 - Virtual species
-scripts [02a] [02b]
+scripts [02a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/02a_Virtual_species_niche.R), [02b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/02b_Simulations.R)
 
-### 2 - Evaluation of simulation results
+### 3 - Data preparation from simulations
+scripts [03](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/03_Data_preparation.R)
 
-### 3 - Spatial thinning
+### 4 - Evaluation of simulation results
+scripts [04](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/04_Simulations_plots.R)
 
-### 4 - SDM fitting and validation
+### 5 - Spatial thinning
+scripts [05](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/05_Spatial_Thinning.R)
 
-### 5 - Data set preparation for statistical analysis
+### 6 - SDM fitting and validation
+scripts [06a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06a_SDM.R), [06b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06b_SDM_dispersalassumption.R)
 
-### 6 - Statistical analysis
+### 7 - Data set preparation for statistical analysis
 
-### 7 - Visualisation of results
+### 8 - Statistical analysis
+
+### 9 - Visualisation of results
 
 
 ---------------------------------------------------------------
