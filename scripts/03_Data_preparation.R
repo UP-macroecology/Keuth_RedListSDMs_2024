@@ -83,6 +83,15 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dplyr", "tibble", "scales", "data.ta
   ls_Occ<- split(occ_year100, occ_year100$Rep)
   saveRDS(ls_Occ, paste0("output_data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
+  # Calculate dispersal distances
+  vec_distances <- c()
+  for (replicate in 0:99) {
+    dist <- read.table(paste0(sim_dir, "Outputs/Batch", BatchNum, "_Sim", rep_nr, "_Land1_Rep", replicate, "_Inds.txt"), header = T, sep = "\t")
+    dist <- subset(dist, dist$Year == 99)
+    vec_distances <- append(vec_distances, dist$DistMoved)
+  }
+  
+  save(vec_distances, file = paste0(sim_dir, "Outputs/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
 }
 stopCluster(cl)
 
