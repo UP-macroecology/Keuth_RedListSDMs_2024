@@ -1,14 +1,16 @@
-# RangeShifter simulations for the 16 different scenarios for each landscape replica
+# Red List criteria underestimate climate-related extinction risk of range-shifting species
 
-# The different values for the different scenarios are
-# niche position: cold (0.27), warm (0.5)
-# niche breadth: narrow (0.025), wide (0.035)
-# reproduction: slow (3), fast (5)
-# dispersal: short (5000), long (15 000, 250 000, 0.95)
 
-#define file path
-sim_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/02_Simulations/")
-sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
+#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------- #
+#                         04a. Plot results of Simulations                   #
+# -------------------------------------------------------------------------- #
+
+
+#-------------------------------------------------------------------------------
+
+# Visualising the results of the RangeShifter Simulations
 
 # Load packages
 require(RangeShiftR)
@@ -22,40 +24,42 @@ library(scales)
 library(data.table)
 library(terra)
 
-# Function for calculating extinction probability
-source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/Extinction_probability.R")
+# define file paths
+home_folder <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/") #needs to be adjusted based on own folder structure
+sim_dir <- file.path(paste0(home_folder, "Simulations/"))
+sdm_dir <- file.path(paste0(home_folder, "output_data/SDMs/"))
 
 # create data frame with all parameter combinations
 land_rep <- 1:3
-optima <- c(0.27, 0.5)
+position <- c(0.27, 0.5)
 breadth <- c(0.045, 0.055)
 rmax <- c(3, 5)
 dispersal <- c(5000, 15000)
 
-sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims <- expand.grid(land_rep = land_rep, position = position, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims$BatchNum <- rep(1:16, each = 3)
 
 ncores <- 5
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 
-foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "tibble", "scales", "ggplot2", "gridExtra", "terra", "data.table")) %dopar% {
+foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "tibble", "scales", "ggplot2", "gridExtra", "terra", "data.table")) %dopar% {
   # Extract parameter values
   rep_nr <- sims[sim_nr,]$land_rep
-  optima <- sims[sim_nr,]$optima
+  position <- sims[sim_nr,]$position
   breadth <- sims[sim_nr,]$breadth
   rmax <- sims[sim_nr,]$rmax
   dispersal <- sims[sim_nr,]$dispersal
   BatchNum <- sims[sim_nr,]$BatchNum
   
-  # Set up the dynamic landscapes ------------------------------------------------------------------------------------
+  # Create all submodules for the RangeShifter simulation for visual inspection of results ------------
   # Numbers of spinup years in dynamic landscape
   spinup <- 100
 
   # Set dynamic landscape parameters
   landnames <- c()
   for (i in 0:89){
-    landnames <- append(landnames, paste0("land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", i, ".asc"))
+    landnames <- append(landnames, paste0("land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", i, ".asc"))
   }
 
   #create vector for the years (landscapes start changing at year 101)
@@ -111,36 +115,9 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
 
   s <- RSsim(batchnum = BatchNum, land = land, demog = demo, dispersal = disp, simul = sim, init = init)
   
-  # Calculation of different values  -------------------------------------------------------------------
-  
-  # Calculate extinction probability
+  # Load in required data ----------------------------
   pop <- fread(paste0(sim_dir, "Outputs/Batch", BatchNum, "_Sim", rep_nr, "_Land1_Pop.txt"))
-  
-  extProb <- Calc_ExtProb(pop, s)
-  saveRDS(extProb, paste0(sim_dir, file = "Outputs/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-
-  # Calculate maximum number of individuals per replicate run and year
-  sumInd_s <- pop %>% group_by(Rep,Year) %>% summarise(sumPop = sum(NInd), .groups='keep')
-
-  saveRDS(sumInd_s, file = paste0(sim_dir, "Outputs/SumInd_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-  
-  # Obtaining occurrence points  -------------------------------------------------------------------
-  # Obtain Occurrence points for year 100 (year before cc)
-  pop_year100 <- subset(pop, pop$Year == 100)
-  pop_year100 <- pop_year100 %>% dplyr::select(-c(RepSeason, Species, Year))
-
-  # Extract coordinates where the number of individuals was above 1
-  occ_year100 <- subset(pop_year100, pop_year100$NInd >= 1)
-
-  # change coordinates to match climate coordinates (move coordinate to center and multiply with the resolution)
-  occ_year100$x <- (occ_year100$x + 0.5) * 1000
-  occ_year100$y <- (occ_year100$y + 0.5) * 1000
-  colnames(occ_year100)[colnames(occ_year100) == "x"] <- "X"
-  colnames(occ_year100)[colnames(occ_year100) == "y"] <- "Y"
-
-  # store the occurrence points of every replicated run in a separate element of a list
-  ls_Occ<- split(occ_year100, occ_year100$Rep)
-  saveRDS(ls_Occ, paste0(sdm_dir, "data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  extProb <- readRDS(paste0(sim_dir, "Outputs/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
   
   # plot outputs ---------------------------------------------------------------------------------
   pdf(paste0(sim_dir, "Output_Maps/Plots_Batch", BatchNum, "_Sim", rep_nr, ".pdf"))
@@ -151,7 +128,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
   lines(extProb$Year, extProb$extProb, type = "l", lwd = 1.8, col = "black")
   # Parameter values Plot
   plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
-  text(x = 0.45, y = 0.7, paste0("ntemp:", optima, "+", breadth),
+  text(x = 0.45, y = 0.7, paste0("ntemp:", position, "+", breadth),
        cex = 1, col = "black", family="serif", font=2, adj=0.5)
   text(x = 0.45, y = 0.6, paste0("npre:0.5+", breadth),
        cex = 1, col = "black", family="serif", font=2, adj=0.5)
@@ -193,7 +170,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("RangeShiftR", "dplyr", "scales", "ti
   
   # Plot the occurrences under climate change
   for (i in 0:89) {
-    tmp <-terra::rast(paste0(sim_dir, "Inputs/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", i, ".asc"))
+    tmp <-terra::rast(paste0(sim_dir, "Inputs/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", i, ".asc"))
     occ_sub <- subset(occ_Rep0, occ_Rep0$Year == i+100)
     m <- terra::vect(occ_sub, geom = c("X", "Y"))
     if(length(m) >0){
