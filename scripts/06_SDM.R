@@ -1,5 +1,16 @@
-# Estimate SDMs
-# Estimate SDMs to all 16 scenarios and every landscape replicate and predict the habitat suitability to all future years
+# Red List criteria underestimate climate-related extinction risk of range-shifting species
+
+
+#-------------------------------------------------------------------------------
+
+# ------------------------------------------------------ #
+#                         06a. Run SDMs                   #
+# ------------------------------------------------------ #
+
+
+#-------------------------------------------------------------------------------
+
+# Run SDMs for all species
 
 #Load packages
 library(maxnet)
@@ -13,21 +24,22 @@ library(terra)
 library(randomForest)
 library(data.table)
 
-# Load functions
-source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/evalSDM.R") 
-source("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/Functions/response_curves.R")
+# Loading functions
+source("scripts/00_functions.R")
 
-#define file path
-sdm_dir <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/03_SDMs/")
+# define file paths
+home_folder <- file.path("/import/ecoc9z/data-zurell/keuth/SDM_Extinctions/") #needs to be adjusted based on own folder structure
+sim_dir <- file.path(paste0(home_folder, "Simulations/"))
+sdm_dir <- file.path(paste0(home_folder, "output_data/SDMs/"))
 
 # create data frame with all parameter combinations
 land_rep <- 1:3
-optima <- c(0.27, 0.5)
+position <- c(0.27, 0.5)
 breadth <- c(0.045, 0.055)
 rmax <- c(3, 5)
 dispersal <- c(5000, 15000)
 
-sims <- expand.grid(land_rep = land_rep, optima = optima, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims <- expand.grid(land_rep = land_rep, position = position, breadth = breadth, rmax = rmax, dispersal = dispersal)
 sims$BatchNum <- rep(1:16, each = 3)
 
 # select 10 random replications from the 100
@@ -44,17 +56,16 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
      
   # Prepare variables --------------
   rep_nr <- sims[sim_nr,]$land_rep
-  optima <- sims[sim_nr,]$optima
+  position <- sims[sim_nr,]$position
   breadth <- sims[sim_nr,]$breadth
   BatchNum <- sims[sim_nr,]$BatchNum
 
   #read in climate landscape
-  clim <- rast(paste0(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear0.grd"))
+  clim <- rast(paste0("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear0.grd"))
   clim_pack <- wrap(clim)
 
   #Read in thinned points
-  points_thinned <- readRDS(paste0(sdm_dir, "data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
-  #points_thinned <- readRDS("3_SDMs/data/Occ_Abs_thinned_list_Batch_1_Sim1.rds")
+  points_thinned <- readRDS(paste0("output_data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
   
   points_thinned <- lapply(points_thinned, function(x){x <- x[,-which(names(x) %in% c("cell","x", "y"))]; return(x)})
     
@@ -99,8 +110,6 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
 
     #save algorithms
     save(loop_glm, loop_rf, loop_maxent, file = paste0(sdm_dir, "algorithms/Algorithms_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
-    #load(paste0(sdm_dir, "algorithms/Algorithms_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
-    #load("3_SDMs/data/Algorithms_Batch1_Sim1_Replication87.RData")
 
     #PDF for response curves--------------------------------------------------------
     pdf(paste0(sdm_dir, "evaluation/algorithm_output/Response_curves_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".pdf"))
@@ -186,8 +195,6 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
       Maxent = rowMeans(pred_maxent)
     )
 
-    #save(pred_testdata, file = paste0(sdm_dir, "evaluation/algorithm_output/pred_testdata_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
-
     #Calculate ensembles --------------------------------------------------------------------------------
     # Mean of probabilities
     ensemble_mean <- rowMeans(pred_testdata)
@@ -196,8 +203,7 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
 
     #Save ensembles
     save(ensemble_mean, sd_prob, file = paste0(sdm_dir, "algorithms/Ensemble_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
-    #load(paste0(sdm_dir, "algorithms/Ensemble_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
-
+    
     #Evaluate performance of ensemble model -----------------------------------------------------------
     for (i in 1:length(data_test)) {
       test <- data_test[[i]]
@@ -227,9 +233,6 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
     performance_mean_loop <- as.data.frame(performance_mean_loop)
     # save as single element in list of the performance measures of all replicated runs
     performance_mean[[replicate_nr]] <- performance_mean_loop
-
-    #save(performance_raw_loop, performance_mean_loop, file = paste0(sdm_dir, "evaluation/algorithm_output/performance_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
-    #load(paste0(sdm_dir, "evaluation/algorithm_output/performance_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".Rdata"))
 
     # Make predictions to current climate ----------------------------------------------------------------------------------
     #Load in landscapes for predictions
@@ -263,8 +266,7 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
 
     # save predictions
     save(all_preds, all_preds_bin, ens_preds, ens_preds_bin, file = paste0(sdm_dir, "predictions/Predictions_curr_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
-    #load(paste0(sdm_dir, "predictions/Predictions_curr_Batch", BatchNum, "_Sim", rep_nr, "_Replication", replicates[replicate_nr], ".RData"))
-
+   
     # calculate sum of habitat suitability of the ensemble for current climate --------------------------------------------
     ens_pred_cur <- ens_preds[,1:3]
 
@@ -286,8 +288,7 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
     # Loop for predictions to future climate
     for (year_nr in 1:89) {
       # Load data set
-      bio_fut <- terra::rast(paste0(sdm_dir, "data/landscapes/land", rep_nr, "_optima",  optima, "_breadth", breadth, "_ccYear", year_nr, ".grd"))
-      #bio_fut <- terra::rast("3_SDMs/data/land1_optima0.27_breadth0.045_ccYear1.grd")
+      bio_fut <- terra::rast(paste0("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", year_nr, ".grd"))
 
       #Transform data frame
       bio_fut_df <- data.frame(crds(bio_fut),as.points(bio_fut))
@@ -344,8 +345,8 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
     } #close replication loop
     saveRDS(performance_raw, file = paste0(sdm_dir, "evaluation/performance_measures/performance_raw_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     saveRDS(performance_mean, file = paste0(sdm_dir, "evaluation/performance_measures/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-    saveRDS(hs_change, file = paste0(sdm_dir, "results/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-    saveRDS(range_size, file = paste0(sdm_dir, "results/range_size_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(hs_change, file = paste0("analysis_data/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(range_size, file = paste0("analysis_data/range_size_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 stopCluster(cl)
