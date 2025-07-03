@@ -359,3 +359,41 @@ extract_legend <- function(my_ggp) {
   step3 <- step1$grobs[[step2]]
   return(step3)
 }
+
+# 5. Function for a moving window to obtain classification time points for every single replicate run -------------------------------------------
+MW_replicates <- function(data, new_data, timehorizon, threshold, category, metric){
+  
+  # select the right column depending on the selected metric
+  if(metric == "Pop"){
+    column_data <- "pop_sum"
+  } else if(metric == "HS") {
+    column_data <- "hs_change"
+  } else {
+    column_data <- "extProb"
+  }
+  
+  # reduce timehorizon if it exceeds the maximum number of years in the data set
+  if(timehorizon > max(data$Year) - 100){
+    timehorizon <- max(data$Year) - 100
+    #print(timehorizon)
+  }
+  
+  # for every year calculated the relative size to the size x years into the future
+  for (i in 1:nrow(data)) {
+    if(column_data == "extProb"){
+      rel_loss <- data[data$Year == unique(data$Year)[i+timehorizon] & data$Rep == rep_nr, column_data]
+      #print(rel_loss)
+    } else {
+      rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon] & data$Rep == rep_nr, column_data]/data[data$Year == unique(data$Year)[i] & data$Rep == rep_nr, column_data])
+      #print(rel_loss)
+    }
+    
+    # controls if the relative loss exceeds the threshold
+    if(rel_loss >= threshold){
+      #print(unique(data$Year)[i])
+      new_data[new_data$BatchNum == BatchNum & new_data$land_rep == land_rep & new_data$replicates == rep_nr, paste(category, metric, sep = "_")] <- (unique(data$Year)[i])-100
+      return(new_data)
+      break
+    }
+  }
+}
