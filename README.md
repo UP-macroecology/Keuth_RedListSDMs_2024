@@ -39,10 +39,13 @@ scripts [05](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/m
 scripts [06a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06a_SDM.R), [06b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06b_SDM_dispersalassumption.R)
 
 ### 7 - Data set preparation for statistical analysis
+scripts [07a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07a_Join_datasets.R), [07b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07b_Prepare_data_analysis.R), [07c](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07c_Prepare_data_hsloss_dispersal_assumptions.R), [07d](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07d_Popdata_Fig2.R)
 
 ### 8 - Statistical analysis
+scripts [08a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/08a_Ordbeta_model.R), [08b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/08b_MW_IUCN_classifications.R)
 
 ### 9 - Visualisation of results
+scripts [09a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/09a_Plots_Maintext.R)
 
 
 ---------------------------------------------------------------
