@@ -85,7 +85,7 @@ scripts/
 * Running under: Debian GNU/Linux 12 (bookworm)
 
 * Attached packages:
-[1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1
+[1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1 [21] RColorBrewer_1.1-2
 
 The aim of this study is to test the validity of the guidelines of the IUCN Red List for assessing species threatened by climate change. As well as testing how different traits might influence the assessment of species threatened by climate change. For this, a spatially-explicit simulation of virtual species under a simulated climate change in three different artificial landscapes is used. Simulation data was used to fit different SDM algorithms according to the IUCN Red List Guidelines. The relationship between simulated population size and SDM-predicted habitat loss under scenarios of climate change was investigated and the classification time in the IUCN Red List is determined against criterion A3 and criterion E using simulated population size, SDM-predicted habitat loss and quantitative estimates of extinction probability.
 
