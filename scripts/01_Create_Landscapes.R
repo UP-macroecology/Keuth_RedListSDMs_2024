@@ -102,7 +102,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "NLMR", "dplyr", "scales"
     for (i in 1:length(temp_cc@layers)){
       tmp <- stack(temp_cc[[i]], l_pre)
       names(tmp) <- c("temp", "pre")
-      writeRaster(tmp, filename = paste("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", (i-1), ".grd", sep = ""), overwrite = T)
+      writeRaster(tmp, filename = paste(home_folder, "output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", (i-1), ".grd", sep = ""), overwrite = T)
     }
     
     # save stack for creating virtual species niche ---------------
@@ -119,7 +119,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "NLMR", "dplyr", "scales"
     }
     names(ls_cc) <- l_name
     
-    save(ls_cc, file = paste("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_stack.Rdata", sep = ""))
+    save(ls_cc, file = paste(home_folder, "output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_stack.Rdata", sep = ""))
 }
 
 stopCluster(cl)

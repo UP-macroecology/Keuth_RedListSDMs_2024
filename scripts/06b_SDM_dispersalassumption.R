@@ -37,9 +37,6 @@ sims$BatchNum <- rep(1:16, each = 3)
 set.seed(8765)
 replicates <- sample(0:99, 10)
 
-# load in the dispersal assumption values
-#load(paste0(sdm_dir, "data/values_dispersal_assumption.Rdata"))
-
 #set up cluster
 ncores <- 48
 cl <- makeCluster(ncores)
@@ -55,6 +52,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
   BatchNum <- sims[sim_nr,]$BatchNum
   dispersal <- sims[sim_nr,]$dispersal
   
+  # Load in distance values
   load(paste0(sim_dir, "Outputs/vec_distances_ Batch", BatchNum, "_Sim", rep_nr, ".Rdata"))
   
   # remove the 0s out of the data set
@@ -72,7 +70,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
     df_mean <- data.frame(startYear = 0:79, hs_startYear = NA, hs_plus10 = NA)
 
     # load the already calculated habitat suitabilities
-    habitat <- readRDS(paste0("analysis_data/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    habitat <- readRDS(paste0(home_folder, "analysis_data/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     habitat <- habitat[[replicate_nr]]
 
     # append the already calculated habitat values to the data set
@@ -85,7 +83,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
     performance_mean <- performance_mean[[replicate_nr]]
 
     # Create a background mask with target resolution and extent from climate layers
-    bg <- terra::rast(paste0("output_data/landscapes/land", rep_nr, "_position", position, "_breadth", breadth, "_ccYear0.grd"))
+    bg <- terra::rast(paste0(home_folder, "output_data/landscapes/land", rep_nr, "_position", position, "_breadth", breadth, "_ccYear0.grd"))
     bg <- bg$temp
 
     # Prepare pdf for plotting the results
@@ -144,7 +142,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("terra", "data.table")) %dopar% {
   }
 
   # save the calculated habitat suitability values
-  saveRDS(hs_list_mean, file = paste0("analysis_data/habitat_suitability_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(hs_list_mean, file = paste0(home_folder, "analysis_data/habitat_suitability_SDM_dispersal_assumptions_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 #stopCluster(cl)

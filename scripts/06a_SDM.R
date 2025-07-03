@@ -61,11 +61,11 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
   BatchNum <- sims[sim_nr,]$BatchNum
 
   #read in climate landscape
-  clim <- rast(paste0("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear0.grd"))
+  clim <- rast(paste0(home_folder, "output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear0.grd"))
   clim_pack <- wrap(clim)
 
   #Read in thinned points
-  points_thinned <- readRDS(paste0("output_data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
+  points_thinned <- readRDS(paste0(home_folder, "output_data/occurrences/Occ_Abs_thinned_list_Batch_", BatchNum, "_Sim", rep_nr, ".rds"))
   
   points_thinned <- lapply(points_thinned, function(x){x <- x[,-which(names(x) %in% c("cell","x", "y"))]; return(x)})
     
@@ -288,7 +288,7 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
     # Loop for predictions to future climate
     for (year_nr in 1:89) {
       # Load data set
-      bio_fut <- terra::rast(paste0("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", year_nr, ".grd"))
+      bio_fut <- terra::rast(paste0(home_folder, "output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_ccYear", year_nr, ".grd"))
 
       #Transform data frame
       bio_fut_df <- data.frame(crds(bio_fut),as.points(bio_fut))
@@ -345,8 +345,8 @@ foreach(sim_nr=1:24, .packages = c("raster", "maxnet", "gbm", "dplyr", "tibble",
     } #close replication loop
     saveRDS(performance_raw, file = paste0(sdm_dir, "evaluation/performance_measures/performance_raw_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
     saveRDS(performance_mean, file = paste0(sdm_dir, "evaluation/performance_measures/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-    saveRDS(hs_change, file = paste0("analysis_data/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
-    saveRDS(range_size, file = paste0("analysis_data/range_size_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(hs_change, file = paste0(home_folder, "analysis_data/habitat_suitability_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+    saveRDS(range_size, file = paste0(home_folder, "analysis_data/range_size_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
 } #close foreach loop
 stopCluster(cl)

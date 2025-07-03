@@ -48,7 +48,7 @@ foreach(sim_nr = 1:nrow(sims), .packages = c("raster", "virtualspecies", "dplyr"
   breadth <- sims[sim_nr,]$breadth
   
   # Load landscape stacks
-  load(paste("output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_stack.Rdata"))
+  load(paste(home_folder, "output_data/landscapes/land", rep_nr, "_position",  position, "_breadth", breadth, "_stack.Rdata"))
   
   # create virtual species niche
   

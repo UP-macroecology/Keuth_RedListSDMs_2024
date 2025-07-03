@@ -58,7 +58,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dplyr", "tibble", "scales", "data.ta
   pop <- fread(paste0(sim_dir, "Outputs/Batch", BatchNum, "_Sim", rep_nr, "_Land1_Pop.txt"))
 
   extProb <- Calc_ExtProb(pop, s)
-  saveRDS(extProb, file = paste0("analysis_data/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(extProb, file = paste0(home_folder, "analysis_data/ExtProb_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
   # Calculate maximum number of individuals per replicate run and year
   sumInd_s <- pop %>% group_by(Rep,Year) %>% summarise(sumPop = sum(NInd), .groups='keep')
@@ -81,7 +81,7 @@ foreach(sim_nr=1:nrow(sims), .packages = c("dplyr", "tibble", "scales", "data.ta
 
   # store the occurrence points of every replicated run in a separate element of a list
   ls_Occ<- split(occ_year100, occ_year100$Rep)
-  saveRDS(ls_Occ, paste0("output_data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  saveRDS(ls_Occ, paste0(home_folder, "output_data/occurrences/Occ_list_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
 
   # Calculate dispersal distances
   vec_distances <- c()
