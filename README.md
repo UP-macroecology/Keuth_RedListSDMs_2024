@@ -45,7 +45,7 @@ scripts [07a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/
 scripts [08a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/08a_Ordbeta_model.R), [08b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/08b_MW_IUCN_classifications.R)
 
 ### 9 - Visualisation of results
-scripts [09a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/09a_Plots_Maintext.R)
+scripts [09a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/09a_Plots_Maintext.R), [09b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/09b_Plots_Supplementary.R)
 
 
 ---------------------------------------------------------------
@@ -71,8 +71,6 @@ output_data/
 │   └── plots/
 ├── analysis_data/
 ├── plots/
-│   ├── final_plots
-│   └── detailed_plots/
 └── model_results/
 
 scripts/
