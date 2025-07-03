@@ -30,8 +30,7 @@ source("scripts/00_functions.R")
 
 # Load data
 load(paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
-load(paste0(home_folder, "analysis_data/Model_predictions_OBR.Rdata"))
-# data mean
+load(paste0(home_folder, "analysis_data/data_mean.Rdata"))
 
 # Plots for Fig. 2 --------------
 # plot of HS, population size and extinction probability over time --------
@@ -180,6 +179,39 @@ dev.off()
 
 # Plots for Fig. 3 -------------------
 # Population size against habitat suitability ---------------
+#Load model data
+load("4_Analysis/Model Results/Model_ordbeta_randomintercept.Rdata")
+
+# get all trait values
+position <- c("range-contracting", "range-shifting")
+breadth <- c("narrow", "wide")
+rmax <- c("slow", "fast")
+dispersal <- c("short", "long")
+land_rep <- 1:3
+
+#create data frame with all trait combinations
+sims_long <- expand.grid(position = position, breadth = breadth, rmax = rmax, dispersal = dispersal, land = land_rep)
+
+#add new hs_loss predictions to it
+hs_loss <- seq(0,1,length=100)
+
+# expand data set by length of vector
+new_data <- sims_long[rep(seq_len(nrow(sims_long)), length(hs_loss)), ]
+new_data$index <- as.numeric(row.names(new_data))
+new_data <- new_data[order(new_data$index), ]
+new_data <- cbind(new_data, hs_loss)
+new_data$land <- factor(new_data$land, levels = c("1", "2", "3"))
+
+# predict to new data
+predictions_data_position <- cbind(new_data, predict(model, newdata=new_data,  type = "response", se.fit=T))
+predictions_data_breadth <- cbind(new_data, predict(model, newdata=new_data,  type = "response", se.fit=T))
+predictions_data_rmax <- cbind(new_data, predict(model, newdata=new_data,  type = "response", se.fit=T))
+predictions_data_dispersal <- cbind(new_data, predict(model, newdata=new_data,  type = "response", se.fit=T))
+
+save(predictions_data_position, predictions_data_breadth, predictions_data_rmax, predictions_data_dispersal, file = paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
+
+# Since the predictions can take a lot of time, I save the results and can load them in afterwards
+#load(paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
 
 # create mean predictions per variable and land
 predictions_mean_position <- predictions_data_position %>%

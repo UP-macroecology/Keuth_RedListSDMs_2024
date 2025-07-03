@@ -21,7 +21,7 @@ sdm_dir <- file.path(paste0(home_folder, "output_data/SDMs/"))
 library(brms)
 library(ordbetareg)
 
-load(paste0(home_folder, "analysis_data/data_ordbeta_model.Rdata"))
+load(paste0(home_folder, "analysis_data/data_mean_longformat.Rdata"))
 
 #run null model without any random effects
 null_model <- ordbetareg(pop_sum ~ hs_loss + position + breadth + rmax + dispersal + hs_loss:position + hs_loss:breadth + hs_loss:rmax + hs_loss:dispersal, 
