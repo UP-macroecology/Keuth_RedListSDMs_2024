@@ -180,7 +180,7 @@ dev.off()
 # Plots for Fig. 3 -------------------
 # Population size against habitat suitability ---------------
 #Load model data
-load("4_Analysis/Model Results/Model_ordbeta_randomintercept.Rdata")
+load(paste0(home_folder, "model_results/Model Results/Model_ordbeta_randomintercept.Rdata"))
 
 # get all trait values
 position <- c("range-contracting", "range-shifting")

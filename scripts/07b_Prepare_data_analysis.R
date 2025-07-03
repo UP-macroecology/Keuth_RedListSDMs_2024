@@ -96,3 +96,36 @@ data_adapted_long <- as.data.frame(data_adapted_long)
 #save data set
 save(data_adapted_long, file=paste0(home_folder, "analysis_data/data_mean_longformat.Rdata"))
 save(data_mean, file=paste0(home_folder, "analysis_data/data_mean.Rdata"))
+
+# Create data set with all performance measures ------
+
+# create data frame with all parameter combinations
+land_rep <- 1:3
+position <- c("marginal", "central")
+breadth <- c("narrow", "wide")
+rmax <- c("slow", "fast")
+dispersal <- c("short", "long")
+
+sims <- expand.grid(land_rep = land_rep, position = position, breadth = breadth, rmax = rmax, dispersal = dispersal)
+sims$BatchNum <- rep(1:16, each = 3)
+
+# Load data sets
+performance_measures <- c()
+
+for (sim_nr in 1:nrow(sims)) {
+  rep_nr <- sims[sim_nr,]$land_rep
+  BatchNum <- sims[sim_nr,]$BatchNum
+  tmp <- readRDS(paste0(sdm_dir, "evaluation/performance_measures/performance_mean_SDM_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  tmp <- do.call(rbind, tmp)
+  # add scenario and land replication number
+  tmp$scenario <- paste(BatchNum, rep_nr, sep = ".")
+  tmp$BatchNum <- BatchNum
+  tmp$landRep <- rep_nr
+  tmp$position <- sims[sim_nr,]$position
+  tmp$breadth <- sims[sim_nr,]$breadth
+  tmp$rmax <- sims[sim_nr,]$rmax
+  tmp$dispersal <- sims[sim_nr,]$dispersal
+  performance_measures <- rbind(performance_measures, tmp)
+}
+
+save(performance_measures, file=paste0(home_folder, "analysis_data/performance_measures.Rdata"))
