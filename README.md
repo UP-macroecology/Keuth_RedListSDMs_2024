@@ -20,23 +20,41 @@ Funding: This study was supported by the German Research Foundation DFG (grant n
 **Workflow**
 ---------------------------------------------------------------
 
+### 0 - Data setup
+scripts [folder structure](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/00_create_folder_structure.R), [functions](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/00_functions.R)
+
+The required folder structure is set up and the needed functions are listed.
+
 ### 1 - Artificial landscapes
 scripts [01](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/01_Create_Landscapes.R)
+
+The artificial landscapes are created, which consist of two environmental variables that can be interpreted as temperature and precipitation. To simulate climate change, temperature is linearly increased with a temporal autocorrelated noise over 90 years. Precipitation remained static under climate change. The landscape is replicated three times using the same settings.
 
 ### 2 - Virtual species
 scripts [02a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/02a_Virtual_species_niche.R), [02b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/02b_Simulations.R)
 
+Based on the artifical landscapes the virtual species niche is modelled. Species niche varied in the parameters niche position (central vs. marginal) and niche breadth (wide vs. narrow), resulting in four different niche settings. The virutal species niche is also modelled under climate change. Then, the population dynamics under climate change are simulated for the different species using a spatially explicit individual-based modelling plattform. In this simulation dispersal distance (long vs. short) and growth rate (fast vs. slow) are adapted and the different virtual species niches are used as input data. To cover all parameter combinations 16 different virtual species are modelled. The simulation was replicated 100 times.
+
 ### 3 - Data preparation from simulations
 scripts [03](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/03_Data_preparation.R)
+
+The population size per year and species are extracted from the simulation results and extinction probability for every year is calculated. Occurrence points for the SDMs are extracted based on the pre-climate change distribution of the invidiuals. The dispersal distances for each species are extracted from the simulation results.
 
 ### 4 - Evaluation of simulation results
 scripts [04](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/04_Simulations_plots.R)
 
+Results of the simulations are plotted for visual inspection. This includes abundance, occupancy and extinction probability over time and the distribution of the individuals in the landscape under climate change.
+
 ### 5 - Spatial thinning
 scripts [05](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/05_Spatial_Thinning.R)
 
+For every species, absences are obtained based on the pre-climate change distribution of the individuals in the landscape, i.e. every cell not occupied by an individual is marked as an absence. Presences and Absences are related with the climate data extracted from the artificial landscapes and spatially thinned by extracting every second cell.
+
 ### 6 - SDM fitting and validation
 scripts [06a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06a_SDM.R), [06b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06b_SDM_dispersalassumption.R)
+
+
+For each model, the performance was assessed using the 99 replicate runs not used for model fitting across four performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity, specificity
 
 ### 7 - Data set preparation for statistical analysis
 scripts [07a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07a_Join_datasets.R), [07b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07b_Prepare_data_analysis.R), [07c](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07c_Prepare_data_hsloss_dispersal_assumptions.R), [07d](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07d_Popdata_Fig2.R)
