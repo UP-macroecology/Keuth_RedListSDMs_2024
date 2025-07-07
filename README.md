@@ -28,17 +28,17 @@ The required folder structure is set up and the needed functions are listed.
 ### 1 - Artificial landscapes
 scripts [01](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/01_Create_Landscapes.R)
 
-The artificial landscapes are created, which consist of two environmental variables that can be interpreted as temperature and precipitation. To simulate climate change, temperature is linearly increased with a temporal autocorrelated noise over 90 years. Precipitation remained static under climate change. The landscape is replicated three times using the same settings.
+The artificial landscapes are created, which consist of two environmental variables that can be interpreted as temperature and precipitation. To simulate climate change, temperature is linearly increased with a temporal autocorrelated noise over 90 years. Precipitation remains static under climate change. The landscape is replicated three times using the same settings.
 
 ### 2 - Virtual species
 scripts [02a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/02a_Virtual_species_niche.R), [02b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/02b_Simulations.R)
 
-Based on the artifical landscapes the virtual species niche is modelled. Species niche varied in the parameters niche position (central vs. marginal) and niche breadth (wide vs. narrow), resulting in four different niche settings. The virutal species niche is also modelled under climate change. Then, the population dynamics under climate change are simulated for the different species using a spatially explicit individual-based modelling plattform. In this simulation dispersal distance (long vs. short) and growth rate (fast vs. slow) are adapted and the different virtual species niches are used as input data. To cover all parameter combinations 16 different virtual species are modelled. The simulation was replicated 100 times.
+Based on the artifical landscapes the virtual species niche is modelled under climate change. Species niche varied in the parameters niche position (central vs. marginal) and niche breadth (wide vs. narrow), resulting in four different niche settings. The population dynamics under climate change are simulated for the different species using a spatially explicit individual-based modelling plattform. In the simulation dispersal distance (long vs. short) and growth rate (fast vs. slow) are adapted and the different virtual species niches are used as input data. To cover all parameter combinations 16 different virtual species are modelled. The simulation is replicated 100 times.
 
 ### 3 - Data preparation from simulations
 scripts [03](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/03_Data_preparation.R)
 
-The population size per year and species are extracted from the simulation results and extinction probability for every year is calculated. Occurrence points for the SDMs are extracted based on the pre-climate change distribution of the invidiuals. The dispersal distances for each species are extracted from the simulation results.
+The population size per year and species are extracted from the simulation results and extinction probability for every year is calculated. Occurrence points for the SDMs are obtained based on the pre-climate change distribution of the invidiuals. The dispersal distances for each species are extracted from the simulation results.
 
 ### 4 - Evaluation of simulation results
 scripts [04](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/04_Simulations_plots.R)
@@ -48,23 +48,28 @@ Results of the simulations are plotted for visual inspection. This includes abun
 ### 5 - Spatial thinning
 scripts [05](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/05_Spatial_Thinning.R)
 
-For every species, absences are obtained based on the pre-climate change distribution of the individuals in the landscape, i.e. every cell not occupied by an individual is marked as an absence. Presences and Absences are related with the climate data extracted from the artificial landscapes and spatially thinned by extracting every second cell.
+For every species, absences are obtained based on the pre-climate change distribution of the individuals in the landscape (i.e., every cell not occupied by an individual is marked as an absence). Presences and absences are related with the climate data extracted from the artificial landscapes and spatially thinned by extracting every second cell.
 
 ### 6 - SDM fitting and validation
 scripts [06a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06a_SDM.R), [06b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06b_SDM_dispersalassumption.R)
 
-
-For each model, the performance was assessed using the 99 replicate runs not used for model fitting across four performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity, specificity
+SDMs are fitted for each individual species and landscape replicate. To account for variation between the replicate runs, ten replicate runs are selected randomly and SDMs are fitted to each separately. This resulted in 480 SDMs (16 species x 3 landscape replicates x 10 replicate runs). SDMs are fitted using three different model algorithms (GLM, RF, Maxent) as well as an ensemble model. For each model, the performance was assessed using the 99 replicate runs not used for model fitting across four performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity, specificity. Following the guidelines of the Red List the sum of habitat suitabilities is calculated excluding values below the maxTSS threshold.
+To test the effect of dispersal assumptions on the predictions of SDMs the predictions are binarised using the maxTSS and around the known presences a buffer with the size of the estimated dispersal distance of an individual in 10 years (timeframe of the Red List) is created. Dispersal distances are obtained from the simulations. Habitat suitabilities outside the buffer are set to 0.
 
 ### 7 - Data set preparation for statistical analysis
 scripts [07a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07a_Join_datasets.R), [07b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07b_Prepare_data_analysis.R), [07c](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07c_Prepare_data_hsloss_dispersal_assumptions.R), [07d](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07d_Popdata_Fig2.R)
 
+Data sets for the statistical analysis are prepared. This includes joining extinction probability, population size and habitat suitability based on ensemble predictions in one data frame, calculating the relative population size and habitat suitability and calculating the mean over all replicate runs. The results of the performance measures of the SDMs are also joined in one data frame. For the habitat suitability using the basic dispersal assumptions, the relative change in habitat suitability between year x and year x+10 are calculated. For plots, the data on the distribution of abundance in the landscape are extracted for one replicate run from the simulation output.
+
 ### 8 - Statistical analysis
 scripts [08a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/08a_Ordbeta_model.R), [08b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/08b_MW_IUCN_classifications.R)
+
+For the statistical analysis, an ordered beta regression model is used to estimate the influence of the traits on the relationship between population size and habitat loss. Landscape is included as a random effect and the best setting for this is determined using the difference in expected log predictive density between the models. The classification time of the different species in each of the threatened categories are determined using a moving window approach, testing for every year if the species would fulfil the Red List criteria in the following years. This is applied to population loss, habitat loss, extinction probability and the habitat loss estimated using dispersal assumptions.
 
 ### 9 - Visualisation of results
 scripts [09a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/09a_Plots_Maintext.R), [09b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/09b_Plots_Supplementary.R)
 
+These scripts contain the codes for the figures in the main text and the supplement.
 
 ---------------------------------------------------------------
 **Required folder structure**
@@ -104,128 +109,3 @@ scripts/
 
 * Attached packages:
 [1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1 [21] RColorBrewer_1.1-2
-
-The aim of this study is to test the validity of the guidelines of the IUCN Red List for assessing species threatened by climate change. As well as testing how different traits might influence the assessment of species threatened by climate change. For this, a spatially-explicit simulation of virtual species under a simulated climate change in three different artificial landscapes is used. Simulation data was used to fit different SDM algorithms according to the IUCN Red List Guidelines. The relationship between simulated population size and SDM-predicted habitat loss under scenarios of climate change was investigated and the classification time in the IUCN Red List is determined against criterion A3 and criterion E using simulated population size, SDM-predicted habitat loss and quantitative estimates of extinction probability.
-
-## Workflow
-First, the population dynamics of virtual species in an artifical landscape under simulated climate change is modelled using the spatially-explicit individual-based modelling plattform RangeShifter. Species differed in their traits niche position (central vs. marginal), niche width (narrow vs. wide), growth rate (slow vs. fast) and dispersal (short vs. long) leading to 16 (24) different species to cover all trait combinations. Species occurrence data and climate data were extracted from the simulation at equilibrium before climate change set in. Based on these data we fitted species distribution models (SDMs) and predicted habitat suitability under climate change. From the simulations, we observed population sizes across the entire time frame and estimated extinction probability per year. From the SDMs, we derived the predicted habitat suitabilities for each year and compared these to true population size. Last, we applied the IUCN Red List criteria to each of these three metrics to classify species into different threatened categories.
-
-## Extras:
-Additionally, this repository includes scripts and code, which investigate several different aspects such as the habitat loss - extinction risk relationship or the habitat loss - range loss relationship. This code is sometimes commented in the orginal scripts, sometimes included as miscellaneous scripts.
-
-## 1. Parameter testing for the simulation model
-To establish the parameters for the simulation model I first test different parameter values to establish values that represent the patterns that I want to investigate as well as to obtain a stable population size after the spin-up period in 
-my simulation model. In the different scripts I tested different niche positions, different niche breadths and different dispersal distances. For the dispersal distance I modelled a short dispersal distance and a long dispersal distance with a double exponential kernel. For the long dispersal distance I also tested different probabilities for the long dispersal distance. The results of the parameter testing can be found in the ReadMe.txt.
-
-## 2. Simulations
-As a first step for the study, I simulated the population dynamics of the different species under climate change in the three neutral landscapes.
-
-*Script:* 01_CreateLandscape.R
-
-In this script, I create the three artifical landscapes under climate change. First, the landscapes are created, which consist of two environmental variables that can be interpreted as temperature and precipitation. Next, climate change is modelled by linearly increasing temperature over 90 years with spatially-autocorrelated noise using an ARIMA model of the order 0,0,1. Based on these landscapes the virtual species niche was modelled for the four different niche parameter combinations. These maps of suitable habitat are further used in the simulation model. The whole process was replicated three times to obtain three replicates of the same statistical settings. In this part of the study, the traits niche breadth and niche position were adapted.
-
-*Script:* 02_Simulations.R
-
-Here, I simulate the population dynamics of the different virtual species in the neutral landscape under climate change using RangeShifter. In the simulation the traits growth rate an dispersal distance were changed. In total I modelled 16 different species. The simulation was replicated for all three artifical landscapes.
-
-*Script:* 02a_Simulations_data_graphs.R
-
-In this script, I calculate the extinction probability of each year and extract the occurrences of the species from year 100 (at equilibrium conditions) for the different replicated runs. I further plot the results of the simulation to visualize the abundances, extinction probabilities and habitat loss and plot the occurrences in the landscape under climate change.
-
-*Script:* 02b_Simulations_Results_Plots.R
-
-In this script, I plot the abundances, extinction probabilities and real habitat loss values for all different species and landscapes for exploratory purposes.
-
-*Script:* 02c_Simulation_extract_dispersal.R
-
-In this script, I rerun the simulations to extract the dispersal distances of every individual for every single year. This is done for every species and every replicated landscape.
-
-*misc. Scripts:*
-
-*Simulation_nr_replicateruns.R*: Here, I extract the number of replicated runs with a viable population size for every year from the simulation outputs.
-
-*text_labels_plots.R*: This script contains text labels for various plots.
-
-*Cluster_clean.R*: This script is used to reduce the amount of data files on the HPC. Dispersal distances of individuals are stored in seperate files for every single replicated run. From these files I extract the data I need and store it all together in an Rdata file.
-
-## 3. SDMs
-As the second step, I fitted SDMs using the simulation data.
-
-*Script:* 03_Spatial_Thinning.R
-
-In this script, I first obtain the absences and then thin the data points by removing every second cell. To obtain the absences I marked every cell that was not occupied by an individual in the respective replicated run as absence.
-
-*Script:* 04_SDM.R
-
-I estimated SDMs to ten randomly selected replicated runs using the presences and absences and the climate data from the simulation. I fitted three algorithms and further calculated an ensemble model and predicted the habitat suitability to every year under climate change. To obtain the habitat suitability sums for every year I removed cells below a certain threshold (obtained by maxTSS) and sumed up the habitat suitability for the other cells. I evaluated the performance of the SDMs against all 99 replicated runs that were not used for the fitting of the SDM.
-
-*Script:* 04d_SDM_dispersalassumption.R
-
-In this script, I used dispersal assumptions based on empirical dispersal distances in the SDMs. For this, I calculated a buffer of the size of 10 times the estimated dispersal distance for one year (reflecting the 10 year timeframe of the IUCN Red List under criterion A3). All values outside of this buffer were set to 0.
-
-*misc. Scripts:*
-
-*04_SDM_2.R*: This script is a replicate script of 04_SDM.R to increase the speed of the SDM calculation.
-
-*04b_plot_predictions.R*: In this script I plotted the predictions of all algorithms for year 0 and further also plotted the occurrence points of the respective scenario on top of it.
-
-*04a_SDM_rangesize.R*: In this script, I did an additional calculation. I calculated the range size of each species by marking a cell as a presence if the habitat suitability was above a certain threshold (masTSS) and summing up the number of cells.
-
-*ensemble_testing.R*: This script was used for trouble-shooting. When I first fitted my models I obtained weird performance values for my ensemble model. Here, I obtained the differences in the predictions between the three algorithms and the ensemble model. Now, I just keep the code in case I need it again some day.
-
-*plot_occurrences.R*: Here, I plot the presences and absences of the different species.
-
-*plot_SDM_predictions_current.R*: In this script, I plotted the predicitons of habitat suitability and binarized habitat suitability for all species of current climate conditions.
-
-*plot_SDM_predictions_future.R*: In this script, I plotted the predicitons of habitat suitability and the occurrences under climate change.
-
-## 4. Analysis
-Here, I plot and statistically analyse the results.
-
-*Script:* 5_SDM_performance.R
-
-Boxplots of the different performance values for all SDM algorithms and the ensemble.
-
-*Script:* 06a_dispersal_assumptions_dataset.R
-
-Here, I calculate the habitat loss for every "start Year" (meaning the year in which I check if the species fulfills the criteria) to 10 years into the future. This is needed to later determine the classification time points when using dispersal assumptions in SDMs under criterion A3.
-
-*Script:* 06_create_dataset.R
-
-In this script, I joined all the different values I obtained during my workflow (extinction probabilities, population size, habitat suitability, range size). I further calculated the relative population size, habitat suitability and range size (relative to year 0). I saved these data sets in different formats (long and wide format).
-
-*Script:* 07_MW_IUCN_classifications.R
-
-Here, I obtain the classification time point, when a species would be assessed in the IUCN Red List under two criteria using three metrics. For this I write a function, which calculates population loss and habitat loss respective to the start Year of the assessment. I then look for every year, if the species would fulfill the criteria of the IUCN Red List in one of the three threatened categories and if not proceed with the next year. This means that if a species was predicted to reach a habitat loss of 30% by year 10, the year 0 would be marked as classification time point for listing the species as “Vulnerable” under criterion A3 and using the metric sum of SDM-derived habitat suitabilities. If the species was predicted to reach a habitat loss of 30% only by year 35, then the year 25 would be marked as classification time for the “Vulnerable” category.
-
-*Script:* 08_Plots.R
-
-This script includes the plots that are used in the paper as well as some exploratory plots.
-
-*Script:* 09a_popdata_Inkscape.R
-
-In this script, I create a shorter data set of the abundance values for later creating plots with it. For this, I extract one replicate run from the pop data set and adjust calculation of coordinates.
-
-*Script:* 09b_Inkscape_plots.R
-
-This script is used to produce plots which are needed for figures, which are created in Inkscape. I saved plots of the habitat suitability predictions for the first landscape for current and future (year 20+30) SDM predictions and also the abundances of species for the same year obtained from the simulation model.
-
-*Script:* 09_Inkscape_plots.R
-
-Here, I created various plots, which I used in several figures in the paper. This includes time trajectories of habitat size, population size and extinction probability, SDM predictions for current and future climatic conditions and the spatial distribution of the abundances of the species. All of this is done for two species in the first landscape.
-
-*Script:* 10_Statistical_anaylsis.R
-
-Here, I tried several different statistical analysis for investigating the influence of the traits on the classification time points and on the population loss - habitat loss relationship. For the first analysis I tested a multi-way ANOVA for detemining the effects of the traits on the classification time point, but decided against it. For the second analysis, I used GLMs and GLMER but had problems with overdispersion and convergence, which is why I transitioned to using a Bayesian model.
-
-*Script:* 11_Bayesian_models_cluster.R
-
-In this script, I perform a random-intercept Bayesian model to evaluate the effects of the landscape and the traits on the population loss.
-
-*misc. Scripts:*
-
-*misc_Plots.R*: This script includes some misc. Plots, which I did throughout the whole plotting process but didn't end up in the final paper.
-
-*occupancy_plots.R*: Plots of the occupancy probability of the different scenarios and landscapes.
-
-*plot_landscapes.R*: In this script, I plotted the different landscapes separated into the different environmental variables and also for the one example virtual species niche.
