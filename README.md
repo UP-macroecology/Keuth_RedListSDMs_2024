@@ -107,7 +107,7 @@ scripts/
 * Platform: x86_64-pc-linux-gnu (64-bit)
 * Running under: Debian GNU/Linux 12 (bookworm)
 
-* For figures:
+**For figures:**
 * R version 4.5.1 (2025-06-13)
 * Platform: x86_64-pc-linux-gnu
 * Running under: Linux Mint 21.3
