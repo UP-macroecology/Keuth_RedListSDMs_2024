@@ -106,11 +106,11 @@ scripts/
 * R version 4.2.2 (2022-11-10 r83330)
 * Platform: x86_64-pc-linux-gnu (64-bit)
 * Running under: Debian GNU/Linux 12 (bookworm)
+  
+* Attached packages:
+[1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1 [21] RColorBrewer_1.1-2
 
 **For figures:**
 * R version 4.5.1 (2025-06-13)
 * Platform: x86_64-pc-linux-gnu
 * Running under: Linux Mint 21.3
-
-* Attached packages:
-[1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1 [21] RColorBrewer_1.1-2
