@@ -96,6 +96,7 @@ data_adapted_long <- as.data.frame(data_adapted_long)
 #save data set
 save(data_adapted_long, file=paste0(home_folder, "analysis_data/data_mean_longformat.Rdata"))
 save(data_mean, file=paste0(home_folder, "analysis_data/data_mean.Rdata"))
+save(data, file=paste0(home_folder, "analysis_data/data_analysis.Rdata"))
 
 # Create data set with all performance measures ------
 

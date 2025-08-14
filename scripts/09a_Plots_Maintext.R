@@ -32,6 +32,9 @@ source("scripts/00_functions.R")
 load(paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
 load(paste0(home_folder, "analysis_data/data_mean.Rdata"))
 
+load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+load("4_Analysis/data/data_bayes_model.Rdata")
+
 # Plots for Fig. 2 --------------
 # plot of HS, population size and extinction probability over time --------
 
@@ -254,7 +257,25 @@ IUCN_classification$position <- as.character(IUCN_classification$position)
 IUCN_classification[which(IUCN_classification$position == "marginal"), "position"] <- "range-contracting"
 IUCN_classification[which(IUCN_classification$position == "central"), "position"] <- "range-shifting"
 
+# calculate mean Extinction time and standard deviation for position trait
+hline_df <- data.frame(IUCN_classification %>% group_by(position) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                       sdExt = sd(Ext_Time)))
+# Create mapping from x levels to numeric positions
+x_positions <- setNames(1:length(levels(hline_df$position)), levels(hline_df$position))
+
+# Add x numeric positions to hline_df
+hline_df$x_num <- x_positions[as.character(hline_df$position)]
+
+# plot
 p_pos1 <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
+  geom_segment(data = hline_df,
+               aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55")+
+  geom_rect(data = hline_df,
+            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - sdExt, ymax = meanExt + sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
   geom_boxplot(aes(x = position, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
   geom_boxplot(aes(x = position, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
@@ -269,15 +290,15 @@ p_pos1 <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=0.655, y=68, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=0.995, y=68, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=1.325, y=68, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=1.685, y=68, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=1.995, y=68, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=2.335, y=68, label="CR", color="black", size = 8)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   xlab("")+
-  ylim(c(0,60))+
+  ylim(c(0,70))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
         axis.title = element_text(size = 24), legend.position = "", 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+

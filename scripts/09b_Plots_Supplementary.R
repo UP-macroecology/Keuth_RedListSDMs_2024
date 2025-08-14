@@ -708,7 +708,38 @@ grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heig
 # Plots for Fig. S7 --------------
 IUCN_classification$position <- factor(IUCN_classification$position, levels = c("marginal", "central"))
 
+# calculate mean and sd Extinction time
+hline_df_position <- data.frame(IUCN_classification %>% group_by(position) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                       sdExt = sd(Ext_Time)))
+hline_df_breadth <- data.frame(IUCN_classification %>% group_by(breadth) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                       sdExt = sd(Ext_Time)))
+hline_df_rmax <- data.frame(IUCN_classification %>% group_by(rmax) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                 sdExt = sd(Ext_Time)))
+hline_df_dispersal <- data.frame(IUCN_classification %>% group_by(dispersal) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                           sdExt = sd(Ext_Time)))
+
+# Create mapping from x levels to numeric positions
+x_positions_position <- setNames(1:length(levels(hline_df_position$position)), levels(hline_df_position$position))
+x_positions_breadth <- setNames(1:length(levels(hline_df_breadth$breadth)), levels(hline_df_breadth$breadth))
+x_positions_rmax <- setNames(1:length(levels(hline_df_rmax$rmax)), levels(hline_df_rmax$rmax))
+x_positions_dispersal <- setNames(1:length(levels(hline_df_dispersal$dispersal)), levels(hline_df_dispersal$dispersal))
+
+# Add x numeric positions to hline_df
+hline_df_position$x_num <- x_positions_position[as.character(hline_df_position$position)]
+hline_df_breadth$x_num <- x_positions_breadth[as.character(hline_df_breadth$breadth)]
+hline_df_rmax$x_num <- x_positions_rmax[as.character(hline_df_rmax$rmax)]
+hline_df_dispersal$x_num <- x_positions_dispersal[as.character(hline_df_dispersal$dispersal)]
+
+# Plot
 p_pos <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
+  geom_segment(data = hline_df_position,
+               aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55")+
+  geom_rect(data = hline_df_position,
+            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - sdExt, ymax = meanExt + sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
   geom_boxplot(aes(x = position, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
   geom_boxplot(aes(x = position, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
@@ -723,22 +754,30 @@ p_pos <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=0.655, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=68, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=68, label="CR", color="black", size = 6)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Niche position")+
   xlab("")+
-  ylim(c(0,60))+
+  ylim(c(0,70))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_text(size = 22), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   ylab("Classification time [years]")
 
 p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
+  geom_segment(data = hline_df_breadth,
+               aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55")+
+  geom_rect(data = hline_df_breadth,
+            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - sdExt, ymax = meanExt + sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
   geom_boxplot(aes(x = breadth, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
   geom_boxplot(aes(x = breadth, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
@@ -753,20 +792,28 @@ p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=0.655, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=68, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=68, label="CR", color="black", size = 6)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Niche breadth")+
-  ylim(c(0,60))+
+  ylim(c(0,70))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 
 p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
+  geom_segment(data = hline_df_rmax,
+               aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55")+
+  geom_rect(data = hline_df_rmax,
+            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - sdExt, ymax = meanExt + sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
   geom_boxplot(aes(x = rmax, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
   geom_boxplot(aes(x = rmax, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
@@ -781,22 +828,30 @@ p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=0.655, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=68, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=68, label="CR", color="black", size = 6)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Growth rate")+
   xlab("")+
-  ylim(c(0,60))+
+  ylim(c(0,70))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_text(size = 22), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   ylab("Classification time [years]")
 
 p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
+  geom_segment(data = hline_df_dispersal,
+               aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55")+
+  geom_rect(data = hline_df_dispersal,
+            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - sdExt, ymax = meanExt + sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
   geom_boxplot(aes(x = dispersal, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
   geom_boxplot(aes(x = dispersal, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
@@ -811,15 +866,15 @@ p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=0.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=1.325, y=59, label="CR", color="black", size = 6)+
-  annotate(geom="text", x=1.685, y=59, label="VU", color="black", size = 6)+
-  annotate(geom="text", x=1.995, y=59, label="EN", color="black", size = 6)+
-  annotate(geom="text", x=2.335, y=59, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=0.655, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=0.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=1.325, y=68, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=1.685, y=68, label="VU", color="black", size = 6)+
+  annotate(geom="text", x=1.995, y=68, label="EN", color="black", size = 6)+
+  annotate(geom="text", x=2.335, y=68, label="CR", color="black", size = 6)+
   scale_x_discrete(expand = c(0.25, 0.25)) +
   ggtitle("Dispersal")+
-  ylim(c(0,60))+
+  ylim(c(0,70))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 20),
         axis.title = element_blank(), legend.position = "", plot.title = element_text(size = 24, face = "italic"), 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))

@@ -24,6 +24,9 @@ library(dplyr)
 # Loading functions
 source("scripts/00_functions.R")
 
+# Loading data
+load(paste0(home_folder, "analysis_data/data_analysis.Rdata"))
+
 # create data frame with all parameter combinations for the IUCN classification time
 land_rep <- 1:3
 BatchNum <- 1:16
@@ -84,6 +87,27 @@ sims_long$BatchNum <- rep(1:16)
 
 # merge data frame to add the trait values
 IUCN_classification <- merge(IUCN_classification, sims_long, by = "BatchNum")
+
+# add Extinction time to data set
+IUCN_classification$Ext_Time <- 0
+
+# obtain individual extinction time and add to IUCN classifications
+for (i in 1:nrow(IUCN_classification)) {
+  # extra values of for loop
+  BatchNum <- IUCN_classification[i, "BatchNum"]
+  land_rep <- IUCN_classification[i, "land_rep"]
+  rep_nr <- IUCN_classification[i, "replicates"]
+  
+  # extract data set
+  tmp_data <- data[[BatchNum]]
+  
+  # subset data set
+  tmp <- subset(tmp_data, tmp_data$Rep == rep_nr & tmp_data$land == land_rep)
+  
+  # Extract extinction time
+  IUCN_classification[IUCN_classification$BatchNum == BatchNum & IUCN_classification$land_rep == land_rep &
+                        IUCN_classification$replicates == rep_nr, "Ext_Time"] <- tmp[head(which(tmp$extProb == 1), 1), "Year"] - 100
+}
 
 # save data set for plotting
 save(IUCN_classification, file = paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
