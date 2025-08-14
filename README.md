@@ -1,20 +1,22 @@
 # Red List criteria underestimate climate-related extinction risk of range-shifting species
 
-Raya Keuth<sup>1</sup>, Susanne Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</sup>
+Raya Keuth<sup>1</sup>, Susanne A. Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</sup>
 
 1. University of Potsdam, Institute of Biochemistry and Biology, Potsdam, Germany
 2. German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig, Germany
-3. Institute of Biodiversity, Ecology and Evolution, Friedrich Schiller University Jena, Germany
+3. Friedrich Schiller University Jena, Institute of Biodiversity, Ecology and Evolution, Jena, Germany
 
 
 ### ABSTRACT:
+
+Climate change causes global species redistribution and elevates extinction risk, making early identification of vulnerable species critical for timely conservation. The IUCN Red List provides guidelines for assessing climate-related extinction risk using species distribution models (SDMs) and spatially explicit population models (SEPMs). However, a systematic evaluation of these guidelines is currently missing. Using simulations of virtual species with diverse life-history traits and range dynamics, we found that SDMs consistently underestimated extinction risk for range-shifting species. This was due to a concave relationship between population size and habitat loss, which contradicts the linear assumption in the Red List guidelines. For range-contracting species, SDMs provided adequate warning times. Probabilistic extinction estimates from SEPMs provided delayed warning for all species, particularly for highly threatened ones. Our results reveal key limitations of current Red List guidelines under climate change. Based on our findings, we provide tentative recommendations for updating the IUCN Red List guidelines.
 
 Keywords: IUCN Red List, extinction risk, species distribution models, climate change, virtual species, spatially explicit population models
 
 This repository contains the R scripts needed to reproduce all results and plots.
 
 
-Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/6-1)
+Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/6-1). S.A.F. gratefully acknowledges the support of iDiv funded by the German Research Foundation (DFG– _FZT 118, 202548816) and of the Leibniz Competition by the Leibniz Association (P52/2017).
 
 ---------------------------------------------------------------
 **Workflow**
