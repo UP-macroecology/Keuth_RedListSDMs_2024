@@ -28,6 +28,7 @@ library(raster)
 
 # Loading functions
 source("scripts/00_functions.R")
+source("scripts/text_labels_plots.R")
 
 # Load data
 load(paste0(home_folder, "model_results/Model Results/Model_ordbeta_randomintercept.Rdata"))

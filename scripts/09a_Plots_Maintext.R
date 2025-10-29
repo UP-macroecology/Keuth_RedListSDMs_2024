@@ -27,6 +27,7 @@ library(terra)
 
 # Loading functions
 source("scripts/00_functions.R")
+source("scripts/text_labels_plots.R")
 
 # Load data
 load(paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
