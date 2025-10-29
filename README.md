@@ -1,20 +1,22 @@
 # Red List criteria underestimate climate-related extinction risk of range-shifting species
 
-Raya Keuth<sup>1</sup>, Susanne Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</sup>
+Raya Keuth<sup>1</sup>, Susanne A. Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</sup>
 
 1. University of Potsdam, Institute of Biochemistry and Biology, Potsdam, Germany
 2. German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig, Germany
-3. Institute of Biodiversity, Ecology and Evolution, Friedrich Schiller University Jena, Germany
+3. Friedrich Schiller University Jena, Institute of Biodiversity, Ecology and Evolution, Jena, Germany
 
 
 ### ABSTRACT:
+
+Climate change causes global species redistribution and elevates extinction risk, making early identification of vulnerable species critical for timely conservation. The IUCN Red List provides guidelines for assessing climate-related extinction risk using species distribution models (SDMs) and spatially explicit population models (SEPMs). However, a systematic evaluation of these guidelines is currently missing. Using simulations of virtual species with diverse life-history traits and range dynamics, we found that SDMs consistently underestimated extinction risk for range-shifting species. This was due to a concave relationship between population size and habitat loss, which contradicts the linear assumption in the Red List guidelines. For range-contracting species, SDMs provided adequate warning times. Probabilistic extinction estimates from SEPMs provided delayed warning for all species, particularly for highly threatened ones. Our results reveal key limitations of current Red List guidelines under climate change. Based on our findings, we provide tentative recommendations for updating the IUCN Red List guidelines.
 
 Keywords: IUCN Red List, extinction risk, species distribution models, climate change, virtual species, spatially explicit population models
 
 This repository contains the R scripts needed to reproduce all results and plots.
 
 
-Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/6-1)
+Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/6-1). S.A.F. gratefully acknowledges the support of iDiv funded by the German Research Foundation (DFG– _FZT 118, 202548816) and of the Leibniz Competition by the Leibniz Association (P52/2017).
 
 ---------------------------------------------------------------
 **Workflow**
@@ -54,7 +56,7 @@ For every species, absences are obtained based on the pre-climate change distrib
 scripts [06a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06a_SDM.R), [06b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/06b_SDM_dispersalassumption.R)
 
 SDMs are fitted for each individual species and landscape replicate. To account for variation between the replicate runs, ten replicate runs are selected randomly and SDMs are fitted to each separately. This resulted in 480 SDMs (16 species x 3 landscape replicates x 10 replicate runs). SDMs are fitted using three different model algorithms (GLM, RF, Maxent) as well as an ensemble model. For each model, the performance was assessed using the 99 replicate runs not used for model fitting across four performance measures: The area under the receiver operating characteristic curve (AUC), true skill statistic (TSS), sensitivity, specificity. Following the guidelines of the Red List the sum of habitat suitabilities is calculated excluding values below the maxTSS threshold.
-To test the effect of dispersal assumptions on the predictions of SDMs the predictions are binarised using the maxTSS and around the known presences a buffer with the size of the estimated dispersal distance of an individual in 10 years (timeframe of the Red List) is created. Dispersal distances are obtained from the simulations. Habitat suitabilities outside the buffer are set to 0.
+To test the effect of dispersal assumptions on the predictions of SDMs, the predictions are binarised using the maxTSS and around the known presences a buffer with the size of the estimated dispersal distance of an individual in 10 years (timeframe of the Red List) is created. Dispersal distances are obtained from the simulations. Habitat suitabilities outside the buffer are set to 0.
 
 ### 7 - Data set preparation for statistical analysis
 scripts [07a](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07a_Join_datasets.R), [07b](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07b_Prepare_data_analysis.R), [07c](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07c_Prepare_data_hsloss_dispersal_assumptions.R), [07d](https://github.com/UP-macroecology/Keuth_SDMExtinctions_2024/blob/main/scripts/07d_Popdata_Fig2.R)
