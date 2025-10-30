@@ -539,3 +539,121 @@ shared_legend <- extract_legend(legend)
 #Plot the large grid
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(2,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
+
+
+# Example response curves of the different species (the four different niche combinations)
+
+# create data set
+clim <- seq(0,1,0.001)
+response_curves_df <- data.frame(clim = seq(0,1,0.001),
+                                    mn_temp = dnorm(clim,mean = 0.27, sd = 0.045),
+                                    mn_pre = dnorm(clim,mean = 0.5, sd = 0.045),
+                                    mw_temp = dnorm(clim,mean = 0.27, sd = 0.055),
+                                    mw_pre = dnorm(clim,mean = 0.5, sd = 0.055),
+                                    cn_temp = dnorm(clim,mean = 0.5, sd = 0.045),
+                                    cn_pre = dnorm(clim,mean = 0.505, sd = 0.045),
+                                    cw_temp = dnorm(clim,mean = 0.5, sd = 0.055),
+                                    cw_pre = dnorm(clim, mean = 0.505, sd = 0.055))
+                                    
+# marginal & narrow
+p1 <- ggplot(response_curves_df, aes(x = clim, y = mn_temp))+
+  geom_line(linewidth = 1.1)+
+  geom_line(aes(y = mn_pre), linetype = "dashed", linewidth = 1.1)+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23), axis.title.x = element_blank())+
+  xlab("Climate ranges")+
+  ylab("Occurrence probability")+
+  scale_y_continuous(
+    breaks = c(0, 2.5, 5.0, 7.5),
+    labels = c("0", "0.25", "0.5", "0.75")
+  )
+
+# marginal & wide
+p2 <- ggplot(response_curves_df, aes(x = clim, y = mw_temp))+
+  geom_line(linewidth = 1.1)+
+  geom_line(aes(y = mw_pre), linetype = "dashed", linewidth = 1.1)+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_blank())+
+  xlab("Climate ranges")+
+  scale_y_continuous(
+    breaks = c(0, 2.5, 5.0, 7.5),
+    labels = c("0", "0.25", "0.5", "0.75")
+  )
+
+# central & narrow
+p3 <- ggplot(response_curves_df, aes(x = clim, y = cn_temp))+
+  geom_line(linewidth = 1.1)+
+  geom_line(aes(y = cn_pre), linetype = "dashed", linewidth = 1.1)+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23))+
+  xlab("Climate ranges")+
+  ylab("Occurrence probability")+
+  scale_y_continuous(
+    breaks = c(0, 2.5, 5.0, 7.5),
+    labels = c("0", "0.25", "0.5", "0.75")
+  )
+
+# central & wide
+p4 <- ggplot(response_curves_df, aes(x = clim, y = cw_temp))+
+  geom_line(linewidth = 1.1)+
+  geom_line(aes(y = cw_pre), linetype = "dashed", linewidth = 1.1)+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23), axis.title.y = element_blank())+
+  xlab("Climate ranges")+
+  scale_y_continuous(
+    breaks = c(0, 2.5, 5.0, 7.5),
+    labels = c("0", "0.25", "0.5", "0.75")
+  )
+
+legend <- ggplot(response_curves_df, aes(x = clim, y = cw_temp))+
+  geom_line(aes(linetype = "Temperature"), linewidth = 1.1)+
+  geom_line(aes(y = cw_pre, linetype = "Precipitation"), linewidth = 1.1)+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23), legend.position = "bottom", legend.text = element_text(size = 23),
+        legend.key.size = unit(2,"line"), legend.title=element_blank())+
+  xlab("Climate ranges")+
+  ylab("Occurrence probability")+
+  scale_linetype_manual(
+    values = c("Temperature" = "solid", "Precipitation" = "dashed")
+  )
+
+shared_legend <- extract_legend(legend)
+
+#Plot the large grid
+grid.arrange(arrangeGrob(t0, t_nn, t_wn, t_c_medium, p1,p2, t_w_medium, p3,p4, nrow = 3, ncol = 3, heights= c(1,4,4), widths = c(2,5,5)),
+             t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
+
+# fit hsloss and poploss curve with linear regression
+load("4_Analysis/data/data_bayes_model.Rdata")
+
+data_adapted_long$breadth <- factor(data_adapted_long$breadth, levels = c("wide", "narrow"))
+data_adapted_long$rmax <- factor(data_adapted_long$rmax, levels = c("fast", "slow"))
+data_adapted_long$dispersal <- factor(data_adapted_long$dispersal, levels = c("long", "short"))
+data_adapted_long$optima <- as.character(data_adapted_long$optima)
+data_adapted_long[which(data_adapted_long$optima == "range-contracting"), "optima"] <- "marginal"
+data_adapted_long[which(data_adapted_long$optima == "range-shifting"), "optima"] <- "central"
+data_adapted_long$optima <- factor(data_adapted_long$optima, levels = c("marginal", "central"))
+
+ggplot(data_adapted_long, aes(x=hs_loss, y = pop_sum, col = land, linetype = optima))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+  geom_point(data = data_adapted_long[seq(1, nrow(data_adapted_long),2),], aes(shape = optima))+
+  geom_smooth(method = lm)+
+  xlab("Habitat loss")+
+  ylab("Relative population size")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 18), axis.title = element_text(size = 23), plot.title = element_text(size = 28, face = "italic"),
+        legend.position = c(0.91, 0.85),  legend.title = element_text(size = 23), legend.text = element_text(size = 23),
+        legend.key.size = unit(2,"line"), )+ #axis.title.x = element_blank(),
+  scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
+  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  ggtitle("Range dynamics")+
+  labs(colour = "Landscape", linetype = NULL)+
+  guides(linetype = guide_legend(order = 1, override.aes = list(color = "black")))
+
+# Fitting a linear model to the data with a random intercept
+glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
+        hs_loss:dispersal + (1|land), data = data_adapted_long, family = "binomial")
+
+
+summary(lm(pop_sum ~ hs_loss, data = subset(data_adapted_long, data_adapted_long$optima == "central")))
