@@ -719,6 +719,33 @@ shared_legend <- extract_legend(legend)
 #Plot large grid
 grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
+# checking if our ordbeta regression fit better than the linear model
+
+load("4_Analysis/data/Model_predictions_OBR_plot.Rdata")
+
+# compare for optima
+data1 <- 1 - predictions_data_optima$hs_loss
+data2 <- predictions_data_optima$Estimate
+
+ks.test(data1, data2) # significant which means that they come from different distributions
+
+# compare for breadth
+data1 <- 1 - predictions_data_breadth$hs_loss
+data2 <- predictions_data_breadth$Estimate
+
+ks.test(data1, data2) # significant which means that they come from different distributions
+
+# compare for growth rate
+data1 <- 1 - predictions_data_rmax$hs_loss
+data2 <- predictions_data_rmax$Estimate
+
+ks.test(data1, data2) # significant which means that they come from different distributions
+
+# compare for dispersal
+data1 <- 1 - predictions_data_dispersal$hs_loss
+data2 <- predictions_data_dispersal$Estimate
+
+ks.test(data1, data2) # significant which means that they come from different distributions
 
 # # Fitting a linear model to the data with a random intercept
 # #model_lm <- glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
