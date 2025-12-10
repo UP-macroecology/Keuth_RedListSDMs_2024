@@ -231,17 +231,17 @@ p16 <- ggplot(subset(data_simulations, data_simulations$BatchNum == 16), aes(y=p
         axis.text.x = element_blank(), axis.ticks.x = element_blank())
 
 # create and extract common legend
-colors <- c("Population Size Year 0" = "#646F58", "Population Size Year 100" = "#B38D97", "Occupancy Year 0" = "#4F94CD", "Occupancy Year 100" = "#CDAD00")
+colors <- c("Population size Year 0" = "#646F58", "Population size Year 100" = "#B38D97", "Occupancy Year 0" = "#4F94CD", "Occupancy Year 100" = "#CDAD00")
 
-legend <- ggplot(subset(data_simulations, data_simulations$BatchNum == 16), aes(y=pop0, x =BatchNum, fill = "Population Size Year 0"))+
+legend <- ggplot(subset(data_simulations, data_simulations$BatchNum == 16), aes(y=pop0, x =BatchNum, fill = "Population size Year 0"))+
   geom_boxplot(position = position_nudge(x = 0.1), width = 0.15)+
-  geom_boxplot(aes(y=pop100, x = BatchNum, fill = "Population Size Year 100"), position = position_nudge(x = -0.1), width = 0.15)+
+  geom_boxplot(aes(y=pop100, x = BatchNum, fill = "Population size Year 100"), position = position_nudge(x = -0.1), width = 0.15)+
   geom_boxplot(aes(y=occ0, x = BatchNum, fill = "Occupancy Year 0"), position = position_nudge(x = 0.3), width = 0.15)+
   geom_boxplot(aes(y=occ100, x = BatchNum, fill = "Occupancy Year 100"), position = position_nudge(x = -0.3), width = 0.15)+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 22), legend.key.size = unit(1.5, "cm"),
         legend.position = "bottom")+
-  scale_fill_manual(values= colors, breaks = c("Population Size Year 0", "Population Size Year 100", "Occupancy Year 0", "Occupancy Year 100"))
+  scale_fill_manual(values= colors, breaks = c("Population size Year 0", "Population size Year 100", "Occupancy Year 0", "Occupancy Year 100"))
   
 shared_legend <- extract_legend(legend)
 
@@ -363,7 +363,7 @@ p3 <- ggplot(data_mean[[3]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -375,7 +375,7 @@ p4 <- ggplot(data_mean[[4]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -399,7 +399,7 @@ p6 <- ggplot(data_mean[[6]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -411,7 +411,7 @@ p7 <- ggplot(data_mean[[7]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -423,7 +423,7 @@ p8 <- ggplot(data_mean[[8]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -447,7 +447,7 @@ p10 <- ggplot(data_mean[[10]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -459,7 +459,7 @@ p11 <- ggplot(data_mean[[11]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -471,7 +471,7 @@ p12 <- ggplot(data_mean[[12]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
   xlim(c(0,55))+
   ylim(c(0,25000))
@@ -483,8 +483,9 @@ p13 <- ggplot(data_mean[[13]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), legend.position = "")+
   ylab("simulated/ predicted \n value")+
+  xlab("Year")+
   xlim(c(0,55))+
   ylim(c(0,25000))
 
@@ -495,8 +496,9 @@ p14 <- ggplot(data_mean[[14]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.y = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
+  xlab("Year")+
   xlim(c(0,55))+
   ylim(c(0,25000))
 
@@ -507,8 +509,9 @@ p15 <- ggplot(data_mean[[15]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.y = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
+  xlab("Year")+
   xlim(c(0,55))+
   ylim(c(0,25000))
 
@@ -519,8 +522,9 @@ p16 <- ggplot(data_mean[[16]], aes(x = Year, y = habitat_size))+
   #geom_ribbon(aes(ymin = mean_occupancy - sd_occupancy, ymax = mean_occupancy + sd_occupancy), col = NA, alpha = 0.15, fill = "blue")+
   #geom_line(aes(x = Year, y = mean_occupancy), linewidth = 1.2, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.x = element_blank(), legend.position = "")+
+  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 16), axis.title.y = element_blank(), legend.position = "")+
   ylab("simulated/ predicted \n value")+
+  xlab("Year")+
   xlim(c(0,55))+
   ylim(c(0,25000))
 
@@ -721,31 +725,100 @@ grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
 # checking if our ordbeta regression fit better than the linear model
 
-load("4_Analysis/data/Model_predictions_OBR_plot.Rdata")
+load("4_Analysis/data/data_bayes_model.Rdata")
 
-# compare for optima
-data1 <- 1 - predictions_data_optima$hs_loss
-data2 <- predictions_data_optima$Estimate
+data_traits <- data.frame(traits = c(rep("range-contracting",3), rep("range-shifting",3), rep("narrow",3), rep("wide",3), rep("slow",3), rep("fast",3),
+                                        rep("short",3), rep("long",3)),
+                             land = rep(c("1", "2", "3"),8))
 
-ks.test(data1, data2) # significant which means that they come from different distributions
+for (i in 1:nrow(data_traits)) {
+  trait <- data_traits[i,"traits"]
+  land <- data_traits[i, "land"]
+  
+  if (i < 7){
+    tmp <- subset(data_adapted_long, data_adapted_long$land == land & data_adapted_long$optima == trait)
+  } else if (i > 6 && i < 13){
+    tmp <- subset(data_adapted_long, data_adapted_long$land == land & data_adapted_long$breadth == trait)
+  } else if (i > 12 && i < 19){
+    tmp <- subset(data_adapted_long, data_adapted_long$land == land & data_adapted_long$rmax == trait)
+  } else {
+    tmp <- subset(data_adapted_long, data_adapted_long$land == land & data_adapted_long$dispersal == trait)
+  }
+  
+  data1 <- tmp$hs_change
+  data2 <- tmp$pop_sum
+  
+  print(paste0(trait, "_", land))
+  print(ks.test(data1, data2))
+}
 
-# compare for breadth
-data1 <- 1 - predictions_data_breadth$hs_loss
-data2 <- predictions_data_breadth$Estimate
+# mean and sd classification time
+load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+IUCN_classification$VU_Pop
 
-ks.test(data1, data2) # significant which means that they come from different distributions
+# Population size range-contracting
+mean(subset(IUCN_classification, IUCN_classification$optima == "marginal")$VU_Pop)
+sd(subset(IUCN_classification, IUCN_classification$optima == "marginal")$VU_Pop)
 
-# compare for growth rate
-data1 <- 1 - predictions_data_rmax$hs_loss
-data2 <- predictions_data_rmax$Estimate
+mean(subset(IUCN_classification, IUCN_classification$optima == "marginal")$EN_Pop)
+sd(subset(IUCN_classification, IUCN_classification$optima == "marginal")$EN_Pop)
 
-ks.test(data1, data2) # significant which means that they come from different distributions
+mean(subset(IUCN_classification, IUCN_classification$optima == "marginal")$CR_Pop)
+sd(subset(IUCN_classification, IUCN_classification$optima == "marginal")$CR_Pop)
 
-# compare for dispersal
-data1 <- 1 - predictions_data_dispersal$hs_loss
-data2 <- predictions_data_dispersal$Estimate
+# Habitat range-contracting
+mean(subset(IUCN_classification, IUCN_classification$optima == "marginal")$VU_HS)
+sd(subset(IUCN_classification, IUCN_classification$optima == "marginal")$VU_HS)
 
-ks.test(data1, data2) # significant which means that they come from different distributions
+mean(subset(IUCN_classification, IUCN_classification$optima == "marginal")$EN_HS)
+sd(subset(IUCN_classification, IUCN_classification$optima == "marginal")$EN_HS)
+
+mean(subset(IUCN_classification, IUCN_classification$optima == "marginal")$CR_HS)
+sd(subset(IUCN_classification, IUCN_classification$optima == "marginal")$CR_HS)
+
+# Population size range-shifting
+mean(subset(IUCN_classification, IUCN_classification$optima == "central")$VU_Pop)
+sd(subset(IUCN_classification, IUCN_classification$optima == "central")$VU_Pop)
+
+mean(subset(IUCN_classification, IUCN_classification$optima == "central")$EN_Pop)
+sd(subset(IUCN_classification, IUCN_classification$optima == "central")$EN_Pop)
+
+mean(subset(IUCN_classification, IUCN_classification$optima == "central")$CR_Pop)
+sd(subset(IUCN_classification, IUCN_classification$optima == "central")$CR_Pop)
+
+# Habitat range-shifting
+mean(subset(IUCN_classification, IUCN_classification$optima == "central")$VU_HS)
+sd(subset(IUCN_classification, IUCN_classification$optima == "central")$VU_HS)
+
+mean(subset(IUCN_classification, IUCN_classification$optima == "central")$EN_HS)
+sd(subset(IUCN_classification, IUCN_classification$optima == "central")$EN_HS)
+
+mean(subset(IUCN_classification, IUCN_classification$optima == "central")$CR_HS)
+sd(subset(IUCN_classification, IUCN_classification$optima == "central")$CR_HS)
+
+# # compare for optima
+# data1 <- 1 - predictions_data_optima$hs_loss
+# data2 <- predictions_data_optima$Estimate
+# 
+# ks.test(data1, data2) # significant which means that they come from different distributions
+# 
+# # compare for breadth
+# data1 <- 1 - predictions_data_breadth$hs_loss
+# data2 <- predictions_data_breadth$Estimate
+# 
+# ks.test(data1, data2) # significant which means that they come from different distributions
+# 
+# # compare for growth rate
+# data1 <- 1 - predictions_data_rmax$hs_loss
+# data2 <- predictions_data_rmax$Estimate
+# 
+# ks.test(data1, data2) # significant which means that they come from different distributions
+# 
+# # compare for dispersal
+# data1 <- 1 - predictions_data_dispersal$hs_loss
+# data2 <- predictions_data_dispersal$Estimate
+# 
+# ks.test(data1, data2) # significant which means that they come from different distributions
 
 # # Fitting a linear model to the data with a random intercept
 # #model_lm <- glmer(pop_sum ~ hs_loss + optima + breadth + rmax + dispersal + hs_loss:optima + hs_loss:breadth + hs_loss:rmax + 
@@ -757,7 +830,7 @@ ks.test(data1, data2) # significant which means that they come from different di
 # load("4_Analysis/Model Results/Model_lm.Rdata")
 # 
 # # fit hsloss and poploss curve with linear regression
-# load("4_Analysis/data/data_bayes_model.Rdata")
+# 
 # 
 # data_adapted_long$breadth <- factor(data_adapted_long$breadth, levels = c("wide", "narrow"))
 # data_adapted_long$rmax <- factor(data_adapted_long$rmax, levels = c("fast", "slow"))
