@@ -145,6 +145,7 @@ pop_Batch1_current_full[which(is.na(pop_Batch1_current_full$NInd)),"NInd"] <- 0
 r_abu_current <- rast(as.data.frame(pop_Batch1_current_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_current_Batch1_Rep4_Land1.pdf"))
+pdf("Inkscape/images/Abundances_map_current_Batch1_Rep4_Land1.pdf")
 plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
 dev.off()
 
@@ -173,13 +174,12 @@ pop_Batch2_future_full[which(is.na(pop_Batch2_future_full$NInd)),"NInd"] <- 0
 r_abu_future <- rast(as.data.frame(pop_Batch2_future_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_future_Batch2_Rep4_Land1.pdf"))
-plot(r_abu_future, axes = F, range = c(0,11), legend = F, col = c("#F2F2F2"))
+plot(r_abu_future, axes = F, range = c(0,11), legend = F, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
 dev.off()
 
 pdf(paste0(home_folder, "final_plots/Abundance_legend.pdf"))
 plot(r_abu_current, axes = F, range = c(0,11), col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
 dev.off()
-
 
 # Plots for Fig. 3 -------------------
 # Population size against habitat suitability ---------------

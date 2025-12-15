@@ -40,11 +40,11 @@ data_mean <- vector("list", 16)
 
 for (i in 1:16){
   # data set for land replication 1
-  tmp1 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim1.rds"))
+  tmp1 <- readRDS(paste0("results/data_analysis_relative_long_Batch", i, "_Sim1.rds"))
   # data set for land replication 2
-  tmp2 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim2.rds"))
+  tmp2 <- readRDS(paste0("results/data_analysis_relative_long_Batch", i, "_Sim2.rds"))
   # data set for land replication 3
-  tmp3 <- readRDS(paste0("4_Analysis/data/data_analysis_relative_long_Batch", i, "_Sim3.rds"))
+  tmp3 <- readRDS(paste0("results/data_analysis_relative_long_Batch", i, "_Sim3.rds"))
   
   #rbind the different data sets
   data[[i]] <- rbind(tmp1, tmp2)
@@ -97,6 +97,47 @@ data_adapted_long <- as.data.frame(data_adapted_long)
 save(data_adapted_long, file=paste0(home_folder, "analysis_data/data_mean_longformat.Rdata"))
 save(data_mean, file=paste0(home_folder, "analysis_data/data_mean.Rdata"))
 save(data, file=paste0(home_folder, "analysis_data/data_analysis.Rdata"))
+
+# Create data set with initial values and at equilibrium --------
+data_simulations <- expand.grid(land_rep = land_rep, BatchNum = BatchNum, replicates = replicates)
+data_simulations$pop0 <- NA
+data_simulations$pop100 <- NA
+data_simulations$occ0 <- NA
+data_simulations$occ100 <- NA
+
+for (sim_nr in 1:nrow(sims)) {
+  rep_nr <- sims[sim_nr,]$land_rep
+  BatchNum <- sims[sim_nr,]$BatchNum
+  
+  # Load in data
+  pop <- readRDS(paste0("Outputs/SumInd_Batch", BatchNum, "_Sim", rep_nr, ".rds"))
+  occ <- fread(paste0("Outputs/Batch", BatchNum, "_Sim", rep_nr, "_Land1_Range.txt"))
+  
+  # extract the replicate runs
+  pop_sub <- subset(pop, pop$Rep %in% replicates)
+  occ_sub <- subset(occ, occ$Rep %in% replicates)
+  
+  # extract the year 0 and 100
+  pop_sub2 <- subset(pop_sub, pop_sub$Year %in% c(0,100))
+  occ_sub2 <- subset(occ_sub, occ_sub$Year %in% c(0,100))
+  
+  for (i in 1:length(replicates)) {
+    data_simulations[data_simulations$BatchNum == BatchNum & data_simulations$land_rep == rep_nr &
+                       data_simulations$replicates == replicates[i], "pop0"] <- pop_sub2[pop_sub2$Rep == replicates[i] & pop_sub2$Year == 0, "sumPop"]
+    data_simulations[data_simulations$BatchNum == BatchNum & data_simulations$land_rep == rep_nr &
+                       data_simulations$replicates == replicates[i], "occ0"] <- occ_sub2[occ_sub2$Rep == replicates[i] & occ_sub2$Year == 0, "NOccupCells"]
+    
+    data_simulations[data_simulations$BatchNum == BatchNum & data_simulations$land_rep == rep_nr &
+                       data_simulations$replicates == replicates[i], "pop100"] <- pop_sub2[pop_sub2$Rep == replicates[i] & pop_sub2$Year == 100, "sumPop"]
+    data_simulations[data_simulations$BatchNum == BatchNum & data_simulations$land_rep == rep_nr &
+                       data_simulations$replicates == replicates[i], "occ100"] <- occ_sub2[occ_sub2$Rep == replicates[i] & occ_sub2$Year == 100, "NOccupCells"]
+  }
+}
+
+# transform column
+data_simulations$BatchNum <- as.character(data_simulations$BatchNum)
+
+save(data_simulations, file=paste0(home_folder, "analysis_data/data_simulation_conditions.Rdata"))
 
 # Create data set with all performance measures ------
 

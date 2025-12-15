@@ -630,13 +630,29 @@ grid.arrange(arrangeGrob(t0, t_nn, t_wn, t_c_medium, p1,p2, t_w_medium, p3,p4, n
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
 # create plot that lists the warning time for all range-shifting species separately 
-load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+load("4_Analysis/data/IUCN_classification_times_allreplicates_ExtTime.RData")
 
 IUCN_sub <- subset(IUCN_classification, IUCN_classification$optima == "central")
 IUCN_sub$BatchNum <- factor(IUCN_sub$BatchNum, levels = c("2", "10", "6", "14", "4", "12", "8", "16"))
 
+# calculate mean Extinction time and standard deviation for position trait
+hline_df <- data.frame(IUCN_classification %>% group_by(optima) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                sdExt = sd(Ext_Time)))
+# Create mapping from x levels to numeric positions
+x_positions <- setNames(1:length(levels(hline_df$optima)), levels(hline_df$optima))
+
+# Add x numeric positions to hline_df
+hline_df$x_num <- x_positions[as.character(hline_df$optima)]
 
 p_pos1 <- ggplot(IUCN_sub, aes(x = BatchNum, y = VU_HS))+
+  geom_segment(data = subset(hline_df, hline_df$optima == "central"),
+               aes(x =  0.55, xend = 8.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55")+
+  geom_rect(data = subset(hline_df, hline_df$optima == "central"),
+            aes(xmin = 0.55, xmax = 8.45, ymin = meanExt - 1.96 * sdExt, ymax = meanExt + 1.96 * sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
   geom_boxplot(aes(y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
   geom_boxplot(aes(y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
@@ -669,36 +685,36 @@ p_pos1 <- ggplot(IUCN_sub, aes(x = BatchNum, y = VU_HS))+
   geom_vline(xintercept = 6.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 8.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 7.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=0.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=1.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=1.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=1.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=2.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=2.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=2.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=3.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=3.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=3.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=4.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=4.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=4.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=5.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=5.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=5.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=6.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=6.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=6.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=7.325, y=48, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=7.655, y=48, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=7.995, y=48, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=8.325, y=48, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=0.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=0.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=1.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=1.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=1.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=2.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=2.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=2.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=3.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=3.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=3.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=4.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=4.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=4.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=5.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=5.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=5.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=6.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=6.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=6.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=7.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=7.655, y=75, label="VU", color="black", size = 8)+
+  annotate(geom="text", x=7.995, y=75, label="EN", color="black", size = 8)+
+  annotate(geom="text", x=8.325, y=75, label="CR", color="black", size = 8)+
   scale_x_discrete(expand = c(0.065, 0.065), label = c("narrow niche<br>slow growth rate<br>short dispersal", "narrow niche<br>slow growth rate<br>long dispersal",
                                                        "narrow niche<br>fast growth rate<br>short dispersal", "narrow niche<br>fast growth rate<br>long dispersal",
                                                        "wide niche<br>slow growth rate<br>short dispersal", "**wide niche<br>slow growth rate<br>long dispersal**",
                                                        "wide niche<br>fast growth rate<br>short dispersal", "**wide niche<br>fast growth rate<br>long dispersal**")) +
   xlab("")+
-  ylim(c(0,50))+
+  ylim(c(0,76))+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 22), axis.text.x = ggtext::element_markdown(),
         axis.title = element_text(size = 24), legend.position = "", 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
