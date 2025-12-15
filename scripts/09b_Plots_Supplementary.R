@@ -25,6 +25,7 @@ library(grid)
 library(RColorBrewer)
 library(terra)
 library(raster)
+library(ggtext)
 
 # Loading functions
 source("scripts/00_functions.R")

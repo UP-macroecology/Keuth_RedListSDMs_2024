@@ -620,7 +620,8 @@ legend <- ggplot(response_curves_df, aes(x = clim, y = cw_temp))+
   xlab("Climate ranges")+
   ylab("Occurrence probability")+
   scale_linetype_manual(
-    values = c("Temperature" = "solid", "Precipitation" = "dashed")
+    values = c("Temperature" = "solid", "Precipitation" = "dashed"),
+    breaks = c("Temperature", "Precipitation")
   )
 
 shared_legend <- extract_legend(legend)
