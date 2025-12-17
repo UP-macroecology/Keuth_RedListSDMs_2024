@@ -26,6 +26,7 @@ library(RColorBrewer)
 library(terra)
 library(raster)
 library(ggtext)
+library(scales)
 
 # Loading functions
 source("scripts/00_functions.R")
@@ -1341,6 +1342,26 @@ shared_legend <- extract_legend(legend)
 #Plot the large grid
 grid.arrange(arrangeGrob(t0, t_nn, t_wn, t_c_medium, p1,p2, t_w_medium, p3,p4, nrow = 3, ncol = 3, heights= c(1,4,4), widths = c(2,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
+
+# Plots for Fig. S12 -------------
+
+t <- 1:90
+alpha <- 0.5
+beta <- 0.9 
+theta <- 0.3
+set.seed(5678)
+ts <- alpha + beta * t + arima.sim(list(ma = theta), n = length(t))
+x <- as.vector(ts)
+temp_rise <- data.frame(year = seq(1,90,1),
+                        temp = scales::rescale(x, c(0,0.9)))
+
+
+ggplot(temp_rise, aes(x = year, y = temp))+
+  geom_line(linewidth = 1.1)+
+  theme_bw()+
+  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25))+
+  xlab("Year")+
+  ylab("Temperature")
 
 # Plots for Tab. S1 --------------
 summary(model_intercept)
