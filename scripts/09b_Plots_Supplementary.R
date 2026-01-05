@@ -28,9 +28,9 @@ library(raster)
 library(ggtext)
 library(scales)
 
-# Loading functions
+# Loading functions and text labels
 source("scripts/00_functions.R")
-source("scripts/text_labels_plots.R")
+source("scripts/00_text_labels_plots.R")
 
 # Load data
 load(paste0(home_folder, "model_results/Model Results/Model_ordbeta_randomintercept.Rdata"))
