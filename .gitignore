@@ -26,5 +26,6 @@ SDM_Extinctions.Rproj
 scripts/*.sh
 functions
 scripts/02c_Simulation_extract_dispersal.R
+scripts/10_Plots_review.R
 
 
