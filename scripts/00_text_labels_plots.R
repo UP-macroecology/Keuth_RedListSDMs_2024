@@ -1,4 +1,17 @@
-# text labels for grid.arrange graphs
+# Red List criteria underestimate climate-related extinction risk of range-shifting species
+
+
+#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------- #
+#                         00. Text labels for plots                    #
+# -------------------------------------------------------------------- #
+
+
+#-------------------------------------------------------------------------------
+# all text labels required for the figures in the main text and appendix
+
+# Load packages
 library(ggplot2)
 
 # empty plot for the upper left corner of the plots
