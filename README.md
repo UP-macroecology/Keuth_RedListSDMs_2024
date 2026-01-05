@@ -16,7 +16,7 @@ Keywords: IUCN Red List, extinction risk, species distribution models, climate c
 This repository contains the R scripts needed to reproduce all results and plots.
 
 
-Funding: This study was supported by the German Research Foundation DFG (grant no. ZU 361/6-1). S.A.F. gratefully acknowledges the support of iDiv funded by the German Research Foundation (DFG– _FZT 118, 202548816) and of the Leibniz Competition by the Leibniz Association (P52/2017).
+Funding: This study was supported by the German Research Foundation DFG (grant no. 518316503). S.A.F. gratefully acknowledges the support of iDiv funded by the German Research Foundation (DFG– _FZT 118, 202548816) and of the Leibniz Competition by the Leibniz Association (P52/2017).
 
 ---------------------------------------------------------------
 **Workflow**
