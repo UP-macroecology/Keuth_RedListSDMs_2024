@@ -430,17 +430,17 @@ p16 <- ggplot(subset(data_simulations, data_simulations$BatchNum == 16), aes(y=p
         axis.text.x = element_blank(), axis.ticks.x = element_blank())
 
 # create and extract common legend
-colors <- c("Population size Year 0" = "#646F58", "Population size Year 100" = "#B38D97", "Occupancy Year 0" = "#4F94CD", "Occupancy Year 100" = "#CDAD00")
+colors <- c("Population size Year -100" = "#646F58", "Population size Year 0" = "#B38D97", "Occupancy Year -100" = "#4F94CD", "Occupancy Year 0" = "#CDAD00")
 
-legend <- ggplot(subset(data_simulations, data_simulations$BatchNum == 16), aes(y=pop0, x =BatchNum, fill = "Population size Year 0"))+
+legend <- ggplot(subset(data_simulations, data_simulations$BatchNum == 16), aes(y=pop0, x =BatchNum, fill = "Population size Year -100"))+
   geom_boxplot(position = position_nudge(x = 0.1), width = 0.15)+
-  geom_boxplot(aes(y=pop100, x = BatchNum, fill = "Population size Year 100"), position = position_nudge(x = -0.1), width = 0.15)+
-  geom_boxplot(aes(y=occ0, x = BatchNum, fill = "Occupancy Year 0"), position = position_nudge(x = 0.3), width = 0.15)+
-  geom_boxplot(aes(y=occ100, x = BatchNum, fill = "Occupancy Year 100"), position = position_nudge(x = -0.3), width = 0.15)+
+  geom_boxplot(aes(y=pop100, x = BatchNum, fill = "Population size Year 0"), position = position_nudge(x = -0.1), width = 0.15)+
+  geom_boxplot(aes(y=occ0, x = BatchNum, fill = "Occupancy Year -100"), position = position_nudge(x = 0.3), width = 0.15)+
+  geom_boxplot(aes(y=occ100, x = BatchNum, fill = "Occupancy Year 0"), position = position_nudge(x = -0.3), width = 0.15)+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
         axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 22), legend.key.size = unit(1.5, "cm"),
         legend.position = "bottom")+
-  scale_fill_manual(values= colors, breaks = c("Population size Year 0", "Population size Year 100", "Occupancy Year 0", "Occupancy Year 100"))
+  scale_fill_manual(values= colors, breaks = c("Population size Year -100", "Population size Year 0", "Occupancy Year -100", "Occupancy Year 0"))
 
 shared_legend <- extract_legend(legend)
 
@@ -1042,7 +1042,7 @@ p_pos1 <- ggplot(IUCN_sub, aes(x = BatchNum, y = VU_HS))+
   annotate(geom="text", x=8.325, y=75, label="CR", color="black", size = 8)+
   scale_x_discrete(expand = c(0.065, 0.065), label = c("narrow niche<br>slow growth rate<br>short dispersal", "narrow niche<br>slow growth rate<br>long dispersal",
                                                        "narrow niche<br>fast growth rate<br>short dispersal", "narrow niche<br>fast growth rate<br>long dispersal",
-                                                       "wide niche<br>slow growth rate<br>short dispersal", "**wide niche<br>slow growth rate<br>long dispersal**",
+                                                       "wide niche<br>slow growth rate<br>short dispersal", "wide niche<br>slow growth rate<br>long dispersal",
                                                        "wide niche<br>fast growth rate<br>short dispersal", "**wide niche<br>fast growth rate<br>long dispersal**")) +
   xlab("")+
   ylim(c(0,76))+
