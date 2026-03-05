@@ -397,3 +397,43 @@ MW_replicates <- function(data, new_data, timehorizon, threshold, category, metr
     }
   }
 }
+
+# 6. Function for a moving window to obtain classification time points -------------------------------------------
+MW <- function(data, new_data, timehorizon, threshold, category, metric){
+  #column_new_data <- paste(category, metric, sep = "_")
+  #print(column_new_data)
+  
+  # select the right column depending on the selected metric
+  if(metric == "Pop"){
+    column_data <- "pop_mean"
+  } else if(metric == "HS") {
+    column_data <- "hs_mean"
+  } else {
+    column_data <- "extProb"
+  }
+  
+  # reduce timehorizon if it exceeds the maximum number of years in the data set
+  if(timehorizon > max(data$Year) - 100){
+    timehorizon <- max(data$Year) - 100
+    #print(timehorizon)
+  }
+  
+  # for every year calculated the relative size to the size x years into the future
+  for (i in 1:nrow(data)) {
+    if(column_data == "extProb"){
+      rel_loss <- data[data$Year == unique(data$Year)[i+timehorizon], column_data]
+      #print(rel_loss)
+    } else {
+      rel_loss <- 1 - (data[data$Year == unique(data$Year)[i+timehorizon], column_data]/data[data$Year == unique(data$Year)[i], column_data])
+      #print(rel_loss)
+    }
+    
+    # controls if the relative loss exceeds the threshold
+    if(rel_loss >= threshold){
+      #print(unique(data$Year)[i])
+      new_data[new_data$BatchNum == BatchNum & new_data$land_rep == land_rep, paste(category, metric, sep = "_")] <- (unique(data$Year)[i])-100
+      return(new_data)
+      break
+    }
+  }
+}

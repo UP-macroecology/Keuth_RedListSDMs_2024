@@ -54,6 +54,7 @@ for (i in 1:nrow(IUCN_classification)) {
   
   # Load data
   dat <- readRDS(paste0(home_folder, "analysis_data/data_analysis_raw_long_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  #dat <- readRDS(paste0("4_Analysis/data/data_analysis_raw_long_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   
   # remove rows till year 100
   dat <- dat[!dat$Year %in% c(0:99),]
@@ -134,6 +135,7 @@ for (i in 1:nrow(IUCN_classification)) {
   
   # Load data
   dat <- readRDS(paste0(home_folder, "analysis_data/data_analysis_raw_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  #dat <- readRDS(paste0("4_Analysis/data/data_analysis_raw_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   
   # remove rows till year 100
   dat <- dat[!dat$Year %in% c(0:99),]
@@ -148,6 +150,7 @@ for (i in 1:nrow(IUCN_classification)) {
   
   # calculate time point of classification for using dispersal assumptions
   dat_disp <- readRDS(paste0(home_folder, "analysis_data/hs_loss_wide_SDM_dispersal_assumptions_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  #dat_disp <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   
   #calculate the mean hs_loss for every startYear
   dat_disp$hs_mean <- rowMeans(dat_disp[,2:11])

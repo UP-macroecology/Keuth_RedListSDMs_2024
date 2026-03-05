@@ -29,7 +29,7 @@ t_nn <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "narrow \nniche") +
+           label = "Narrow \nniche") +
   theme_void()
 
 t_wn <- ggplot() +
@@ -37,7 +37,7 @@ t_wn <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "wide \nniche") +
+           label = "Wide \nniche") +
   theme_void()
 
 #text plots for niche optima
@@ -46,7 +46,7 @@ t_c_small <- ggplot() +
            x = 1,
            y = 1,
            size = 6.5,
-           label = "marginal niche position") +
+           label = "Marginal niche position") +
   theme_void()
 
 t_w_small <- ggplot() +
@@ -54,7 +54,7 @@ t_w_small <- ggplot() +
            x = 1,
            y = 1,
            size = 6.5,
-           label = "central niche position") +
+           label = "Central niche position") +
   theme_void()
 
 t_c_medium <- ggplot() +
@@ -62,7 +62,7 @@ t_c_medium <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "marginal niche position") +
+           label = "Marginal niche position") +
   theme_void()
 
 t_w_medium <- ggplot() +
@@ -70,7 +70,7 @@ t_w_medium <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "central niche position") +
+           label = "Central niche position") +
   theme_void()
 
 t_c_large <- ggplot() +
@@ -78,7 +78,7 @@ t_c_large <- ggplot() +
            x = 1,
            y = 1,
            size = 10,
-           label = "marginal niche position") +
+           label = "Marginal niche position") +
   theme_void()
 
 t_w_large <- ggplot() +
@@ -86,7 +86,7 @@ t_w_large <- ggplot() +
            x = 1,
            y = 1,
            size = 10,
-           label = "central niche position") +
+           label = "Central niche position") +
   theme_void()
 
 # text plots for years
@@ -128,7 +128,7 @@ l1 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nnarrow niche\nslow gr. rate \nshort disp.") +
+           label = "Marginal niche position\nNarrow niche\nSlow gr. rate \nShort disp.") +
   theme_void()
 
 l2 <- ggplot() +
@@ -136,7 +136,7 @@ l2 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nnarrow niche\nslow gr. rate \nlong disp.") +
+           label = "Marginal niche position\nNarrow niche\nSlow gr. rate \nLong disp.") +
   theme_void()
 
 l3 <- ggplot() +
@@ -144,7 +144,7 @@ l3 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nnarrow niche\nfast gr. rate \nshort disp.") +
+           label = "Marginal niche position\nNarrow niche\nFast gr. rate \nShort disp.") +
   theme_void()
 
 l4 <- ggplot() +
@@ -152,7 +152,7 @@ l4 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nnarrow niche\nfast gr. rate \nlong disp.") +
+           label = "Marginal niche position\nNarrow niche\nFast gr. rate \nLong disp.") +
   theme_void()
 
 l5 <- ggplot() +
@@ -160,7 +160,7 @@ l5 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nwide niche\nslow gr. rate \nshort disp.") +
+           label = "Marginal niche position\nWide niche\nSlow gr. rate \nShort disp.") +
   theme_void()
 
 l6 <- ggplot() +
@@ -168,7 +168,7 @@ l6 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nwide niche\nslow gr. rate \nlong disp.") +
+           label = "Marginal niche position\nWide niche\nSlow gr. rate \nLong disp.") +
   theme_void()
 
 l7 <- ggplot() +
@@ -176,7 +176,7 @@ l7 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nwide niche\nfast gr. rate \nshort disp.") +
+           label = "Marginal niche position\nWide niche\nFast gr. rate \nShort disp.") +
   theme_void()
 
 l8 <- ggplot() +
@@ -184,7 +184,7 @@ l8 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "marginal niche position\nwide niche\nfast gr. rate \nlong disp.") +
+           label = "Marginal niche position\nWide niche\nFast gr. rate \nLong disp.") +
   theme_void()
 
 l9 <- ggplot() +
@@ -192,7 +192,7 @@ l9 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nnarrow niche\nslow gr. rate \nshort disp.") +
+           label = "Central niche position\nNarrow niche\nSlow gr. rate \nShort disp.") +
   theme_void()
 
 l10 <- ggplot() +
@@ -200,7 +200,7 @@ l10 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nnarrow niche\nslow gr. rate \nlong disp.") +
+           label = "Central niche position\nNarrow niche\nSlow gr. rate \nLong disp.") +
   theme_void()
 
 l11 <- ggplot() +
@@ -208,7 +208,7 @@ l11 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nnarrow niche\nfast gr. rate \nshort disp.") +
+           label = "Central niche position\nNarrow niche\nFast gr. rate \nShort disp.") +
   theme_void()
 
 l12 <- ggplot() +
@@ -216,7 +216,7 @@ l12 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nnarrow niche\nfast gr. rate \nlong disp.") +
+           label = "Central niche position\nNarrow niche\nFast gr. rate \nLong disp.") +
   theme_void()
 
 l13 <- ggplot() +
@@ -224,7 +224,7 @@ l13 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nwide niche\nslow gr. rate \nshort disp.") +
+           label = "Central niche position\nWide niche\nSlow gr. rate \nShort disp.") +
   theme_void()
 
 l14 <- ggplot() +
@@ -232,7 +232,7 @@ l14 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nwide niche\nslow gr. rate \nlong disp.") +
+           label = "Central niche position\nWide niche\nSlow gr. rate \nLong disp.") +
   theme_void()
 
 l15 <- ggplot() +
@@ -240,7 +240,7 @@ l15 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nwide niche\nfast gr. rate \nshort disp.") +
+           label = "Central niche position\nWide niche\nFast gr. rate \nShort disp.") +
   theme_void()
 
 l16 <- ggplot() +
@@ -248,7 +248,7 @@ l16 <- ggplot() +
            x = 1,
            y = 1,
            size = 4,
-           label = "central niche position\nwide niche\nfast gr. rate \nlong disp.") +
+           label = "Central niche position\nWide niche\nFast gr. rate \nLong disp.") +
   theme_void()
 
 # dispersal growth rate combinations
@@ -258,7 +258,7 @@ t_ss <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "slow growth \n rate \n short dispersal") +
+           label = "Slow growth \n rate \n short dispersal") +
   theme_void()
 
 t_sl <- ggplot() +
@@ -266,7 +266,7 @@ t_sl <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "slow growth \n rate \n long dispersal") +
+           label = "Slow growth \n rate \n long dispersal") +
   theme_void()
 
 t_fs <- ggplot() +
@@ -274,7 +274,7 @@ t_fs <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "fast growth \n rate \n short dispersal") +
+           label = "Fast growth \n rate \n short dispersal") +
   theme_void()
 
 t_fl <- ggplot() +
@@ -282,7 +282,7 @@ t_fl <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "fast growth \n rate \n long dispersal") +
+           label = "Fast growth \n rate \n long dispersal") +
   theme_void()
 
 # niche combinations
@@ -292,7 +292,7 @@ t_cn <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "marginal niche position & narrow niche") +
+           label = "Marginal niche position & narrow niche") +
   theme_void()
 
 t_cw <- ggplot() +
@@ -300,7 +300,7 @@ t_cw <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "marginal niche position & wide niche") +
+           label = "Marginal niche position & wide niche") +
   theme_void()
 
 t_wna <- ggplot() +
@@ -308,7 +308,7 @@ t_wna <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "central niche position & narrow niche") +
+           label = "Central niche position & narrow niche") +
   theme_void()
 
 t_ww <- ggplot() +
@@ -316,7 +316,7 @@ t_ww <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "central niche position & wide niche") +
+           label = "Central niche position & wide niche") +
   theme_void()
 
 # threatened values

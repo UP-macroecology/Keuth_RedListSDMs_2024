@@ -33,55 +33,50 @@ source("scripts/00_text_labels_plots.R")
 load(paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
 load(paste0(home_folder, "analysis_data/data_mean.Rdata"))
 
-load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
-load("4_Analysis/data/data_bayes_model.Rdata")
+#load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+#load("4_Analysis/data/data_bayes_model.Rdata")
 
 # Plots for Fig. 2 --------------
 # plot of HS, population size and extinction probability over time --------
 
 ggplot(data_mean[[1]] %>% filter(), aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.3, fill = "#FF6A6A")+
-  geom_line(linewidth = 1.2, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), alpha = 0.3, fill = "gold")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "gold")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.3, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
+  geom_line(linewidth = 2.3, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 2.3, col = "gold")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 2.3, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), legend.position = "")+
-  ylab("simulated/ predicted value")+
+  theme(axis.text = element_text(size = 35), axis.title = element_text(size = 38), legend.position = "")+
+  ylab("Simulated/ predicted value")+
   xlim(c(0,75))+
-  ylim(c(-0.05,1.05))
+  ylim(c(-0.05,1.08))
 
 ggsave(paste0(home_folder, "final_plots/comparison_graph_Batch1.pdf"))
+ggsave("4_Analysis/plots/reviews/review2/comparison_graph_Batch2.pdf")
 
 ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
-  geom_ribbon(aes(ymin = meanHS - sdHS, ymax = meanHS + sdHS), col = NA, alpha = 0.3, fill = "#FF6A6A")+
-  geom_line(linewidth = 1.2, col = "#FF6A6A")+
-  geom_ribbon(aes(ymin = meanPop - sdPop, ymax = meanPop + sdPop), col = NA, alpha = 0.3, fill = "gold")+
-  geom_line(aes(x = Year, y = meanPop), linewidth = 1.2, col = "gold")+
-  geom_ribbon(aes(ymin = meanExt - sdExt, ymax = meanExt + sdExt), col = NA, alpha = 0.3, fill = "blue")+
-  geom_line(aes(x = Year, y = meanExt), linewidth = 1.2, col = "blue")+
+  geom_line(linewidth = 2.3, col = "#FF6A6A")+
+  geom_line(aes(x = Year, y = meanPop), linewidth = 2.3, col = "gold")+
+  geom_line(aes(x = Year, y = meanExt), linewidth = 2.3, col = "blue")+
   theme_bw()+
-  theme(axis.text = element_text(size = 20), axis.title = element_text(size = 25), legend.position = "")+
-  ylab("simulated/ predicted value")+
+  theme(axis.text = element_text(size = 35), axis.title = element_text(size = 38), legend.position = "")+
+  ylab("Simulated/ predicted value")+
   xlim(c(0,75))+
-  ylim(c(-0.05,1.05))
+  ylim(c(-0.05,1.08))
 
 ggsave(paste0(home_folder, "final_plots/comparison_graph_Batch2.pdf"))
 
 # Extract legend for the plots
 
-colors <- c("relative Population size" = "gold", "relative Habitat suitability" = "#FF6A6A", "Extinction probability" = "blue")
+colors <- c("Relative population size" = "gold", "Relative habitat suitability" = "#FF6A6A", "Extinction probability" = "blue")
 
-legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "relative Habitat suitability"))+
+legend <- ggplot(data_mean[[16]], aes(x = Year, y = meanHS, color = "Relative habitat suitability"))+
   geom_line(linewidth = 1)+
-  geom_line(aes(x = Year, y = meanPop, color = "relative Population size"), linewidth = 1)+
+  geom_line(aes(x = Year, y = meanPop, color = "Relative population size"), linewidth = 1)+
   geom_line(aes(x = Year, y = meanExt, color = "Extinction probability"), linewidth = 1)+
   ylab("")+
   theme_bw()+
   theme(axis.text = element_text(size = 18), axis.title = element_text(size = 18), legend.position = "right", , legend.title = element_blank(), 
         legend.text = element_text(size = 30), legend.key.size = unit(2, "cm"), legend.key.width = unit(2.5, "cm"))+
-  scale_color_manual(values= colors, breaks = c("relative Habitat suitability", "relative Population size", "Extinction probability"))+
+  scale_color_manual(values= colors, breaks = c("Relative habitat suitability", "Relative population size", "Extinction probability"))+
   guides(color = guide_legend(override.aes = list(linewidth = 3)))
 
 shared_legend <- extract_legend(legend)
@@ -215,7 +210,8 @@ predictions_data_dispersal <- cbind(new_data, predict(model, newdata=new_data,  
 save(predictions_data_position, predictions_data_breadth, predictions_data_rmax, predictions_data_dispersal, file = paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
 
 # Since the predictions can take a lot of time, I save the results and can load them in afterwards
-#load(paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
+load(paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
+#load("4_Analysis/data/Model_predictions_OBR_plot.Rdata")
 
 # create mean predictions per variable and land
 predictions_mean_position <- predictions_data_position %>%
@@ -242,18 +238,18 @@ ggplot(predictions_mean_position, aes(x=hs_loss, y = mean, col = land, linetype 
   xlab("Habitat loss")+
   ylab("Relative population size")+
   theme_bw()+
-  theme(axis.text = element_text(size = 22), axis.title = element_text(size = 24),
-        legend.position = c(0.91, 0.85),  legend.title = element_text(size = 23), legend.text = element_text(size = 22),
+  theme(axis.text = element_text(size = 24), axis.title = element_text(size = 26),
+        legend.position = c(0.92, 0.87),  legend.title = element_text(size = 26), legend.text = element_text(size = 24),
         legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  scale_linetype_discrete(labels = c("Range-contracting", "Range-shifting"))+
   labs(colour = "Landscape", linetype = NULL)+
   guides(linetype = guide_legend(order = 1), fill = "none")
 
 # Plots for Fig. 4 ------------------
 # IUCN classification time -------
-
 IUCN_classification$position <- as.character(IUCN_classification$position)
 IUCN_classification[which(IUCN_classification$position == "marginal"), "position"] <- "range-contracting"
 IUCN_classification[which(IUCN_classification$position == "central"), "position"] <- "range-shifting"
@@ -261,6 +257,8 @@ IUCN_classification[which(IUCN_classification$position == "central"), "position"
 # calculate mean Extinction time and standard deviation for position trait
 hline_df <- data.frame(IUCN_classification %>% group_by(position) %>% summarise(meanExt = mean(Ext_Time),
                                                                                        sdExt = sd(Ext_Time)))
+
+hline_df$position <- factor(hline_df$position, levels = c("range-contracting", "range-shifting"))
 # Create mapping from x levels to numeric positions
 x_positions <- setNames(1:length(levels(hline_df$position)), levels(hline_df$position))
 
@@ -274,7 +272,7 @@ p_pos1 <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
                inherit.aes = FALSE,
                color = "gray55")+
   geom_rect(data = hline_df,
-            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - sdExt, ymax = meanExt + sdExt),
+            aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - 1.96 * sdExt, ymax = meanExt + 1.96 * sdExt),
             inherit.aes = FALSE,
             fill = "gray55", alpha = 0.2) +
   geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
@@ -291,17 +289,17 @@ p_pos1 <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
   geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
   geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=68, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=0.995, y=68, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=1.325, y=68, label="CR", color="black", size = 8)+
-  annotate(geom="text", x=1.685, y=68, label="VU", color="black", size = 8)+
-  annotate(geom="text", x=1.995, y=68, label="EN", color="black", size = 8)+
-  annotate(geom="text", x=2.335, y=68, label="CR", color="black", size = 8)+
-  scale_x_discrete(expand = c(0.25, 0.25)) +
+  annotate(geom="text", x=0.655, y=78, label="VU", color="black", size = 9)+
+  annotate(geom="text", x=0.995, y=78, label="EN", color="black", size = 9)+
+  annotate(geom="text", x=1.325, y=78, label="CR", color="black", size = 9)+
+  annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 9)+
+  annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 9)+
+  annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 9)+
+  scale_x_discrete(expand = c(0.25, 0.25), labels = c("Range-contracting \n (Marginal niche position)", "Range-shifting \n (Central niche position)")) +
   xlab("")+
-  ylim(c(0,70))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 22),
-        axis.title = element_text(size = 24), legend.position = "", 
+  ylim(c(0,80))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 24),
+        axis.title = element_text(size = 26), legend.position = "", 
         panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   ylab("Classification time [years]")
 
@@ -314,7 +312,7 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Popu
   geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 22), legend.key.size = unit(1.5, "cm"),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 24), legend.key.size = unit(1.5, "cm"),
         legend.position = "bottom")+
   ylab("Timepoint of classification")+
   scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
@@ -322,4 +320,4 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Popu
 shared_legend <- extract_legend(legend)
 
 #Plot large grid
-grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,1))
+grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,0.8))
