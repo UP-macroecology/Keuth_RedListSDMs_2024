@@ -448,7 +448,113 @@ shared_legend <- extract_legend(legend)
 grid.arrange(arrangeGrob(t0, t_cn, t_cw, t_wna, t_ww, t_ss, p1,p3,p2,p4, t_sl, p9,p11,p10,p12, t_fs, p5,p7,p6,p8, t_fl, p13,p15,p14,p16, nrow = 5, ncol = 5, heights= c(1,3.8,4,4,4.2), widths = c(2,5,5,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
-# Plots for Fig. S3 --------------
+# Plots for Fig. S3 -----------
+BatchNum <- c(1:16)
+# Habitat suitability predictions
+
+for (i in BatchNum[c(TRUE, FALSE)]){
+  # current climate
+  load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
+  r_current <- rast(ens_preds[,1:3])
+
+  pdf(paste0(home_folder, "final_plots/SDM_predictions_map_current_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_current, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
+  dev.off()
+  
+  # future predictions for year 20
+  load(paste0(home_folder, "data_analysis/Predictions_fut_Batch", i, "_Sim1_Replication4.RData"))
+  
+  # extract year 20
+  fut_preds <- ens_fut_preds[[20]]
+  r_fut <- rast(fut_preds[,1:3])
+  
+  pdf(paste0(home_folder, "final_plots/SDM_predictions_map_future_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_fut, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
+  dev.off()
+}
+
+# Maps of abundance
+
+for (i in BatchNum[c(TRUE, FALSE)]){
+  # Load required data
+  pop_Batch <- readRDS(paste0(home_folder, "data_analysis/Batch", i, "_Sim1_Land1_Pop_Rep4.rds"))
+  load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
+  
+  # Abundance plot for year 0
+  pop_current <- subset(pop, pop$Year == 100)
+  pop_current_full <- merge(ens_preds[,c(1:2)], pop_current[,c(4:5,7)], by = c("x","y"), all.x = T)
+  pop_current_full[which(is.na(pop_current_full$NInd)),"NInd"] <- 0
+  r_abu_current <- rast(as.data.frame(pop_current_full[,c(1:3)]))
+  
+  pdf(paste0(home_folder, "final_plots/Abundances_map_current_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+  dev.off()
+  
+  # Plot future (year 20)
+  pop_future <- subset(pop, pop$Year == 120)
+  pop_future_full <- merge(ens_preds[,c(1:2)], pop_future[,c(4:5,7)], by = c("x","y"), all.x = T)
+  pop_future_full[which(is.na(pop_future_full$NInd)),"NInd"] <- 0
+  r_abu_future <- rast(as.data.frame(pop_future_full[,c(1:3)]))
+  
+  pdf(paste0(home_folder, "final_plots/Abundances_map_future_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_abu_future, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+  dev.off()
+}
+
+# Plots for Fig. S4 -----------
+
+BatchNum <- c(1:16)
+# Habitat suitability predictions
+
+for (i in BatchNum[c(FALSE, TRUE)]){
+  # current climate
+  load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
+  r_current <- rast(ens_preds[,1:3])
+  
+  pdf(paste0(home_folder, "final_plots/SDM_predictions_map_current_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_current, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
+  dev.off()
+  
+  # future predictions for year 30
+  load(paste0(home_folder, "data_analysis/Predictions_fut_Batch", i, "_Sim1_Replication4.RData"))
+  
+  # extract year 30
+  fut_preds <- ens_fut_preds[[30]]
+  r_fut <- rast(fut_preds[,1:3])
+  
+  pdf(paste0(home_folder, "final_plots/SDM_predictions_map_future_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_fut, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
+  dev.off()
+}
+
+# Maps of abundance
+
+for (i in BatchNum[c(FALSE, TRUE)]){
+  # Load required data
+  pop_Batch <- readRDS(paste0(home_folder, "data_analysis/Batch", i, "_Sim1_Land1_Pop_Rep4.rds"))
+  load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
+  
+  # Abundance plot for year 0
+  pop_current <- subset(pop, pop$Year == 100)
+  pop_current_full <- merge(ens_preds[,c(1:2)], pop_current[,c(4:5,7)], by = c("x","y"), all.x = T)
+  pop_current_full[which(is.na(pop_current_full$NInd)),"NInd"] <- 0
+  r_abu_current <- rast(as.data.frame(pop_current_full[,c(1:3)]))
+  
+  pdf(paste0(home_folder, "final_plots/Abundances_map_current_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+  dev.off()
+  
+  # Plot future (year 20)
+  pop_future <- subset(pop, pop$Year == 130)
+  pop_future_full <- merge(ens_preds[,c(1:2)], pop_future[,c(4:5,7)], by = c("x","y"), all.x = T)
+  pop_future_full[which(is.na(pop_future_full$NInd)),"NInd"] <- 0
+  r_abu_future <- rast(as.data.frame(pop_future_full[,c(1:3)]))
+  
+  pdf(paste0(home_folder, "final_plots/Abundances_map_future_Batch", i, "_Rep4_Land1.pdf"))
+  plot(r_abu_future, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+  dev.off()
+}
+# Plots for Fig. S5 --------------
 #convert specific columns
 performance_measures$Algorithm <- factor(performance_measures$Algorithm, levels = c("GLM", "RF", "Maxent", "mean_prob"))
 performance_measures$BatchNum <- factor(performance_measures$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
@@ -513,7 +619,7 @@ shared_legend <- extract_legend(legend)
 #Plot for main text
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
-# Plots for Fig. S4 --------------
+# Plots for Fig. S6 --------------
 #convert specific columns
 performance_measures$Algorithm <- factor(performance_measures$Algorithm, levels = c("GLM", "RF", "Maxent", "mean_prob"))
 performance_measures$BatchNum <- factor(performance_measures$BatchNum, levels = c("1", "9", "5", "13", "3", "11", "7", "15", "2", "10", "6", "14", "4", "12", "8","16"))
@@ -578,7 +684,7 @@ shared_legend <- extract_legend(legend)
 #Plot for main text
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(8,8)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
-# Plots for Fig. S5 --------------
+# Plots for Fig. S7 --------------
 names(predictions_mean_position)[names(predictions_mean_position) == 'optima'] <- 'position'
 predictions_mean_position$position <- as.character(predictions_mean_position$position)
 predictions_mean_position[which(predictions_mean_position$position == "range-contracting"), "position"] <- "marginal"
@@ -673,7 +779,7 @@ shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,1))
 
-# Plots for Fig. S6 --------------
+# Plots for Fig. S8 --------------
 
 #Prepare data
 data_adapted_long$breadth <- factor(data_adapted_long$breadth, levels = c("wide", "narrow"))
@@ -769,7 +875,7 @@ shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=2, nrow = 1, widths = c(10,1))
 
-# Plots for Fig. S7 --------------
+# Plots for Fig. S9 --------------
 IUCN_classification$position <- factor(IUCN_classification$position, levels = c("marginal", "central"))
 
 # calculate mean and sd Extinction time
@@ -961,7 +1067,7 @@ shared_legend <- extract_legend(legend)
 
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
-# Plots for Fig. S8 --------------
+# Plots for Fig. S10 --------------
 
 IUCN_sub <- subset(IUCN_classification, IUCN_classification$position == "central")
 IUCN_sub$BatchNum <- factor(IUCN_sub$BatchNum, levels = c("2", "10", "6", "14", "4", "12", "8", "16"))
@@ -1070,7 +1176,7 @@ shared_legend <- extract_legend(legend)
 #Plot large grid
 grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
-# Plots for Fig. S9 --------------
+# Plots for Fig. S11 --------------
 p_pos <- ggplot(IUCN_classification_dispersal, aes(x = position, y = VU_HS))+
   geom_boxplot(width = 0.1, fill = "#F36868", position = position_nudge(x = -0.40))+
   geom_boxplot(aes(x = position, y = VU_HS_disp), position = position_nudge(x = -0.26), width = 0.1, fill = "#3EA39F")+
@@ -1194,7 +1300,7 @@ shared_legend <- extract_legend(legend)
 #Plot large grid
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,1))
 
-# Plots for Fig. S10 --------------
+# Plots for Fig. S12 --------------
 
 #Landscape 1
 load(paste0(home_folder, "landscapes/land1_temp_pre.Rdata"))
@@ -1259,7 +1365,7 @@ plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend
 
 dev.off()
 
-# Plots for Fig. S11 ------------
+# Plots for Fig. S13 ------------
 
 # create data set
 clim <- seq(0,1,0.001)
@@ -1342,7 +1448,7 @@ shared_legend <- extract_legend(legend)
 grid.arrange(arrangeGrob(t0, t_nn, t_wn, t_c_medium, p1,p2, t_w_medium, p3,p4, nrow = 3, ncol = 3, heights= c(1,4,4), widths = c(2,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11.2, 0.8), widths = c(11.7,0.3))
 
-# Plots for Fig. S12 -------------
+# Plots for Fig. S14 -------------
 
 t <- 1:90
 alpha <- 0.5

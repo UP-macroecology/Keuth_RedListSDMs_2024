@@ -50,7 +50,7 @@ ggplot(data_mean[[1]] %>% filter(), aes(x = Year, y = meanHS))+
   ylim(c(-0.05,1.08))
 
 ggsave(paste0(home_folder, "final_plots/comparison_graph_Batch1.pdf"))
-ggsave("4_Analysis/plots/reviews/review2/comparison_graph_Batch2.pdf")
+#ggsave("4_Analysis/plots/reviews/review2/comparison_graph_Batch2.pdf")
 
 ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
   geom_line(linewidth = 2.3, col = "#FF6A6A")+
@@ -140,7 +140,7 @@ pop_Batch1_current_full[which(is.na(pop_Batch1_current_full$NInd)),"NInd"] <- 0
 r_abu_current <- rast(as.data.frame(pop_Batch1_current_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_current_Batch1_Rep4_Land1.pdf"))
-pdf("Inkscape/images/Abundances_map_current_Batch1_Rep4_Land1.pdf")
+#pdf("Inkscape/images/Abundances_map_current_Batch1_Rep4_Land1.pdf")
 plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
 dev.off()
 
