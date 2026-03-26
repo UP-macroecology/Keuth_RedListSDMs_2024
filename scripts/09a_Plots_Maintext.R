@@ -239,12 +239,12 @@ ggplot(predictions_mean_position, aes(x=hs_loss, y = mean, col = land, linetype 
   ylab("Relative population size")+
   theme_bw()+
   theme(axis.text = element_text(size = 24), axis.title = element_text(size = 26),
-        legend.position = c(0.92, 0.87),  legend.title = element_text(size = 26), legend.text = element_text(size = 24),
-        legend.key.size = unit(2,"line"))+ #axis.title.x = element_blank(),
+        legend.position = c(0.91, 0.84),  legend.title = element_text(size = 26), legend.text = element_text(size = 24),
+        legend.key.size = unit(2,"line"), legend.key.spacing.y = unit(0.4, "cm"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
-  scale_linetype_discrete(labels = c("Range-contracting", "Range-shifting"))+
+  scale_linetype_discrete(labels = c("Range-contracting\n(Marginal niche position)", "Range-shifting\n(Central niche position)"))+
   labs(colour = "Landscape", linetype = NULL)+
   guides(linetype = guide_legend(order = 1), fill = "none")
 
