@@ -295,6 +295,8 @@ p_pos1 <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
   annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 9)+
   annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 9)+
   annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 9)+
+  annotate(geom="text", x=2.42, y=70, label="\u2020", color="black", size = 13)+
+  annotate(geom="text", x=1.42, y=58.5, label="\u2020", color="black", size = 13)+
   scale_x_discrete(expand = c(0.25, 0.25), labels = c("Range-contracting \n (Marginal niche position)", "Range-shifting \n (Central niche position)")) +
   xlab("")+
   ylim(c(0,80))+

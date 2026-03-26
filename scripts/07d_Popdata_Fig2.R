@@ -40,7 +40,7 @@ foreach(BatchNum=1:16, .packages = c("data.table")) %dopar% {
   pop$y <- (pop$y + 0.5) * 1000
   
   #save data set
-  save(pop, file = paste0(sim_dir, "Outputs/Batch", BatchNum, "_Sim1_Land1_Pop_Rep4.Rdata"))
+  saveRDS(pop, file = paste0(sim_dir, "Outputs/Batch", BatchNum, "_Sim1_Land1_Pop_Rep4.rds"))
 }
 
 stopCluster(cl)

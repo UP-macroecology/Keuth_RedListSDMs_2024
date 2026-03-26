@@ -455,20 +455,24 @@ BatchNum <- c(1:16)
 for (i in BatchNum[c(TRUE, FALSE)]){
   # current climate
   load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
+  #load(paste0("4_Analysis/data/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
   r_current <- rast(ens_preds[,1:3])
 
   pdf(paste0(home_folder, "final_plots/SDM_predictions_map_current_Batch", i, "_Rep4_Land1.pdf"))
+  #pdf(paste0("4_Analysis/plots/Paper/SDM_predictions_map_current_Batch", i, "_Rep4_Land1.pdf"))
   plot(r_current, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
   dev.off()
   
   # future predictions for year 20
   load(paste0(home_folder, "data_analysis/Predictions_fut_Batch", i, "_Sim1_Replication4.RData"))
+  #load(paste0("4_Analysis/data/Predictions_fut_Batch", i, "_Sim1_Replication4.RData"))
   
   # extract year 20
   fut_preds <- ens_fut_preds[[20]]
   r_fut <- rast(fut_preds[,1:3])
   
   pdf(paste0(home_folder, "final_plots/SDM_predictions_map_future_Batch", i, "_Rep4_Land1.pdf"))
+  #pdf(paste0("4_Analysis/plots/Paper/SDM_predictions_map_future_Batch", i, "_Rep4_Land1.pdf"))
   plot(r_fut, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
   dev.off()
 }
@@ -509,33 +513,47 @@ BatchNum <- c(1:16)
 for (i in BatchNum[c(FALSE, TRUE)]){
   # current climate
   load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
+  #load(paste0("4_Analysis/data/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
   r_current <- rast(ens_preds[,1:3])
   
   pdf(paste0(home_folder, "final_plots/SDM_predictions_map_current_Batch", i, "_Rep4_Land1.pdf"))
+  #pdf(paste0("4_Analysis/plots/Paper/SDM_predictions_map_current_Batch", i, "_Rep4_Land1.pdf"))
   plot(r_current, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
   dev.off()
   
   # future predictions for year 30
   load(paste0(home_folder, "data_analysis/Predictions_fut_Batch", i, "_Sim1_Replication4.RData"))
+  #load(paste0("4_Analysis/data/Predictions_fut_Batch", i, "_Sim1_Replication4.RData"))
   
   # extract year 30
   fut_preds <- ens_fut_preds[[30]]
   r_fut <- rast(fut_preds[,1:3])
   
   pdf(paste0(home_folder, "final_plots/SDM_predictions_map_future_Batch", i, "_Rep4_Land1.pdf"))
+  #pdf(paste0("4_Analysis/plots/Paper/SDM_predictions_map_future_Batch", i, "_Rep4_Land1.pdf"))
   plot(r_fut, legend = F, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))))
   dev.off()
 }
+
+# Plot legend
+# Extract legend
+pdf(paste0(home_folder, "final_plots/SDM_predictions_legend.pdf"))
+pdf("4_Analysis/plots/Paper/SDM_predictions_legend.pdf")
+plot(r_current, axes = F, col = c("#F2F2F2", rev(c("#D9F0A3", "#ADDD8E", "#78C679", "#41AB5D", "#238443", "#006837", "#004529"))), 
+     range = c(0,100), plg = list(x = "top", size = c(1,2), cex = 3))
+dev.off()
 
 # Maps of abundance
 
 for (i in BatchNum[c(FALSE, TRUE)]){
   # Load required data
   pop_Batch <- readRDS(paste0(home_folder, "data_analysis/Batch", i, "_Sim1_Land1_Pop_Rep4.rds"))
+  #pop_Batch <- readRDS(paste0("4_Analysis/data/Batch", i, "_Sim1_Land1_Pop_Rep4.rds"))
+  #load(paste0("4_Analysis/data/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
   load(paste0(home_folder, "data_analysis/Predictions_curr_Batch", i, "_Sim1_Replication4.RData"))
   
   # Abundance plot for year 0
-  pop_current <- subset(pop, pop$Year == 100)
+  pop_current <- subset(pop_Batch, pop_Batch$Year == 100)
   pop_current_full <- merge(ens_preds[,c(1:2)], pop_current[,c(4:5,7)], by = c("x","y"), all.x = T)
   pop_current_full[which(is.na(pop_current_full$NInd)),"NInd"] <- 0
   r_abu_current <- rast(as.data.frame(pop_current_full[,c(1:3)]))
@@ -554,6 +572,14 @@ for (i in BatchNum[c(FALSE, TRUE)]){
   plot(r_abu_future, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
   dev.off()
 }
+
+# Plot legend
+pdf(paste0(home_folder, "final_plots/Abundance_legend.pdf"))
+#pdf("4_Analysis/plots/Paper/Abundance_legend.pdf")
+plot(r_abu_current, axes = F, range = c(0,11), col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))), plg = list(x = "top", size = c(1,2), cex = 3))
+dev.off()
+
+
 # Plots for Fig. S5 --------------
 #convert specific columns
 performance_measures$Algorithm <- factor(performance_measures$Algorithm, levels = c("GLM", "RF", "Maxent", "mean_prob"))
@@ -930,6 +956,8 @@ p_pos <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
   annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 6)+
   annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 6)+
   annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=2.42, y=69.5, label="\u2020", color="black", size = 9)+
+  annotate(geom="text", x=1.42, y=58.5, label="\u2020", color="black", size = 9)+
   scale_x_discrete(expand = c(0.25, 0.25), labels = c("Marginal", "Central")) +
   ggtitle("Niche position")+
   xlab("")+
@@ -968,6 +996,8 @@ p_breadth <- ggplot(IUCN_classification, aes(x = breadth, y = VU_HS))+
   annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 6)+
   annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 6)+
   annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=2.42, y=71, label="\u2020", color="black", size = 9)+
+  annotate(geom="text", x=1.42, y=55.5, label="\u2020", color="black", size = 9)+
   scale_x_discrete(expand = c(0.25, 0.25), labels = c("Narrow", "Wide")) +
   ggtitle("Niche breadth")+
   ylim(c(0,80))+
@@ -1004,6 +1034,8 @@ p_rmax <- ggplot(IUCN_classification, aes(x = rmax, y = VU_HS))+
   annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 6)+
   annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 6)+
   annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=2.42, y=70.5, label="\u2020", color="black", size = 9)+
+  annotate(geom="text", x=1.42, y=57.5, label="\u2020", color="black", size = 9)+
   scale_x_discrete(expand = c(0.25, 0.25), labels = c("Slow", "Fast")) +
   ggtitle("Growth rate")+
   xlab("")+
@@ -1042,6 +1074,8 @@ p_disp <- ggplot(IUCN_classification, aes(x = dispersal, y = VU_HS))+
   annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 6)+
   annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 6)+
   annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 6)+
+  annotate(geom="text", x=2.42, y=70, label="\u2020", color="black", size = 9)+
+  annotate(geom="text", x=1.42, y=59.5, label="\u2020", color="black", size = 9)+
   scale_x_discrete(expand = c(0.25, 0.25), labels = c("Short", "Long")) +
   ggtitle("Dispersal")+
   ylim(c(0,80))+
@@ -1146,6 +1180,7 @@ p_pos1 <- ggplot(IUCN_sub, aes(x = BatchNum, y = VU_HS))+
   annotate(geom="text", x=7.655, y=75, label="VU", color="black", size = 8)+
   annotate(geom="text", x=7.995, y=75, label="EN", color="black", size = 8)+
   annotate(geom="text", x=8.325, y=75, label="CR", color="black", size = 8)+
+  annotate(geom="text", x=8.35, y=70, label="\u2020", color="black", size = 13)+
   scale_x_discrete(expand = c(0.065, 0.065), label = c("Narrow niche<br>Slow growth rate<br>Short dispersal", "Narrow niche<br>Slow growth rate<br>Long dispersal",
                                                        "Narrow niche<br>Fast growth rate<br>Short dispersal", "Narrow niche<br>Fast growth rate<br>Long dispersal",
                                                        "Wide niche<br>Slow growth rate<br>Short dispersal", "Wide niche<br>Slow growth rate<br>Long dispersal",

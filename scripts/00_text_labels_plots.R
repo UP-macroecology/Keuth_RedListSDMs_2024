@@ -258,7 +258,7 @@ t_ss <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Slow growth \n rate \n short dispersal") +
+           label = "Slow growth \n rate \n Short dispersal") +
   theme_void()
 
 t_sl <- ggplot() +
@@ -266,7 +266,7 @@ t_sl <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Slow growth \n rate \n long dispersal") +
+           label = "Slow growth \n rate \n Long dispersal") +
   theme_void()
 
 t_fs <- ggplot() +
@@ -274,7 +274,7 @@ t_fs <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Fast growth \n rate \n short dispersal") +
+           label = "Fast growth \n rate \n Short dispersal") +
   theme_void()
 
 t_fl <- ggplot() +
@@ -282,7 +282,7 @@ t_fl <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Fast growth \n rate \n long dispersal") +
+           label = "Fast growth \n rate \n Long dispersal") +
   theme_void()
 
 # niche combinations
@@ -292,7 +292,7 @@ t_cn <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Marginal niche position & narrow niche") +
+           label = "Marginal niche position & Narrow niche") +
   theme_void()
 
 t_cw <- ggplot() +
@@ -300,7 +300,7 @@ t_cw <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Marginal niche position & wide niche") +
+           label = "Marginal niche position & Wide niche") +
   theme_void()
 
 t_wna <- ggplot() +
@@ -308,7 +308,7 @@ t_wna <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Central niche position & narrow niche") +
+           label = "Central niche position & Narrow niche") +
   theme_void()
 
 t_ww <- ggplot() +
@@ -316,7 +316,7 @@ t_ww <- ggplot() +
            x = 1,
            y = 1,
            size = 6,
-           label = "Central niche position & wide niche") +
+           label = "Central niche position & Wide niche") +
   theme_void()
 
 # threatened values
