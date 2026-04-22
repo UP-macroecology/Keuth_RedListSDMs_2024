@@ -1,4 +1,4 @@
-# Red List criteria underestimate climate-related extinction risk of range-shifting species
+# Models used for Red List assessments underestimate climate-related extinction risk of range-shifting species
 
 Raya Keuth<sup>1</sup>, Susanne A. Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</sup>
 
@@ -9,7 +9,7 @@ Raya Keuth<sup>1</sup>, Susanne A. Fritz<sup>2,3</sup>, Damaris Zurell<sup>1</su
 
 ### ABSTRACT:
 
-Climate change causes global species redistribution and elevates extinction risk, making early identification of vulnerable species critical for timely conservation. The IUCN Red List provides guidelines for assessing climate-related extinction risk using species distribution models (SDMs) and spatially explicit population models (SEPMs). However, a systematic evaluation of these guidelines is currently missing. Using simulations of virtual species with diverse life-history traits and range dynamics, we found that SDMs consistently underestimated extinction risk for range-shifting species. This was due to a concave relationship between population size and habitat loss, which contradicts the linear assumption in the Red List guidelines. For range-contracting species, SDMs provided adequate warning times. Probabilistic extinction estimates from SEPMs provided delayed warning for all species, particularly for highly threatened ones. Our results reveal key limitations of current Red List guidelines under climate change. Based on our findings, we provide tentative recommendations for updating the IUCN Red List guidelines.
+Climate change causes species redistribution and elevates extinction risk, making early identification of vulnerable species critical for timely conservation. The IUCN Red List provides guidelines for assessing climate-related extinction risk using species distribution models (SDMs) and spatially explicit population models (SEPMs). Here, we present a systematic evaluation of these guidelines based on simulations of virtual species with diverse life-history traits and range dynamics. We find that, while SDMs provide adequate warning times for range-contracting species, they consistently underestimate extinction risk for range-shifting species. This is due to a concave relationship between population size and habitat loss, which contradicts the linear assumption in the Red List guidelines. Probabilistic extinction estimates from SEPMs provide belated warning for all species, particularly for highly threatened ones. Our results reveal key limitations of current Red List guidelines under climate change. Based on our findings, we provide tentative recommendations for updating the IUCN Red List guidelines.
 
 Keywords: IUCN Red List, extinction risk, species distribution models, climate change, virtual species, spatially explicit population models
 
@@ -110,7 +110,7 @@ scripts/
 * Running under: Debian GNU/Linux 12 (bookworm)
   
 * Attached packages:
-[1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1 [21] RColorBrewer_1.1-2 [22] ggtext 0.1.2
+[1] data.table_1.17.0  [2] gridExtra_2.3  [3] terra_1.7-78  [4] ggplot2_3.5.1  [5] dplyr_1.1.2  [6] scales_1.3.0  [7] ordbetareg_0.8  [8] lhs_1.1.6  [9] PresenceAbsence_1.1.11  [10] gbm_2.1.9  [11] maxnet_0.1.4  [12] randomForest_4.7-1.1  [13] dismo_1.3-14  [14] virtualspecies_1.5.1  [15] raster_3.6-26  [16] NLMR_1.1.1  [17] RangeShiftR_1.0.4  [18] doParallel_1.0.16  [19] foreach_1.5.2 [20] tibble_3.2.1 [21] RColorBrewer_1.1-2 [22] ggtext 0.1.2 [23] scico 1.5.0
 
 **For figures:**
 * R version 4.5.1 (2025-06-13)
