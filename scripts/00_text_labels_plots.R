@@ -29,7 +29,7 @@ t_nn <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "Narrow \nniche") +
+           label = "Narrow niche") +
   theme_void()
 
 t_wn <- ggplot() +
@@ -37,7 +37,7 @@ t_wn <- ggplot() +
            x = 1,
            y = 1,
            size = 8,
-           label = "Wide \nniche") +
+           label = "Wide niche") +
   theme_void()
 
 #text plots for niche optima

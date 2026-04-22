@@ -149,7 +149,7 @@ for (i in 1:nrow(IUCN_classification)) {
   IUCN_classification <- MW(dat, IUCN_classification, 10, 0.8, "CR", "HS")
   
   # calculate time point of classification for using dispersal assumptions
-  dat_disp <- readRDS(paste0(home_folder, "analysis_data/hs_loss_wide_SDM_dispersal_assumptions_Batch", BatchNum, "_Sim", land_rep, ".rds"))
+  dat_disp <- readRDS(paste0(home_folder, "analysis_data/hs_loss_SDM_dispersal_assumptions_analysis_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   #dat_disp <- readRDS(paste0("4_Analysis/data/hs_loss_wide_SDM_dispersal_assumptions_empirical_Batch", BatchNum, "_Sim", land_rep, ".rds"))
   
   #calculate the mean hs_loss for every startYear

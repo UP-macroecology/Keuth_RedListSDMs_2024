@@ -130,8 +130,11 @@ dev.off()
 
 # Load required data
 pop_Batch1 <- readRDS(paste0(home_folder, "data_analysis/Batch1_Sim1_Land1_Pop_Rep4.rds"))
+pop_Batch1 <- readRDS("4_Analysis/data/Batch1_Sim1_Land1_Pop_Rep4.rds")
 pop_Batch2 <- readRDS(paste0(home_folder, "data_analysis/Batch2_Sim1_Land1_Pop_Rep4.rds"))
+pop_Batch2 <- readRDS("4_Analysis/data/Batch2_Sim1_Land1_Pop_Rep4.rds")
 load(paste0(home_folder, "data_analysis/Predictions_curr_Batch1_Sim1_Replication4.RData"))
+load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
 
 # Abundance plot for year 0
 pop_Batch1_current <- subset(pop_Batch1, pop_Batch1$Year == 100)
@@ -141,7 +144,7 @@ r_abu_current <- rast(as.data.frame(pop_Batch1_current_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_current_Batch1_Rep4_Land1.pdf"))
 #pdf("Inkscape/images/Abundances_map_current_Batch1_Rep4_Land1.pdf")
-plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", c("#264D81", "#2A5B93", "#3165A6", "#3E6FB8", "#557CCA", "#7087D7", "#8A94E1", "#A19FE9", "#B1ACEF", "#BDB7F1", "#C7C2F4", "#D2CEF5", "#DDDAF7", "#E8E6FA")))
 dev.off()
 
 pop_Batch2_current <- subset(pop_Batch2, pop_Batch2$Year == 100)
@@ -150,7 +153,7 @@ pop_Batch2_current_full[which(is.na(pop_Batch2_current_full$NInd)),"NInd"] <- 0
 r_abu_current <- rast(as.data.frame(pop_Batch2_current_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_current_Batch2_Rep4_Land1.pdf"))
-plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+plot(r_abu_current, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", c("#264D81", "#2A5B93", "#3165A6", "#3E6FB8", "#557CCA", "#7087D7", "#8A94E1", "#A19FE9", "#B1ACEF", "#BDB7F1", "#C7C2F4", "#D2CEF5", "#DDDAF7", "#E8E6FA")))
 dev.off()
 
 # Plot future
@@ -160,7 +163,7 @@ pop_Batch1_future_full[which(is.na(pop_Batch1_future_full$NInd)),"NInd"] <- 0
 r_abu_future <- rast(as.data.frame(pop_Batch1_future_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_future_Batch1_Rep4_Land1.pdf"))
-plot(r_abu_future, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+plot(r_abu_future, axes = F, range = c(0,11), legend = F, smooth = T, col = c("#F2F2F2", c("#264D81", "#2A5B93", "#3165A6", "#3E6FB8", "#557CCA", "#7087D7", "#8A94E1", "#A19FE9", "#B1ACEF", "#BDB7F1", "#C7C2F4", "#D2CEF5", "#DDDAF7", "#E8E6FA")))
 dev.off()
 
 pop_Batch2_future <- subset(pop_Batch2, pop_Batch2$Year == 130)
@@ -169,12 +172,14 @@ pop_Batch2_future_full[which(is.na(pop_Batch2_future_full$NInd)),"NInd"] <- 0
 r_abu_future <- rast(as.data.frame(pop_Batch2_future_full[,c(1:3)]))
 
 pdf(paste0(home_folder, "final_plots/Abundances_map_future_Batch2_Rep4_Land1.pdf"))
-plot(r_abu_future, axes = F, range = c(0,11), legend = F, col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))))
+plot(r_abu_future, axes = F, range = c(0,11), legend = F, col = c("#F2F2F2", c("#264D81", "#2A5B93", "#3165A6", "#3E6FB8", "#557CCA", "#7087D7", "#8A94E1", "#A19FE9", "#B1ACEF", "#BDB7F1", "#C7C2F4", "#D2CEF5", "#DDDAF7", "#E8E6FA")))
 dev.off()
 
-pdf(paste0(home_folder, "final_plots/Abundance_legend.pdf"))
-plot(r_abu_current, axes = F, range = c(0,11), col = c("#F2F2F2", rev(brewer.pal(n = 11, name = "Spectral"))), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
+pdf(paste0(home_folder, "final_plots/Abundance_legend_side.pdf"))
+pdf("4_Analysis/plots/Paper/Abundance_legend_side.pdf")
+plot(r_abu_current, axes = F, range = c(0,11), col = c("#F2F2F2", c("#264D81", "#2A5B93", "#3165A6", "#3E6FB8", "#557CCA", "#7087D7", "#8A94E1", "#A19FE9", "#B1ACEF", "#BDB7F1", "#C7C2F4", "#D2CEF5", "#DDDAF7", "#E8E6FA")), plg = list(size = c(1,2), cex = 3), mar = c(1, 1, 1, 6))
 dev.off()
+
 
 # Plots for Fig. 3 -------------------
 # Population size against habitat suitability ---------------
@@ -214,8 +219,8 @@ load(paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
 #load("4_Analysis/data/Model_predictions_OBR_plot.Rdata")
 
 # create mean predictions per variable and land
-predictions_mean_position <- predictions_data_position %>%
-  group_by(position, land, hs_loss) %>%
+predictions_mean_optima <- predictions_data_optima %>%
+  group_by(optima, land, hs_loss) %>%
   summarise(mean = mean(Estimate), sd = sd(Estimate))
 
 predictions_mean_breadth <- predictions_data_breadth %>%
@@ -231,7 +236,8 @@ predictions_mean_dispersal <- predictions_data_dispersal %>%
   summarise(mean = mean(Estimate), sd = sd(Estimate))
 
 # plot predictions
-ggplot(predictions_mean_position, aes(x=hs_loss, y = mean, col = land, linetype = position))+
+pdf("4_Analysis/plots/Final submission/Fig.3.pdf", width = 2558/96, height = 1402/96)
+ggplot(predictions_mean_optima, aes(x=hs_loss, y = mean, col = land, linetype = position))+
   geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
   geom_ribbon(aes(ymin = (mean-1.96*sd), ymax = (mean+1.96*sd), fill = land), alpha=0.05, col = "lightgrey") +
   geom_line(linewidth = 2)+
@@ -243,10 +249,11 @@ ggplot(predictions_mean_position, aes(x=hs_loss, y = mean, col = land, linetype 
         legend.key.size = unit(2,"line"), legend.key.spacing.y = unit(0.4, "cm"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
-  scale_color_manual(values = c("#38A6E5", "#046D51", "#C37B6C"))+
+  scale_color_manual(values = c("#80cdc1", "#dfc27d", "#a6611a"))+
   scale_linetype_discrete(labels = c("Range-contracting\n(Marginal niche position)", "Range-shifting\n(Central niche position)"))+
   labs(colour = "Landscape", linetype = NULL)+
   guides(linetype = guide_legend(order = 1), fill = "none")
+dev.off()
 
 # Plots for Fig. 4 ------------------
 # IUCN classification time -------
@@ -322,4 +329,6 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Popu
 shared_legend <- extract_legend(legend)
 
 #Plot large grid
+cairo_pdf("4_Analysis/plots/Final submission/Fig.4.pdf", width = 2558/96, height = 1402/96)
 grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,0.8))
+dev.off()
