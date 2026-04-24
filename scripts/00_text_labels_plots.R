@@ -28,7 +28,7 @@ t_nn <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 8,
+           size = 2.5,
            label = "Narrow niche") +
   theme_void()
 
@@ -36,7 +36,7 @@ t_wn <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 8,
+           size = 2.5,
            label = "Wide niche") +
   theme_void()
 
@@ -61,16 +61,16 @@ t_c_medium <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 8,
-           label = "Marginal niche position") +
+           size = 2.5,
+           label = "Marginal niche \nposition") +
   theme_void()
 
 t_w_medium <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 8,
-           label = "Central niche position") +
+           size = 2.5,
+           label = "Central niche \nposition") +
   theme_void()
 
 t_c_large <- ggplot() +
@@ -257,7 +257,7 @@ t_ss <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Slow growth \n rate \n Short dispersal") +
   theme_void()
 
@@ -265,7 +265,7 @@ t_sl <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Slow growth \n rate \n Long dispersal") +
   theme_void()
 
@@ -273,7 +273,7 @@ t_fs <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Fast growth \n rate \n Short dispersal") +
   theme_void()
 
@@ -281,7 +281,7 @@ t_fl <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Fast growth \n rate \n Long dispersal") +
   theme_void()
 
@@ -291,7 +291,7 @@ t_cn <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Marginal niche position & Narrow niche") +
   theme_void()
 
@@ -299,7 +299,7 @@ t_cw <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Marginal niche position & Wide niche") +
   theme_void()
 
@@ -307,7 +307,7 @@ t_wna <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Central niche position & Narrow niche") +
   theme_void()
 
@@ -315,7 +315,7 @@ t_ww <- ggplot() +
   annotate("text",
            x = 1,
            y = 1,
-           size = 6,
+           size = 2,
            label = "Central niche position & Wide niche") +
   theme_void()
 

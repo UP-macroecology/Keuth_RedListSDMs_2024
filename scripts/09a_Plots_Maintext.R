@@ -33,7 +33,7 @@ source("scripts/00_text_labels_plots.R")
 load(paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
 load(paste0(home_folder, "analysis_data/data_mean.Rdata"))
 
-#load("4_Analysis/data/IUCN_classification_times_allreplicates.RData")
+#load("4_Analysis/data/IUCN_classification_times_allreplicates_ExtTime.RData")
 #load("4_Analysis/data/data_bayes_model.Rdata")
 
 # Plots for Fig. 2 --------------
@@ -236,17 +236,17 @@ predictions_mean_dispersal <- predictions_data_dispersal %>%
   summarise(mean = mean(Estimate), sd = sd(Estimate))
 
 # plot predictions
-pdf("4_Analysis/plots/Final submission/Fig.3.pdf", width = 2558/96, height = 1402/96)
-ggplot(predictions_mean_optima, aes(x=hs_loss, y = mean, col = land, linetype = position))+
-  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 1)+
+pdf("4_Analysis/plots/Final submission/Fig.3.pdf", width = 3.4, height = 2)
+ggplot(predictions_mean_optima, aes(x=hs_loss, y = mean, col = land, linetype = optima))+
+  geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 0.4)+
   geom_ribbon(aes(ymin = (mean-1.96*sd), ymax = (mean+1.96*sd), fill = land), alpha=0.05, col = "lightgrey") +
-  geom_line(linewidth = 2)+
+  geom_line(linewidth = 0.6)+
   xlab("Habitat loss")+
   ylab("Relative population size")+
-  theme_bw()+
-  theme(axis.text = element_text(size = 24), axis.title = element_text(size = 26),
-        legend.position = c(0.91, 0.84),  legend.title = element_text(size = 26), legend.text = element_text(size = 24),
-        legend.key.size = unit(2,"line"), legend.key.spacing.y = unit(0.4, "cm"))+ #axis.title.x = element_blank(),
+  theme_bw(base_size=3)+
+  theme(axis.text = element_text(size = 5), axis.title = element_text(size = 5),
+        legend.position = c(0.88, 0.78),  legend.title = element_text(size = 4), legend.text = element_text(size = 4),
+        legend.key.size = unit(0.3,"line"), legend.key.spacing.y = unit(0.1, "cm"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#80cdc1", "#dfc27d", "#a6611a"))+
@@ -257,6 +257,7 @@ dev.off()
 
 # Plots for Fig. 4 ------------------
 # IUCN classification time -------
+names(IUCN_classification)[names(IUCN_classification) == 'optima'] <- 'position'
 IUCN_classification$position <- as.character(IUCN_classification$position)
 IUCN_classification[which(IUCN_classification$position == "marginal"), "position"] <- "range-contracting"
 IUCN_classification[which(IUCN_classification$position == "central"), "position"] <- "range-shifting"
@@ -274,42 +275,42 @@ hline_df$x_num <- x_positions[as.character(hline_df$position)]
 
 # plot
 p_pos1 <- ggplot(IUCN_classification, aes(x = position, y = VU_HS))+
-  geom_segment(data = hline_df,
+  geom_segment(data = hline_df_position,
                aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
                inherit.aes = FALSE,
-               color = "gray55")+
-  geom_rect(data = hline_df,
+               color = "gray55", linewidth = 0.2)+
+  geom_rect(data = hline_df_position,
             aes(xmin = x_num - 0.45, xmax = x_num + 0.45, ymin = meanExt - 1.96 * sdExt, ymax = meanExt + 1.96 * sdExt),
             inherit.aes = FALSE,
             fill = "gray55", alpha = 0.2) +
-  geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42))+
-  geom_boxplot(aes(x = position, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE")+
-  geom_boxplot(aes(x = position, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange")+
-  geom_boxplot(aes(x = position, y = EN_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.09))+
-  geom_boxplot(aes(x = position, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, fill = "#1C86EE")+
-  geom_boxplot(aes(x = position, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, fill = "orange")+
-  geom_boxplot(aes(x = position, y = CR_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = 0.24))+
-  geom_boxplot(aes(x = position, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, fill = "#1C86EE")+
-  geom_boxplot(aes(x = position, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, fill = "orange")+
-  geom_vline(xintercept = 1.5)+
-  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey")+
-  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey")+
-  annotate(geom="text", x=0.655, y=78, label="VU", color="black", size = 9)+
-  annotate(geom="text", x=0.995, y=78, label="EN", color="black", size = 9)+
-  annotate(geom="text", x=1.325, y=78, label="CR", color="black", size = 9)+
-  annotate(geom="text", x=1.685, y=78, label="VU", color="black", size = 9)+
-  annotate(geom="text", x=1.995, y=78, label="EN", color="black", size = 9)+
-  annotate(geom="text", x=2.335, y=78, label="CR", color="black", size = 9)+
-  annotate(geom="text", x=2.42, y=70, label="\u2020", color="black", size = 13)+
-  annotate(geom="text", x=1.42, y=58.5, label="\u2020", color="black", size = 13)+
-  scale_x_discrete(expand = c(0.25, 0.25), labels = c("Range-contracting \n (Marginal niche position)", "Range-shifting \n (Central niche position)")) +
+  geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = EN_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.09), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = EN_Pop), position = position_nudge(x = 0), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = CR_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = 0.24), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(x = position, y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_vline(xintercept = 1.5, linewidth = 0.2)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  annotate(geom="text", x=0.655, y=79, label="VU", color="black", size = 2.5)+
+  annotate(geom="text", x=0.995, y=79, label="EN", color="black", size = 2.5)+
+  annotate(geom="text", x=1.325, y=79, label="CR", color="black", size = 2.5)+
+  annotate(geom="text", x=1.685, y=79, label="VU", color="black", size = 2.5)+
+  annotate(geom="text", x=1.995, y=79, label="EN", color="black", size = 2.5)+
+  annotate(geom="text", x=2.335, y=79, label="CR", color="black", size = 2.5)+
+  annotate(geom="text", x=2.42, y=70, label="\u2020", color="black", size = 3)+
+  annotate(geom="text", x=1.42, y=59, label="\u2020", color="black", size = 3)+
+  scale_x_discrete(expand = c(0.25, 0.25), labels = c("Marginal", "Central")) +
   xlab("")+
   ylim(c(0,80))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 24),
-        axis.title = element_text(size = 26), legend.position = "", 
-        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 7),
+        axis.title = element_text(size = 7), legend.position = "", axis.ticks = element_line(linewidth = 0.3), 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.3))+
   ylab("Classification time [years]")
 
 # create and extract common legend
@@ -321,14 +322,24 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Popu
   geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
   theme_bw()+
   theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 24), legend.key.size = unit(1.5, "cm"),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 25, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 7), 
+        legend.key.size = unit(0.4, "cm"),
         legend.position = "bottom")+
+  guides(
+    fill = guide_legend(
+      override.aes = list(
+        size = 0.3,
+        linewidth = 0.2  # controls the box outline thickness
+      )
+    )
+  )+
   ylab("Timepoint of classification")+
   scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
+
 
 shared_legend <- extract_legend(legend)
 
 #Plot large grid
-cairo_pdf("4_Analysis/plots/Final submission/Fig.4.pdf", width = 2558/96, height = 1402/96)
-grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,0.8))
+cairo_pdf("4_Analysis/plots/Final submission/Fig.4.pdf", height = 4)
+grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(9,0.5))
 dev.off()
