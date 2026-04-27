@@ -33,9 +33,6 @@ source("scripts/00_text_labels_plots.R")
 load(paste0(home_folder, "analysis_data/IUCN_classification_times_allreplicates.RData"))
 load(paste0(home_folder, "analysis_data/data_mean.Rdata"))
 
-#load("4_Analysis/data/IUCN_classification_times_allreplicates_ExtTime.RData")
-#load("4_Analysis/data/data_bayes_model.Rdata")
-
 # Plots for Fig. 2 --------------
 # plot of HS, population size and extinction probability over time --------
 
@@ -50,7 +47,6 @@ ggplot(data_mean[[1]] %>% filter(), aes(x = Year, y = meanHS))+
   ylim(c(-0.05,1.08))
 
 ggsave(paste0(home_folder, "final_plots/comparison_graph_Batch1.pdf"))
-#ggsave("4_Analysis/plots/reviews/review2/comparison_graph_Batch2.pdf")
 
 ggplot(data_mean[[2]], aes(x = Year, y = meanHS))+
   geom_line(linewidth = 2.3, col = "#FF6A6A")+
@@ -113,7 +109,7 @@ dev.off()
 
 load(paste0(home_folder, "data_analysis/Predictions_fut_Batch2_Sim1_Replication4.RData"))
 
-# extract year 40 (for range-shifting)
+# extract year 30 (for range-shifting)
 fut_preds <- ens_fut_preds[[30]]
 r_fut <- rast(fut_preds[,1:3])
 
@@ -130,11 +126,11 @@ dev.off()
 
 # Load required data
 pop_Batch1 <- readRDS(paste0(home_folder, "data_analysis/Batch1_Sim1_Land1_Pop_Rep4.rds"))
-pop_Batch1 <- readRDS("4_Analysis/data/Batch1_Sim1_Land1_Pop_Rep4.rds")
+#pop_Batch1 <- readRDS("4_Analysis/data/Batch1_Sim1_Land1_Pop_Rep4.rds")
 pop_Batch2 <- readRDS(paste0(home_folder, "data_analysis/Batch2_Sim1_Land1_Pop_Rep4.rds"))
-pop_Batch2 <- readRDS("4_Analysis/data/Batch2_Sim1_Land1_Pop_Rep4.rds")
+#pop_Batch2 <- readRDS("4_Analysis/data/Batch2_Sim1_Land1_Pop_Rep4.rds")
 load(paste0(home_folder, "data_analysis/Predictions_curr_Batch1_Sim1_Replication4.RData"))
-load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
+#load("4_Analysis/data/Predictions_curr_Batch1_Sim1_Replication4.RData")
 
 # Abundance plot for year 0
 pop_Batch1_current <- subset(pop_Batch1, pop_Batch1$Year == 100)
@@ -219,8 +215,8 @@ load(paste0(home_folder, "analysis_data/Model_predictions_OBR_plot.Rdata"))
 #load("4_Analysis/data/Model_predictions_OBR_plot.Rdata")
 
 # create mean predictions per variable and land
-predictions_mean_optima <- predictions_data_optima %>%
-  group_by(optima, land, hs_loss) %>%
+predictions_mean_position <- predictions_data_position %>%
+  group_by(position, land, hs_loss) %>%
   summarise(mean = mean(Estimate), sd = sd(Estimate))
 
 predictions_mean_breadth <- predictions_data_breadth %>%
@@ -236,8 +232,9 @@ predictions_mean_dispersal <- predictions_data_dispersal %>%
   summarise(mean = mean(Estimate), sd = sd(Estimate))
 
 # plot predictions
-pdf("4_Analysis/plots/Final submission/Fig.3.pdf", width = 3.4, height = 2)
-ggplot(predictions_mean_optima, aes(x=hs_loss, y = mean, col = land, linetype = optima))+
+#pdf("4_Analysis/plots/Final submission/Fig.3.pdf", width = 3.4, height = 2)
+pdf(paste0(home_folder, "final_plots/Fig.3.pdf"), width = 3.4, height = 2)
+ggplot(predictions_mean_position, aes(x=hs_loss, y = mean, col = land, linetype = position))+
   geom_abline(intercept = 1, slope = -1, col = "#C7C7C7", linetype = "twodash", linewidth = 0.4)+
   geom_ribbon(aes(ymin = (mean-1.96*sd), ymax = (mean+1.96*sd), fill = land), alpha=0.05, col = "lightgrey") +
   geom_line(linewidth = 0.6)+
@@ -245,19 +242,22 @@ ggplot(predictions_mean_optima, aes(x=hs_loss, y = mean, col = land, linetype = 
   ylab("Relative population size")+
   theme_bw(base_size=3)+
   theme(axis.text = element_text(size = 5), axis.title = element_text(size = 5),
-        legend.position = c(0.88, 0.78),  legend.title = element_text(size = 4), legend.text = element_text(size = 4),
-        legend.key.size = unit(0.3,"line"), legend.key.spacing.y = unit(0.1, "cm"))+ #axis.title.x = element_blank(),
+        legend.position = c(0.87, 0.78),  legend.title = element_text(size = 4), legend.text = element_text(size = 4),
+        legend.key.size = unit(0.5,"line"))+ #axis.title.x = element_blank(),
   scale_x_continuous(limits = c(0,1), expand = c(0.008, 0.008)) +
   scale_y_continuous(limits = c(0,1), expand = c(0.015, 0.015)) +
   scale_color_manual(values = c("#80cdc1", "#dfc27d", "#a6611a"))+
   scale_linetype_discrete(labels = c("Range-contracting\n(Marginal niche position)", "Range-shifting\n(Central niche position)"))+
   labs(colour = "Landscape", linetype = NULL)+
-  guides(linetype = guide_legend(order = 1), fill = "none")
+  guides(linetype = guide_legend(order = 1,
+                                 theme = theme(
+                                   legend.key.spacing.y = unit(0.1, "cm")  # larger spacing for linetype
+                                 )), fill = "none")
 dev.off()
 
 # Plots for Fig. 4 ------------------
 # IUCN classification time -------
-names(IUCN_classification)[names(IUCN_classification) == 'optima'] <- 'position'
+#names(IUCN_classification)[names(IUCN_classification) == 'optima'] <- 'position'
 IUCN_classification$position <- as.character(IUCN_classification$position)
 IUCN_classification[which(IUCN_classification$position == "marginal"), "position"] <- "range-contracting"
 IUCN_classification[which(IUCN_classification$position == "central"), "position"] <- "range-shifting"
@@ -340,6 +340,7 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Popu
 shared_legend <- extract_legend(legend)
 
 #Plot large grid
-cairo_pdf("4_Analysis/plots/Final submission/Fig.4.pdf", height = 4)
+#cairo_pdf("4_Analysis/plots/Final submission/Fig.4.pdf", height = 4)
+cairo_pdf(paste0(home_folder, "final_plots/Fig.4.pdf"), height = 4) # to keep the unicode character in the plot
 grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(9,0.5))
 dev.off()
