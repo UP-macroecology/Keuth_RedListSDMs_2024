@@ -998,7 +998,7 @@ pdf(paste0(home_folder, "final_plots/Extended Data Fig.6b.pdf"), height = 4)
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_dispersal, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, ncol=1, nrow = 2, heights = c(10,0.5))
 dev.off()
 
-# Plots for Extended Data Fig.7a --------------
+# Plots for Extended Data Fig.7 --------------
 IUCN_classification$position <- factor(IUCN_classification$position, levels = c("marginal", "central"))
 
 # calculate mean and sd Extinction time
@@ -1206,11 +1206,133 @@ legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Popu
 shared_legend <- extract_legend(legend)
 
 #cairo_pdf("4_Analysis/plots/Final submission/Fig.S9.pdf", height = 4)
-cairo_pdf(paste0(home_folder, "final_plots/Extended Data Fig.7a.pdf"), height = 4)
+cairo_pdf(paste0(home_folder, "final_plots/Extended Data Fig.7.pdf"), height = 4)
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,0.5))
 dev.off()
 
-# Plots for Extended Data Fig.7b --------------
+# Plots for Extended Data Fig.8 --------------
+
+IUCN_sub <- subset(IUCN_classification, IUCN_classification$position == "central")
+IUCN_sub$BatchNum <- factor(IUCN_sub$BatchNum, levels = c("2", "10", "6", "14", "4", "12", "8", "16"))
+
+# calculate mean Extinction time and standard deviation for position trait
+hline_df <- data.frame(IUCN_classification %>% group_by(position) %>% summarise(meanExt = mean(Ext_Time),
+                                                                                sdExt = sd(Ext_Time)))
+# Create mapping from x levels to numeric positions
+x_positions <- setNames(1:length(levels(hline_df$position)), levels(hline_df$position))
+
+# Add x numeric positions to hline_df
+hline_df$x_num <- x_positions[as.character(hline_df$position)]
+
+p_pos1 <- ggplot(IUCN_sub, aes(x = BatchNum, y = VU_HS))+
+  geom_segment(data = subset(hline_df, hline_df$position == "central"),
+               aes(x =  0.55, xend = 8.45, y = meanExt, yend = meanExt),
+               inherit.aes = FALSE,
+               color = "gray55", linewidth = 0.2)+
+  geom_rect(data = subset(hline_df, hline_df$position == "central"),
+            aes(xmin = 0.55, xmax = 8.45, ymin = meanExt - 1.96 * sdExt, ymax = meanExt + 1.96 * sdExt),
+            inherit.aes = FALSE,
+            fill = "gray55", alpha = 0.2) +
+  geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = EN_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.09), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = EN_Pop), position = position_nudge(x = 0), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = CR_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = 0.24), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_boxplot(aes(y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
+  geom_vline(xintercept = 1.5, linewidth = 0.2)+
+  geom_vline(xintercept = 2.5, linewidth = 0.2)+
+  geom_vline(xintercept = 3.5, linewidth = 0.2)+
+  geom_vline(xintercept = 4.5, linewidth = 0.2)+
+  geom_vline(xintercept = 5.5, linewidth = 0.2)+
+  geom_vline(xintercept = 6.5, linewidth = 0.2)+
+  geom_vline(xintercept = 7.5, linewidth = 0.2)+
+  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 3.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 2.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 4.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 3.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 5.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 4.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 6.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 5.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 7.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 6.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 8.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  geom_vline(xintercept = 7.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
+  annotate(geom="text", x=0.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=0.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=1.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=1.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=1.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=2.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=2.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=2.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=3.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=3.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=3.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=4.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=4.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=4.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=5.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=5.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=5.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=6.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=6.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=6.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=7.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=7.655, y=75, label="VU", color="black", size = 2)+
+  annotate(geom="text", x=7.995, y=75, label="EN", color="black", size = 2)+
+  annotate(geom="text", x=8.325, y=75, label="CR", color="black", size = 2)+
+  annotate(geom="text", x=8.35, y=70, label="\u2020", color="black", size = 3)+
+  scale_x_discrete(expand = c(0.065, 0.065), label = c("Narrow niche<br>Slow growth rate<br>Short dispersal", "Narrow niche<br>Slow growth rate<br>Long dispersal",
+                                                       "Narrow niche<br>Fast growth rate<br>Short dispersal", "Narrow niche<br>Fast growth rate<br>Long dispersal",
+                                                       "Wide niche<br>Slow growth rate<br>Short dispersal", "Wide niche<br>Slow growth rate<br>Long dispersal",
+                                                       "Wide niche<br>Fast growth rate<br>Short dispersal", "**Wide niche<br>Fast growth rate<br>Long dispersal**")) +
+  xlab("")+
+  ylim(c(0,76))+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 6), axis.text.x = ggtext::element_markdown(), axis.ticks = element_line(linewidth = 0.3),
+        axis.title = element_text(size = 7), legend.position = "", 
+        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.3))+
+  ylab("Classification time [years]")
+
+# create and extract common legend
+colors <- c("Habitat suitability (A3)" = "#EE2C2C", "Population size (A3)" = "orange", "Extinction probability (E)" = "#1C86EE")
+
+legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Population size (A3)"))+
+  geom_boxplot()+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
+  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
+  theme_bw()+
+  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20), plot.title = element_text(size = 7, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 6), 
+        legend.key.size = unit(0.4, "cm"),
+        legend.position = "bottom")+
+  guides(
+    fill = guide_legend(
+      override.aes = list(
+        size = 0.3,
+        linewidth = 0.2  # controls the box outline thickness
+      )
+    )
+  )+
+  ylab("Timepoint of classification")+
+  scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
+
+shared_legend <- extract_legend(legend)
+
+#Plot large grid
+#cairo_pdf("4_Analysis/plots/Final submission/Fig.S10.pdf", height = 4)
+cairo_pdf(paste0(home_folder, "final_plots/Extended Data Fig.8.pdf"), height = 4)
+grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,0.5))
+dev.off()
+
+# Plots for Extended Data Fig.9 --------------
 p_pos <- ggplot(IUCN_classification_dispersal, aes(x = position, y = VU_HS))+
   geom_segment(data = hline_df_position,
                aes(x = x_num - 0.45, xend = x_num + 0.45, y = meanExt, yend = meanExt),
@@ -1382,133 +1504,13 @@ shared_legend <- extract_legend(legend)
 
 #Plot large grid
 #cairo_pdf("4_Analysis/plots/Final submission/Fig.S11.pdf", height = 4)
-cairo_pdf(paste0(home_folder, "final_plots/Extended Data Fig.7b.pdf"), height = 4)
+cairo_pdf(paste0(home_folder, "final_plots/Extended Data Fig.9.pdf"), height = 4)
 grid.arrange(arrangeGrob(p_pos,p_breadth, p_rmax, p_disp, nrow=2, ncol = 2, heights = c(8,8), widths = c(1,1)), shared_legend, nrow=2, ncol = 1, heights = c(10,0.5))
 dev.off()
 
-# Plots for Extended Data Fig.8 --------------
-
-IUCN_sub <- subset(IUCN_classification, IUCN_classification$position == "central")
-IUCN_sub$BatchNum <- factor(IUCN_sub$BatchNum, levels = c("2", "10", "6", "14", "4", "12", "8", "16"))
-
-# calculate mean Extinction time and standard deviation for position trait
-hline_df <- data.frame(IUCN_classification %>% group_by(position) %>% summarise(meanExt = mean(Ext_Time),
-                                                                                sdExt = sd(Ext_Time)))
-# Create mapping from x levels to numeric positions
-x_positions <- setNames(1:length(levels(hline_df$position)), levels(hline_df$position))
-
-# Add x numeric positions to hline_df
-hline_df$x_num <- x_positions[as.character(hline_df$position)]
-
-p_pos1 <- ggplot(IUCN_sub, aes(x = BatchNum, y = VU_HS))+
-  geom_segment(data = subset(hline_df, hline_df$position == "central"),
-               aes(x =  0.55, xend = 8.45, y = meanExt, yend = meanExt),
-               inherit.aes = FALSE,
-               color = "gray55", linewidth = 0.2)+
-  geom_rect(data = subset(hline_df, hline_df$position == "central"),
-            aes(xmin = 0.55, xmax = 8.45, ymin = meanExt - 1.96 * sdExt, ymax = meanExt + 1.96 * sdExt),
-            inherit.aes = FALSE,
-            fill = "gray55", alpha = 0.2) +
-  geom_boxplot(width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.42), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = VU_Ext), position = position_nudge(x = -0.24), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = VU_Pop), position = position_nudge(x = - 0.33), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = EN_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = -0.09), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = EN_Ext), position = position_nudge(x = 0.09), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = EN_Pop), position = position_nudge(x = 0), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = CR_HS), width = 0.06, fill = "#EE2C2C", position = position_nudge(x = 0.24), linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = CR_Ext), position = position_nudge(x = 0.43), width = 0.06, fill = "#1C86EE", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_boxplot(aes(y = CR_Pop), position = position_nudge(x = 0.33), width = 0.06, fill = "orange", linewidth = 0.2, fatten = 1.5, outlier.size = 0.1)+
-  geom_vline(xintercept = 1.5, linewidth = 0.2)+
-  geom_vline(xintercept = 2.5, linewidth = 0.2)+
-  geom_vline(xintercept = 3.5, linewidth = 0.2)+
-  geom_vline(xintercept = 4.5, linewidth = 0.2)+
-  geom_vline(xintercept = 5.5, linewidth = 0.2)+
-  geom_vline(xintercept = 6.5, linewidth = 0.2)+
-  geom_vline(xintercept = 7.5, linewidth = 0.2)+
-  geom_vline(xintercept = 1.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 0.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 2.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 1.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 3.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 2.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 4.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 3.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 5.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 4.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 6.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 5.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 7.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 6.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 8.16, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  geom_vline(xintercept = 7.83, linetype = "dashed", color = "lightgrey", linewidth = 0.2)+
-  annotate(geom="text", x=0.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=0.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=1.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=1.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=1.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=2.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=2.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=2.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=3.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=3.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=3.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=4.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=4.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=4.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=5.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=5.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=5.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=6.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=6.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=6.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=7.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=7.655, y=75, label="VU", color="black", size = 2)+
-  annotate(geom="text", x=7.995, y=75, label="EN", color="black", size = 2)+
-  annotate(geom="text", x=8.325, y=75, label="CR", color="black", size = 2)+
-  annotate(geom="text", x=8.35, y=70, label="\u2020", color="black", size = 3)+
-  scale_x_discrete(expand = c(0.065, 0.065), label = c("Narrow niche<br>Slow growth rate<br>Short dispersal", "Narrow niche<br>Slow growth rate<br>Long dispersal",
-                                                       "Narrow niche<br>Fast growth rate<br>Short dispersal", "Narrow niche<br>Fast growth rate<br>Long dispersal",
-                                                       "Wide niche<br>Slow growth rate<br>Short dispersal", "Wide niche<br>Slow growth rate<br>Long dispersal",
-                                                       "Wide niche<br>Fast growth rate<br>Short dispersal", "**Wide niche<br>Fast growth rate<br>Long dispersal**")) +
-  xlab("")+
-  ylim(c(0,76))+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 6), axis.text.x = ggtext::element_markdown(), axis.ticks = element_line(linewidth = 0.3),
-        axis.title = element_text(size = 7), legend.position = "", 
-        panel.grid = element_blank(), panel.background = element_rect(fill = "white"), panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.3))+
-  ylab("Classification time [years]")
-
-# create and extract common legend
-colors <- c("Habitat suitability (A3)" = "#EE2C2C", "Population size (A3)" = "orange", "Extinction probability (E)" = "#1C86EE")
-
-legend <- ggplot(IUCN_classification, aes(x = BatchNum, y = VU_Pop, fill = "Population size (A3)"))+
-  geom_boxplot()+
-  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Habitat suitability (A3)"), position = position_nudge(x = -0.25), width = 0.2)+
-  geom_boxplot(aes(x = BatchNum, y = VU_HS, fill = "Extinction probability (E)"), position = position_nudge(x = 0.25), width = 0.2)+
-  theme_bw()+
-  theme(axis.title.x = element_blank(), axis.text = element_text(size = 18),
-        axis.title = element_text(size = 20), plot.title = element_text(size = 7, face = "bold"), legend.title = element_blank(), legend.text = element_text(size = 6), 
-        legend.key.size = unit(0.4, "cm"),
-        legend.position = "bottom")+
-  guides(
-    fill = guide_legend(
-      override.aes = list(
-        size = 0.3,
-        linewidth = 0.2  # controls the box outline thickness
-      )
-    )
-  )+
-  ylab("Timepoint of classification")+
-  scale_fill_manual(values= colors, breaks = c("Habitat suitability (A3)", "Population size (A3)", "Extinction probability (E)"))
-
-shared_legend <- extract_legend(legend)
-
-#Plot large grid
-#cairo_pdf("4_Analysis/plots/Final submission/Fig.S10.pdf", height = 4)
-cairo_pdf(paste0(home_folder, "final_plots/Extended Data Fig.8.pdf"), height = 4)
-grid.arrange(p_pos1, shared_legend, nrow=2, ncol = 1, heights = c(10,0.5))
-dev.off()
-
-# Plots for Extended Data Fig.9a --------------
+# Plots for Extended Data Tab.1 --------------
+summary(model_intercept)
+# Plots for Fig.S1 --------------
 
 #Landscape 1
 load(paste0(home_folder, "landscapes/land1_temp_pre.Rdata"))
@@ -1585,7 +1587,7 @@ plot(land, maxpixels=2*ncell(land), cex.axis = 1.5, xaxt='n', yaxt = "n", legend
 
 dev.off()
 
-# Plots for Extended Data Fig.9b ------------
+# Plots for Fig.S2 ------------
 
 # create data set
 clim <- seq(0,1,0.001)
@@ -1678,12 +1680,12 @@ shared_legend <- extract_legend(legend)
 
 #Plot the large grid
 #pdf("4_Analysis/plots/Final submission/Fig.S13.pdf", height = 4)
-pdf(paste0(home_folder, "final_plots/Extended Data Fig.9b.pdf"), height = 4)
+pdf(paste0(home_folder, "final_plots/Fig.S2.pdf"), height = 4)
 grid.arrange(arrangeGrob(t0, t_nn, t_wn, t_c_medium, p1,p2, t_w_medium, p3,p4, nrow = 3, ncol = 3, heights= c(0.6,4,4), widths = c(1.2,5,5)),
              t0,shared_legend, nrow = 2, ncol = 2, heights = c(11, 0.8), widths = c(11.7,0.3))
 dev.off()
 
-# Plots for Extended Data Fig.9c -------------
+# Plots for Fig.S3 -------------
 
 t <- 1:90
 alpha <- 0.5
@@ -1696,7 +1698,7 @@ temp_rise <- data.frame(year = seq(1,90,1),
                         temp = scales::rescale(x, c(0,0.9)))
 
 #pdf("4_Analysis/plots/Final submission/Fig.S14.pdf", height = 4)
-pdf(paste0(home_folder, "final_plots/Extended Data Fig.9c.pdf"), height = 4)
+pdf(paste0(home_folder, "final_plots/Fig.S3.pdf"), height = 4)
 ggplot(temp_rise, aes(x = year, y = temp))+
   geom_line(linewidth = 0.6)+
   theme_bw(base_size=3)+
@@ -1704,9 +1706,3 @@ ggplot(temp_rise, aes(x = year, y = temp))+
   xlab("Year")+
   ylab("Temperature")
 dev.off()
-
-# Plots for Extended Data Tab.1 --------------
-summary(model_intercept)
-
-
-
